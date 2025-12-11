@@ -2,7 +2,9 @@
 // ADMIN UID (Set Your Admin User ID Here)
 // -----------------------------
 export const ADMIN_UID = "za934MEck4Qd3IK2pHqplS6WPBe2";
+
 import { auth, db } from "./firebase.js";
+
 import {
   createUserWithEmailAndPassword,
   signInWithEmailAndPassword,
@@ -14,31 +16,72 @@ import {
 import {
   doc,
   setDoc,
-  getDoc
+  getDoc,
+  updateDoc
 } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore.js";
 
-// -----------------------------
+// ------------------------------------
+// GENERATE USER REFERRAL CODE
+// ------------------------------------
+function generateReferralCode(uid) {
+  return uid.substring(0, 6).toUpperCase();
+}
+
+// ------------------------------------
 // SIGN UP USER (GLOBAL)
-// -----------------------------
-export async function signUpUser(fullName, email, password, referralCode) {
+// ------------------------------------
+export async function signUpUser(fullName, email, password, referredByCode = null) {
   try {
     const userCredential = await createUserWithEmailAndPassword(auth, email, password);
     const user = userCredential.user;
 
     await updateProfile(user, { displayName: fullName });
 
-    // Create user in Firestore
+    const referralCode = generateReferralCode(user.uid);
+
+    let referredBy = null;
+
+    // -----------------------------------------
+    // If referral code exists → find referring user
+    // -----------------------------------------
+    if (referredByCode) {
+      const usersRef = doc(db, "referralCodes", referredByCode);
+      const refSnap = await getDoc(usersRef);
+
+      if (refSnap.exists()) {
+        referredBy = refSnap.data().uid;
+
+        // Add this user to referredUsers of the inviter
+        await updateDoc(doc(db, "users", referredBy), {
+          referredUsers: [user.uid],
+        });
+      }
+    }
+
+    // -----------------------------------------
+    // Create user Firestore profile
+    // -----------------------------------------
     await setDoc(doc(db, "users", user.uid), {
-      fullName: fullName,
-      email: email,
-      referralCode: referralCode || null,
+      fullName,
+      email,
+      referralCode,
+      referredBy,
       referredUsers: [],
       balance: 0,
-      vipStatus: "pending",
-      createdAt: new Date()
+      vipStatus: "none",     // FIXED from pending
+      createdAt: Date.now(),
+      role: user.uid === ADMIN_UID ? "admin" : "user"
+    });
+
+    // -----------------------------------------
+    // Store referral code so others can find it
+    // -----------------------------------------
+    await setDoc(doc(db, "referralCodes", referralCode), {
+      uid: user.uid
     });
 
     return { success: true, user };
+
   } catch (error) {
     return { success: false, message: error.message };
   }
@@ -58,12 +101,10 @@ export async function signInUser(email, password) {
 
 // -----------------------------
 // AUTH STATE LISTENER
-// Redirects user automatically
 // -----------------------------
 export function initAuthState(callback) {
   onAuthStateChanged(auth, async (user) => {
     if (user) {
-      // User is logged in → fetch Firestore data
       const userDoc = await getDoc(doc(db, "users", user.uid));
       callback({
         loggedIn: true,
