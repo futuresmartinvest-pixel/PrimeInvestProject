@@ -1,177 +1,63 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Admin VIP Panel</title>
-
-  <!-- Google Fonts -->
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Admin – VIP Requests</title>
 
   <style>
     body {
-      margin: 0;
-      font-family: "Inter", sans-serif;
-      background: #f1f5f9;
+      font-family: Arial, sans-serif;
+      padding: 20px;
+      background: #f2f2f2;
     }
 
-    .header {
-      background: linear-gradient(135deg, #007bff, #0ea5e9);
-      color: white;
-      padding: 20px;
+    h1 {
       text-align: center;
-      font-size: 22px;
-      font-weight: 700;
-      letter-spacing: 0.5px;
-      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
     }
 
-    .container {
-      width: 95%;
-      max-width: 900px;
-      margin: 20px auto;
+    .request-box {
       background: white;
-      padding: 20px;
-      border-radius: 14px;
-      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-    }
-
-    .title {
-      font-size: 20px;
-      font-weight: 700;
+      padding: 15px;
+      border-radius: 10px;
       margin-bottom: 15px;
-      color: #1e293b;
-    }
-
-    table {
-      width: 100%;
-      border-collapse: collapse;
-      margin-top: 10px;
-    }
-
-    th, td {
-      padding: 12px;
-      text-align: left;
-      border-bottom: 1px solid #e2e8f0;
-    }
-
-    th {
-      background: #e6f2ff;
-      font-weight: 600;
-    }
-
-    tr:hover {
-      background: #f8fafc;
+      box-shadow: 0 0 5px rgba(0,0,0,0.1);
     }
 
     .btn {
       padding: 8px 12px;
+      margin-right: 5px;
       border: none;
-      border-radius: 6px;
+      border-radius: 5px;
       cursor: pointer;
-      font-size: 14px;
-      font-weight: 600;
+      font-weight: bold;
     }
 
     .approve {
-      background: #16a34a;
+      background: #28a745;
       color: white;
-    }
-
-    .approve:hover {
-      background: #15803d;
     }
 
     .reject {
-      background: #ef4444;
+      background: #dc3545;
       color: white;
-    }
-
-    .reject:hover {
-      background: #dc2626;
-    }
-
-    .status-badge {
-      display: inline-block;
-      padding: 6px 10px;
-      border-radius: 6px;
-      font-size: 12px;
-      font-weight: 600;
-      text-transform: capitalize;
-    }
-
-    .pending {
-      background: #fef08a;
-      color: #92400e;
     }
   </style>
 </head>
 
 <body>
+  <h1>VIP Requests – Admin Panel</h1>
 
-  <div class="header">
-    ADMIN VIP REQUEST PANEL
-  </div>
+  <h3>Your Admin UID:</h3>
+  <p style="font-weight:bold; color:#333;">
+    <span id="adminUID"></span>
+  </p>
 
-  <div class="container">
-    <div class="title">Pending VIP Requests</div>
+  <hr>
 
-    <table>
-      <thead>
-        <tr>
-          <th>User Email</th>
-          <th>Status</th>
-          <th>Actions</th>
-        </tr>
-      </thead>
+  <h2>Pending VIP Requests</h2>
+  <div id="requests"></div>
 
-      <tbody id="vipList"></tbody>
-    </table>
-  </div>
-
-  <script type="module">
-    import { auth } from "./firebase.js";
-    import {
-      checkAdmin,
-      loadVIPRequests,
-      approveVIP,
-      rejectVIP
-    } from "./admin_vip.js";
-
-    auth.onAuthStateChanged(() => {
-      checkAdmin();
-    });
-
-    loadVIPRequests((requests) => {
-      const list = document.getElementById("vipList");
-      list.innerHTML = "";
-
-      if (requests.length === 0) {
-        list.innerHTML = `
-          <tr><td colspan="3" style="text-align:center; padding:20px; color:#64748b;">No VIP requests found</td></tr>
-        `;
-        return;
-      }
-
-      requests.forEach((req) => {
-        const row = document.createElement("tr");
-
-        row.innerHTML = `
-          <td>${req.email}</td>
-          <td><span class="status-badge pending">Pending</span></td>
-          <td>
-            <button class="btn approve">Approve</button>
-            <button class="btn reject">Reject</button>
-          </td>
-        `;
-
-        row.querySelector(".approve").onclick = () => approveVIP(req);
-        row.querySelector(".reject").onclick = () => rejectVIP(req);
-
-        list.appendChild(row);
-      });
-    });
-  </script>
-
+  <script type="module" src="./admin_vip.js"></script>
 </body>
 </html>
