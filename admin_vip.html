@@ -14,6 +14,14 @@
 
     h1 {
       text-align: center;
+      margin-bottom: 10px;
+    }
+
+    #loading {
+      text-align: center;
+      color: #555;
+      font-size: 18px;
+      margin-top: 20px;
     }
 
     .request-box {
@@ -42,22 +50,44 @@
       background: #dc3545;
       color: white;
     }
+
+    .nav {
+      text-align: center;
+      margin-bottom: 20px;
+    }
+
+    .nav a {
+      text-decoration: none;
+      background: #007bff;
+      color: white;
+      padding: 8px 12px;
+      border-radius: 5px;
+    }
   </style>
 </head>
 
 <body>
+
   <h1>VIP Requests – Admin Panel</h1>
+
+  <div class="nav">
+    <a href="index.html">← Back to Home</a>
+  </div>
 
   <h3>Your Admin UID:</h3>
   <p style="font-weight:bold; color:#333;">
     <span id="adminUID"></span>
   </p>
 
-  <hr>
+  <hr />
 
   <h2>Pending VIP Requests</h2>
+
+  <div id="loading">Loading requests…</div>
+
   <div id="requests"></div>
 
   <script type="module" src="./admin_vip.js"></script>
+
 </body>
 </html>
