@@ -1,1 +1,50 @@
+// Firebase v9 Modular SDK
+import { initializeApp } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-app.js";
+import {
+  getAuth,
+  createUserWithEmailAndPassword,
+  signInWithEmailAndPassword,
+  signOut,
+  onAuthStateChanged
+} from "https://www.gstatic.com/firebasejs/9.23.0/firebase-auth.js";
 
+import {
+  getFirestore,
+  doc,
+  setDoc,
+  getDoc,
+  updateDoc,
+  addDoc,
+  collection,
+  onSnapshot
+} from "https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore.js";
+
+// Your Firebase config
+const firebaseConfig = {
+  apiKey: "AIzaSyCMRStwAHyes-1HLmW7MntK5Nuzw1-QTjo",
+  authDomain: "primeinvestproject-292bb.firebaseapp.com",
+  projectId: "primeinvestproject-292bb",
+  storageBucket: "primeinvestproject-292bb.firebasestorage.app",
+  messagingSenderId: "503196441640",
+  appId: "1:503196441640:web:38865529e6586c6873291d"
+};
+
+// Initialize Firebase
+export const app = initializeApp(firebaseConfig);
+export const auth = getAuth(app);
+export const db = getFirestore(app);
+
+// Export Firebase functions to other files
+export {
+  createUserWithEmailAndPassword,
+  signInWithEmailAndPassword,
+  signOut,
+  onAuthStateChanged,
+  doc,
+  setDoc,
+  getDoc,
+  updateDoc,
+  addDoc,
+  collection,
+  onSnapshot
+};
