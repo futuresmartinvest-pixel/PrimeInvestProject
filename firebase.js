@@ -24,7 +24,7 @@ const firebaseConfig = {
   apiKey: "AIzaSyAH7t_OO9N5rzXda0sU_rUqM-x0RDEiZtA",
   authDomain: "primeinvestproject-aa94a.firebaseapp.com",
   projectId: "primeinvestproject-aa94a",
-  storageBucket: "primeinvestproject-aa94a.firebasestorage.app",
+  storageBucket: "primeinvestproject-aa94a.appspot.com", // ✅ FIXED
   messagingSenderId: "990540338824",
   appId: "1:990540338824:web:ca0cc230736f078b72713d"
 };
