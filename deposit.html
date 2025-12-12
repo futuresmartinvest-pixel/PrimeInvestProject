@@ -10,50 +10,79 @@ body{
   margin:0;
   padding:16px;
   font-family:system-ui;
-  background:#0b1220;
-  color:#fff;
-}
-.box{
-  background:#141c2f;
-  border-radius:16px;
-  padding:16px;
-  margin-bottom:14px;
-}
-.vip{
-  display:flex;
-  justify-content:space-between;
-  align-items:center;
-}
-.vip small{opacity:.8}
-.vip button{
-  background:#22c55e;
-  border:none;
-  padding:10px 16px;
-  border-radius:12px;
-  font-weight:800;
+  background:#ffffff;
   color:#000;
 }
+
+h2{
+  margin-bottom:14px;
+}
+
+/* VIP GRID */
+.vip-grid{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:12px;
+}
+
+.vip-box{
+  border-radius:16px;
+  padding:16px;
+  background:#f9fafb;
+  box-shadow:0 4px 12px rgba(0,0,0,.05);
+}
+
+.vip-box b{
+  font-size:18px;
+}
+
+.vip-box small{
+  display:block;
+  margin-top:4px;
+  color:#555;
+}
+
+.vip-box button{
+  margin-top:10px;
+  width:100%;
+  padding:10px;
+  border:none;
+  border-radius:12px;
+  background:#22c55e;
+  color:#fff;
+  font-weight:800;
+}
+
+/* DEPOSIT */
 .deposit{
   display:none;
+  margin-top:20px;
+  padding:16px;
+  border-radius:16px;
+  background:#f3f4f6;
 }
+
 .addr{
   background:#000;
+  color:#0f0;
   padding:12px;
-  border-radius:12px;
+  border-radius:10px;
   word-break:break-all;
   margin-top:8px;
 }
-input,button{
+
+input, .confirm{
   width:100%;
   padding:12px;
-  margin-top:10px;
+  margin-top:12px;
   border-radius:12px;
   border:none;
 }
+
 .confirm{
   background:#22c55e;
+  color:#fff;
   font-weight:900;
-  color:#000;
 }
 </style>
 </head>
@@ -62,12 +91,12 @@ input,button{
 
 <h2>Select VIP Plan</h2>
 
-<div id="vipList"></div>
+<div class="vip-grid" id="vipGrid"></div>
 
-<div class="box deposit" id="depositBox">
+<div class="deposit" id="depositBox">
   <h3 id="selectedVip"></h3>
 
-  <div><b>USDT – TRC20</b></div>
+  <div><b>Deposit Method:</b> USDT (TRC20)</div>
   <div class="addr">
     TTHLd1pCtYstvRKtWkx7qfHQmWRuxZKH4p
   </div>
@@ -80,7 +109,7 @@ input,button{
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
 import { getFirestore, collection, addDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
-/* FIREBASE CONFIG */
+/* FIREBASE */
 const firebaseConfig = {
   apiKey: "AIzaSyA1HZLZRY9UADNnDVBnoBIlG3b-bCkojxs",
   authDomain: "primeinvestproject2.firebaseapp.com",
@@ -93,67 +122,61 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 
-/* VIP PLANS */
+/* VIP DATA */
 const VIPS = [
-  {id:1,price:30,rate:2.33},
-  {id:2,price:100,rate:3.33},
-  {id:3,price:499,rate:3.66},
-  {id:4,price:999,rate:3.99},
-  {id:5,price:4999,rate:4.33},
-  {id:6,price:9999,rate:4.99},
-  {id:7,price:49999,rate:6.99},
-  {id:8,price:99999,rate:7.33}
+  {id:1, price:30, rate:2.33},
+  {id:2, price:100, rate:3.33},
+  {id:3, price:499, rate:3.66},
+  {id:4, price:999, rate:3.99},
+  {id:5, price:4999, rate:4.33},
+  {id:6, price:9999, rate:4.99},
+  {id:7, price:49999, rate:6.99},
+  {id:8, price:99999, rate:7.33}
 ];
 
 /* GLOBAL USER ID */
 function uid(){
   let u = localStorage.getItem("uid");
   if(!u){
-    u = "user_" + Date.now() + "_" + Math.random().toString(36).slice(2,8);
-    localStorage.setItem("uid", u);
+    u = "user_"+Date.now()+"_"+Math.random().toString(36).slice(2,8);
+    localStorage.setItem("uid",u);
   }
   return u;
 }
 
-let selected = null;
-const list = document.getElementById("vipList");
+let selectedVip = null;
+const grid = document.getElementById("vipGrid");
 
-/* RENDER VIP BOXES */
 VIPS.forEach(v=>{
-  const d = document.createElement("div");
-  d.className = "box vip";
-  d.innerHTML = `
-    <div>
-      <b>VIP ${v.id}</b><br>
-      $${v.price} <small>(${v.rate}% daily)</small>
-    </div>
+  const box = document.createElement("div");
+  box.className="vip-box";
+  box.innerHTML = `
+    <b>VIP ${v.id}</b>
+    <small>$${v.price} • ${v.rate}% daily</small>
     <button>Select</button>
   `;
-  d.querySelector("button").onclick = ()=>{
-    selected = v;
-    document.getElementById("depositBox").style.display = "block";
+  box.querySelector("button").onclick = ()=>{
+    selectedVip = v;
+    document.getElementById("depositBox").style.display="block";
     document.getElementById("selectedVip").innerText =
-      "VIP " + v.id + " — $" + v.price + " (" + v.rate + "% daily)";
+      "VIP "+v.id+" — $"+v.price+" ("+v.rate+"% daily)";
   };
-  list.appendChild(d);
+  grid.appendChild(box);
 });
 
-/* SUBMIT DEPOSIT */
 window.submitDeposit = async ()=>{
-  if(!selected) return alert("Select VIP plan first");
-
-  const file = document.getElementById("proof").files[0];
-  if(!file) return alert("Upload payment screenshot");
+  if(!selectedVip) return alert("Select VIP");
+  if(!proof.files[0]) return alert("Upload receipt");
 
   await addDoc(collection(db,"vip_requests"),{
     userId: uid(),
-    vipLevel: selected.id,
-    price: selected.price,
-    status: "pending",
+    vipLevel: selectedVip.id,
+    price: selectedVip.price,
+    status:"pending",
     createdAt: serverTimestamp()
   });
 
-  window.location.href = "https://t.me/SmartInvest202";
+  location.href = "https://t.me/SmartInvest202";
 };
 </script>
 
