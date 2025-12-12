@@ -9,8 +9,7 @@
 :root{
   --purple:#5b2bbd;
   --purple-soft:#6f49c9;
-  --card:#ffffff22;
-  --orange:#ff7043;
+  --glass:rgba(255,255,255,0.08);
   --text:#ffffff;
   --muted:#d1c4e9;
 }
@@ -22,10 +21,10 @@ body{
   font-family:system-ui,-apple-system,Segoe UI,Roboto,sans-serif;
   background:var(--purple);
   color:var(--text);
-  padding-bottom:80px;
+  padding-bottom:120px;
 }
 
-/* TOP */
+/* ===== TOP ===== */
 .top{
   padding:22px;
   display:flex;
@@ -48,11 +47,11 @@ body{
 
 .menu{font-size:26px}
 
-/* BALANCE CARD */
+/* ===== BALANCE ===== */
 .balance-card{
   margin:0 18px;
   background:var(--purple-soft);
-  border-radius:20px;
+  border-radius:22px;
   padding:20px;
 }
 
@@ -86,11 +85,11 @@ body{
   text-align:center;
 }
 
-/* BANK CARD */
+/* ===== BANK CARD ===== */
 .bank-card{
   margin:20px 18px;
   height:170px;
-  border-radius:24px;
+  border-radius:26px;
   background:linear-gradient(135deg,#ff7043,#ff5252);
   padding:20px;
 }
@@ -100,7 +99,6 @@ body{
   height:34px;
   background:#fff;
   border-radius:8px;
-  opacity:.9;
 }
 
 .bank-number{
@@ -114,7 +112,7 @@ body{
   opacity:.9;
 }
 
-/* TASKS */
+/* ===== TASKS ===== */
 .section{
   margin:20px 18px;
 }
@@ -127,14 +125,8 @@ body{
 .task{
   display:flex;
   align-items:center;
-  justify-content:space-between;
-  margin-bottom:14px;
-}
-
-.task-left{
-  display:flex;
-  align-items:center;
   gap:12px;
+  margin-bottom:14px;
 }
 
 .task-icon{
@@ -148,16 +140,29 @@ body{
   font-weight:700;
 }
 
-/* BOTTOM NAV – NO WHITE BAR */
-.nav{
+/* ===== FLOATING NAV WINDOW ===== */
+.nav-wrapper{
   position:fixed;
-  bottom:0;
-  left:0;
-  right:0;
-  background:transparent;
+  bottom:18px;
+  left:16px;
+  right:16px;
+  padding:14px 8px;
+  border-radius:22px;
+
+  background:var(--glass);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+
+  box-shadow:
+    0 8px 30px rgba(0,0,0,0.25),
+    inset 0 0 0 1px rgba(255,255,255,0.06);
+}
+
+/* ===== NAV ===== */
+.nav{
   display:flex;
   justify-content:space-around;
-  padding:10px 0 14px;
+  align-items:center;
 }
 
 .nav-item{
@@ -174,6 +179,7 @@ body{
 .nav-icon{
   font-size:22px;
   display:block;
+  margin-bottom:4px;
 }
 </style>
 </head>
@@ -184,7 +190,7 @@ body{
 <div class="top">
   <div class="user">
     <div class="avatar"></div>
-    <div id="username">Alex</div>
+    <div>Alex</div>
   </div>
   <div class="menu">≡</div>
 </div>
@@ -193,7 +199,7 @@ body{
 <div class="balance-card">
   <div class="balance-title">Balance</div>
   <div class="balance-row">
-    <div class="balance-amount" id="balance">$0.00</div>
+    <div class="balance-amount">$0.00</div>
     <div class="balance-actions">
       <div class="balance-btn">Withdraw</div>
       <div class="balance-btn">Deposit</div>
@@ -213,34 +219,40 @@ body{
   <div class="section-title">Tasks</div>
 
   <div class="task">
-    <div class="task-left">
-      <div class="task-icon">1</div>
-      <div>Task 1</div>
-    </div>
+    <div class="task-icon">1</div>
+    <div>Task 1</div>
   </div>
 
   <div class="task">
-    <div class="task-left">
-      <div class="task-icon">2</div>
-      <div>Task 2</div>
-    </div>
+    <div class="task-icon">2</div>
+    <div>Task 2</div>
   </div>
 
   <div class="task">
-    <div class="task-left">
-      <div class="task-icon">3</div>
-      <div>Task 3</div>
-    </div>
+    <div class="task-icon">3</div>
+    <div>Task 3</div>
   </div>
 </div>
 
-<!-- BOTTOM NAV -->
-<div class="nav">
-  <div class="nav-item active"><span class="nav-icon">🏠</span>Home</div>
-  <div class="nav-item"><span class="nav-icon">📝</span>Tasks</div>
-  <div class="nav-item"><span class="nav-icon">💼</span>Wallet</div>
-  <div class="nav-item"><span class="nav-icon">👥</span>Referral</div>
-  <div class="nav-item"><span class="nav-icon">⭐</span>VIP</div>
+<!-- FLOATING NAV -->
+<div class="nav-wrapper">
+  <div class="nav">
+    <div class="nav-item active">
+      <span class="nav-icon">🏠</span>Home
+    </div>
+    <div class="nav-item">
+      <span class="nav-icon">📝</span>Tasks
+    </div>
+    <div class="nav-item">
+      <span class="nav-icon">💼</span>Wallet
+    </div>
+    <div class="nav-item">
+      <span class="nav-icon">👥</span>Referral
+    </div>
+    <div class="nav-item">
+      <span class="nav-icon">⭐</span>VIP
+    </div>
+  </div>
 </div>
 
 </body>
