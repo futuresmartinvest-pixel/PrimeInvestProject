@@ -6,128 +6,194 @@
 <title>PrimeGlobalPro</title>
 
 <style>
-:root {
-  --bg: #f8fafc;
-  --card: #ffffff;
-  --text: #0f172a;
-  --muted: #64748b;
-  --blue: #2563eb;
-  --radius: 18px;
+:root{
+  --bg:#f8fafc;
+  --card:#ffffff;
+  --text:#0f172a;
+  --muted:#64748b;
+  --blue:#2563eb;
+  --radius:18px;
 }
-
-* { box-sizing: border-box; }
-
-body {
-  margin: 0;
-  font-family: system-ui, -apple-system, Segoe UI, Roboto, sans-serif;
-  background: var(--bg);
-  color: var(--text);
-  padding-bottom: 90px;
+*{box-sizing:border-box}
+body{
+  margin:0;
+  font-family:system-ui,-apple-system,Segoe UI,Roboto,sans-serif;
+  background:var(--bg);
+  color:var(--text);
+  padding-bottom:92px;
 }
 
 /* ===== TOP BAR ===== */
-.topbar {
-  background: linear-gradient(135deg, #020617, #0f172a);
-  color: #fff;
-  padding: 16px;
-  font-size: 18px;
-  font-weight: 600;
+.topbar{
+  background:linear-gradient(180deg,#0b1220 0%, #111827 70%, #121a2a 100%);
+  color:#fff;
+  padding:18px 16px;
+}
+.topbar .user{
+  font-size:22px;
+  font-weight:700;
+  letter-spacing:.2px;
 }
 
-/* ===== CARDS ===== */
-.card {
-  background: var(--card);
-  margin: 18px;
-  padding: 22px;
-  border-radius: var(--radius);
-  box-shadow: 0 10px 30px rgba(0,0,0,.08);
+/* ===== LAYOUT ===== */
+.container{padding:0}
+.card{
+  background:var(--card);
+  margin:18px;
+  padding:22px;
+  border-radius:var(--radius);
+  box-shadow:0 10px 25px rgba(0,0,0,.06);
 }
 
 /* ===== BALANCE ===== */
-.balance h1 {
-  margin: 0;
-  font-size: 38px;
-  text-align: center;
+.balance h1{
+  margin:0;
+  font-size:44px;
+  text-align:center;
+  letter-spacing:.4px;
+}
+.balance span{
+  display:block;
+  text-align:center;
+  color:var(--blue);
+  font-weight:600;
+  font-size:18px;
+  margin-top:6px;
 }
 
-.balance span {
-  display: block;
-  text-align: center;
-  margin-top: 6px;
-  color: var(--blue);
-  font-weight: 500;
+/* ===== VIP GOLD CARD ===== */
+.vip-gold{
+  margin:18px;
+  border-radius:22px;
+  padding:18px;
+  color:#1f2937;
+  position:relative;
+  overflow:hidden;
+  box-shadow:0 18px 40px rgba(0,0,0,.14);
+  background:
+    radial-gradient(1000px 300px at 20% 0%, rgba(255,255,255,.65) 0%, rgba(255,255,255,0) 45%),
+    radial-gradient(700px 260px at 100% 30%, rgba(255,255,255,.45) 0%, rgba(255,255,255,0) 55%),
+    linear-gradient(135deg, #f7d774 0%, #f2c24b 25%, #d9a52a 55%, #f7d774 100%);
+}
+.vip-gold:before{
+  content:"";
+  position:absolute;
+  inset:-60px -80px auto auto;
+  width:220px;
+  height:220px;
+  border-radius:50%;
+  background:rgba(255,255,255,.22);
+  filter:blur(2px);
+}
+.vip-gold .row{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:14px;
+}
+.vip-gold .label{
+  font-weight:800;
+  letter-spacing:.2px;
+  font-size:14px;
+  opacity:.85;
+}
+.vip-gold .vip-level{
+  margin-top:4px;
+  font-size:28px;
+  font-weight:900;
+  letter-spacing:.5px;
+}
+.vip-gold .sub{
+  margin-top:10px;
+  font-size:12px;
+  opacity:.8;
+  font-weight:700;
+}
+.vip-chip{
+  width:56px;
+  height:44px;
+  border-radius:10px;
+  background:linear-gradient(145deg,#f3f4f6 0%, #d1d5db 40%, #f9fafb 100%);
+  box-shadow:inset 0 0 0 1px rgba(0,0,0,.08);
+  position:relative;
+  flex:0 0 auto;
+}
+.vip-chip:after{
+  content:"";
+  position:absolute;
+  inset:10px 12px;
+  border-radius:7px;
+  box-shadow:inset 0 0 0 2px rgba(0,0,0,.10);
 }
 
-/* ===== CHART ===== */
-.chart-title {
-  font-size: 18px;
-  font-weight: 600;
-  margin-bottom: 16px;
-}
+/* ===== SECTIONS ===== */
+.page{display:none}
+.page.active{display:block}
 
-.chart-wrapper {
-  position: relative;
-  height: 180px;
+/* ===== SIMPLE CHART (SVG) ===== */
+.chart-title{
+  font-size:28px;
+  font-weight:900;
+  margin:0 0 14px 0;
 }
-
-.chart-grid {
-  position: absolute;
-  inset: 0;
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
+.chart-wrap{
+  width:100%;
+  overflow:hidden;
 }
-
-.chart-grid div {
-  border-top: 1px solid #e5e7eb;
-}
-
-.chart-line {
-  position: absolute;
-  inset: 0;
-}
-
-.chart-line svg {
-  width: 100%;
-  height: 100%;
-}
-
-.chart-labels {
-  display: flex;
-  justify-content: space-between;
-  margin-top: 10px;
-  font-size: 12px;
-  color: var(--muted);
+.chart-svg{
+  width:100%;
+  height:auto;
+  display:block;
 }
 
 /* ===== BOTTOM NAV ===== */
-.navbar {
-  position: fixed;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  background: #fff;
-  border-top: 1px solid #e5e7eb;
-  display: flex;
-  justify-content: space-around;
-  padding: 10px 0;
+.navbar{
+  position:fixed;
+  bottom:0;
+  left:0;
+  right:0;
+  background:#fff;
+  border-top:1px solid #e5e7eb;
+  display:flex;
+  justify-content:space-around;
+  padding:8px 6px 10px;
+}
+.nav-btn{
+  border:0;
+  background:transparent;
+  width:20%;
+  padding:6px 4px;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  gap:4px;
+  color:var(--muted);
+  font-size:12px;
+}
+.nav-btn img{
+  width:28px;
+  height:28px;
+  display:block;
+}
+.nav-btn.active{
+  color:var(--blue);
+  font-weight:800;
+}
+.nav-btn.active::after{
+  content:"";
+  margin-top:4px;
+  width:70%;
+  height:3px;
+  border-radius:999px;
+  background:var(--blue);
 }
 
-.nav-item {
-  text-align: center;
-  font-size: 12px;
-  color: var(--muted);
-}
-
-.nav-item.active {
-  color: var(--blue);
-  font-weight: 600;
-}
-
-.nav-icon {
-  font-size: 22px;
-  display: block;
-  margin-bottom: 4px;
+/* small helper */
+.mini{
+  color:var(--muted);
+  font-size:14px;
+  margin:0;
+  padding:0 18px;
 }
 </style>
 </head>
@@ -135,115 +201,169 @@ body {
 <body>
 
 <!-- TOP -->
-<div class="topbar" id="username">User</div>
-
-<!-- BALANCE -->
-<div class="card balance">
-  <h1 id="balance">$0.00</h1>
-  <span id="today">+$0.00 Today</span>
+<div class="topbar">
+  <div class="user" id="userName">User</div>
 </div>
 
-<!-- CHART -->
-<div class="card">
-  <div class="chart-title">Balance Overview</div>
+<div class="container">
 
-  <div class="chart-wrapper">
-    <div class="chart-grid">
-      <div></div><div></div><div></div><div></div>
+  <!-- HOME PAGE -->
+  <section class="page active" id="page-home">
+    <div class="card balance">
+      <h1 id="balance">$0.00</h1>
+      <span id="today">+$0.00 Today</span>
     </div>
 
-    <div class="chart-line">
-      <svg viewBox="0 0 100 100" preserveAspectRatio="none">
-        <polyline
-          id="chartLine"
-          fill="none"
-          stroke="#2563eb"
-          stroke-width="3"
-          stroke-linecap="round"
-          stroke-linejoin="round"
-          points="0,80 33,80 66,80 100,80"
-        />
-      </svg>
+    <!-- VIP GOLD BANK CARD -->
+    <div class="vip-gold">
+      <div class="row">
+        <div>
+          <div class="label">VIP STATUS</div>
+          <div class="vip-level" id="vipText">VIP 0</div>
+          <div class="sub" id="vipSub">Choose a VIP plan to unlock benefits</div>
+        </div>
+        <div class="vip-chip" aria-hidden="true"></div>
+      </div>
     </div>
-  </div>
 
-  <div class="chart-labels">
-    <span>Start</span>
-    <span>Week 1</span>
-    <span>Week 2</span>
-    <span>Now</span>
-  </div>
+    <div class="card">
+      <div class="chart-title">Balance Overview</div>
+      <div class="chart-wrap">
+        <!-- Simple responsive SVG chart (clean like your screenshot) -->
+        <svg class="chart-svg" viewBox="0 0 800 330" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Balance chart">
+          <!-- grid lines -->
+          <line x1="60" y1="70" x2="760" y2="70" stroke="#e5e7eb" stroke-width="2"/>
+          <line x1="60" y1="150" x2="760" y2="150" stroke="#e5e7eb" stroke-width="2"/>
+          <line x1="60" y1="230" x2="760" y2="230" stroke="#e5e7eb" stroke-width="2"/>
+
+          <!-- line (flat) -->
+          <line x1="100" y1="230" x2="720" y2="230" stroke="#2563eb" stroke-width="10" stroke-linecap="round"/>
+          <circle cx="100" cy="230" r="10" fill="#2563eb"/>
+          <circle cx="300" cy="230" r="10" fill="#2563eb"/>
+          <circle cx="500" cy="230" r="10" fill="#2563eb"/>
+          <circle cx="720" cy="230" r="10" fill="#2563eb"/>
+
+          <!-- labels -->
+          <text x="100" y="300" text-anchor="middle" font-size="26" fill="#64748b" font-family="system-ui, -apple-system, Segoe UI, Roboto">Start</text>
+          <text x="300" y="300" text-anchor="middle" font-size="26" fill="#64748b" font-family="system-ui, -apple-system, Segoe UI, Roboto">Week 1</text>
+          <text x="500" y="300" text-anchor="middle" font-size="26" fill="#64748b" font-family="system-ui, -apple-system, Segoe UI, Roboto">Week 2</text>
+          <text x="720" y="300" text-anchor="middle" font-size="26" fill="#64748b" font-family="system-ui, -apple-system, Segoe UI, Roboto">Now</text>
+        </svg>
+      </div>
+    </div>
+  </section>
+
+  <!-- TASKS PAGE (placeholder) -->
+  <section class="page" id="page-tasks">
+    <p class="mini">Tasks page (we’ll connect your tasks logic next).</p>
+    <div class="card"><b>Tasks</b><div style="color:#64748b;margin-top:8px;">Coming next…</div></div>
+  </section>
+
+  <!-- WALLET PAGE (placeholder) -->
+  <section class="page" id="page-wallet">
+    <p class="mini">Wallet page (deposit/withdraw UI later).</p>
+    <div class="card"><b>Wallet</b><div style="color:#64748b;margin-top:8px;">Coming next…</div></div>
+  </section>
+
+  <!-- REFERRAL PAGE (placeholder) -->
+  <section class="page" id="page-referral">
+    <p class="mini">Referral page (tracking + counts later).</p>
+    <div class="card"><b>Referral</b><div style="color:#64748b;margin-top:8px;">Coming next…</div></div>
+  </section>
+
+  <!-- VIP PAGE (placeholder) -->
+  <section class="page" id="page-vip">
+    <p class="mini">VIP page (VIP plans + admin approval later).</p>
+    <div class="card"><b>VIP</b><div style="color:#64748b;margin-top:8px;">Coming next…</div></div>
+  </section>
 </div>
 
 <!-- BOTTOM NAV -->
-<div class="navbar">
-  <div class="nav-item active">
-    <span class="nav-icon">🏠</span>
+<nav class="navbar" aria-label="Bottom navigation">
+  <button class="nav-btn active" data-page="home" type="button">
+    <img src="icon-home.png" alt="">
     Home
-  </div>
-  <div class="nav-item">
-    <span class="nav-icon">📝</span>
+  </button>
+
+  <button class="nav-btn" data-page="tasks" type="button">
+    <img src="icon-tasks.png" alt="">
     Tasks
-  </div>
-  <div class="nav-item">
-    <span class="nav-icon">💼</span>
+  </button>
+
+  <button class="nav-btn" data-page="wallet" type="button">
+    <img src="icon-wallet.png" alt="">
     Wallet
-  </div>
-  <div class="nav-item">
-    <span class="nav-icon">👥</span>
+  </button>
+
+  <button class="nav-btn" data-page="referral" type="button">
+    <img src="icon-referral.png" alt="">
     Referral
-  </div>
-  <div class="nav-item">
-    <span class="nav-icon">⭐</span>
+  </button>
+
+  <button class="nav-btn" data-page="vip" type="button">
+    <img src="icon-vip.png" alt="">
     VIP
-  </div>
-</div>
+  </button>
+</nav>
 
 <script type="module">
-import { auth, db } from "./firebase.js";
-import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
-import { doc, getDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+  import { auth, db } from "./firebase.js";
+  import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
+  import { doc, getDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
-const nameEl = document.getElementById("username");
-const balanceEl = document.getElementById("balance");
-const todayEl = document.getElementById("today");
-const chartLine = document.getElementById("chartLine");
+  // ===== NAV =====
+  const pages = ["home","tasks","wallet","referral","vip"];
+  const pageEls = Object.fromEntries(pages.map(p => [p, document.getElementById("page-"+p)]));
+  const navBtns = [...document.querySelectorAll(".nav-btn")];
 
-onAuthStateChanged(auth, async (user) => {
-  if (!user) {
-    location.href = "auth.html";
-    return;
+  function setActivePage(page){
+    pages.forEach(p => pageEls[p].classList.toggle("active", p === page));
+    navBtns.forEach(b => b.classList.toggle("active", b.dataset.page === page));
   }
 
-  const snap = await getDoc(doc(db, "users", user.uid));
-  if (!snap.exists()) return;
-
-  const data = snap.data();
-
-  const balance = Number(data.balance || 0);
-  const today = Number(data.todayEarned || 0);
-
-  nameEl.textContent = data.name || "User";
-  balanceEl.textContent = "$" + balance.toFixed(2);
-  todayEl.textContent = "+$" + today.toFixed(2) + " Today";
-
-  // Dynamic chart scaling
-  const values = [
-    balance * 0.2,
-    balance * 0.4,
-    balance * 0.6,
-    balance
-  ];
-
-  const max = Math.max(...values, 1);
-  const points = values.map((v, i) => {
-    const x = (i / 3) * 100;
-    const y = 100 - (v / max) * 80 - 10;
-    return `${x},${y}`;
+  navBtns.forEach(btn=>{
+    btn.addEventListener("click", ()=>{
+      setActivePage(btn.dataset.page);
+    });
   });
 
-  chartLine.setAttribute("points", points.join(" "));
-});
+  // ===== HOME DATA =====
+  const userNameEl = document.getElementById("userName");
+  const balanceEl = document.getElementById("balance");
+  const todayEl   = document.getElementById("today");
+  const vipTextEl = document.getElementById("vipText");
+  const vipSubEl  = document.getElementById("vipSub");
+
+  onAuthStateChanged(auth, async (user) => {
+    if (!user) {
+      location.href = "auth.html";
+      return;
+    }
+
+    const snap = await getDoc(doc(db, "users", user.uid));
+    if (!snap.exists()) return;
+
+    const data = snap.data();
+
+    // Name
+    userNameEl.textContent = data.name || "User";
+
+    // Balance
+    const bal = Number(data.balance || 0);
+    const today = Number(data.todayEarned || 0);
+    balanceEl.textContent = "$" + bal.toFixed(2);
+    todayEl.textContent = "+$" + today.toFixed(2) + " Today";
+
+    // VIP (gold card)
+    const vipLevel = Number(data.vipLevel || 0);
+    vipTextEl.textContent = "VIP " + vipLevel;
+
+    if (vipLevel <= 0) {
+      vipSubEl.textContent = "Choose a VIP plan to unlock benefits";
+    } else {
+      vipSubEl.textContent = "Active VIP level: " + vipLevel;
+    }
+  });
 </script>
 
 </body>
