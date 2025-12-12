@@ -1,118 +1,105 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>VIP Access – PrimeInvest</title>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>VIP Plans</title>
 
-  <style>
-    body {
-      margin: 0;
-      font-family: Arial, sans-serif;
-      background: linear-gradient(135deg, #000000, #3a3a3a);
-      color: white;
-      padding: 20px;
-    }
+<style>
+  body {
+    font-family: Arial, sans-serif;
+    background: #f7f7f7;
+    margin: 0;
+    padding: 15px;
+  }
 
-    .card {
-      background: rgba(255,255,255,0.07);
-      backdrop-filter: blur(12px);
-      border-radius: 20px;
-      padding: 25px;
-      margin-top: 20px;
-      box-shadow: 0 4px 25px rgba(0,0,0,0.4);
-      animation: fade 0.6s ease-out;
-    }
+  h1 {
+    text-align: center;
+    margin-bottom: 15px;
+  }
 
-    @keyframes fade {
-      from {opacity:0; transform: translateY(20px);}
-      to {opacity:1; transform: translateY(0);}
-    }
+  .vip-card {
+    background: white;
+    border-radius: 12px;
+    padding: 15px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    margin-bottom: 15px;
+  }
 
-    .vip-title {
-      font-size: 32px;
-      font-weight: bold;
-      background: linear-gradient(90deg, #FFD700, #FFB700);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      text-align: center;
-      margin-bottom: 20px;
-    }
+  .vip-card h2 {
+    margin: 0;
+    font-size: 22px;
+  }
 
-    .vip-status {
-      font-size: 20px;
-      text-align: center;
-      margin-bottom: 15px;
-      border-radius: 12px;
-      padding: 12px;
-      background: rgba(255,255,255,0.1);
-    }
+  .price {
+    font-size: 18px;
+    margin-top: 5px;
+    color: #444;
+  }
 
-    .vip-btn {
-      width: 100%;
-      padding: 14px;
-      margin-top: 20px;
-      font-size: 20px;
-      font-weight: bold;
-      border: none;
-      border-radius: 12px;
-      cursor: pointer;
+  .profit {
+    font-size: 16px;
+    color: green;
+    margin-bottom: 10px;
+  }
 
-      background: linear-gradient(135deg, #FFD700, #FFB700);
-      color: black;
-      box-shadow: 0 0 20px rgba(255,215,0,0.6);
-      animation: glow 2s infinite alternate;
-    }
-
-    @keyframes glow {
-      from { box-shadow: 0 0 10px rgba(255,215,0,0.4); }
-      to { box-shadow: 0 0 25px rgba(255,215,0,1); }
-    }
-
-    .disabled-btn {
-      background: gray !important;
-      box-shadow: none !important;
-      cursor: not-allowed;
-    }
-
-    .back-btn {
-      text-decoration: none;
-      color: white;
-      font-size: 18px;
-      display: block;
-      margin-top: 15px;
-      text-align: center;
-      opacity: 0.7;
-    }
-  </style>
+  .btn {
+    width: 100%;
+    padding: 12px;
+    background: #007bff;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-size: 16px;
+    cursor: pointer;
+  }
+</style>
 </head>
 
 <body>
 
-  <h1 class="vip-title">VIP ACCESS</h1>
+<h1>VIP Plans</h1>
 
-  <div class="card">
-    <div id="vipStatusText" class="vip-status">Checking VIP status…</div>
+<div id="vipList"></div>
 
-    <button id="activateVIP" class="vip-btn">Activate VIP</button>
+<script type="module">
+  import { auth } from "./firebase.js";
 
-    <a href="index.html" class="back-btn">⬅ Back to Home</a>
-  </div>
+  const vipPlans = [
+    { id: "vip1", price: 30, percent: "2.33%" },
+    { id: "vip2", price: 100, percent: "3.33%" },
+    { id: "vip3", price: 499, percent: "3.66%" },
+    { id: "vip4", price: 999, percent: "3.99%" },
+    { id: "vip5", price: 4999, percent: "4.33%" },
+    { id: "vip6", price: 9999, percent: "4.99%" },
+    { id: "vip7", price: 49999, percent: "6.99%" },
+    { id: "vip8", price: 99999, percent: "7.33%" }
+  ];
 
-  <script type="module">
-    import { loadVIPStatus, initVIPPage } from "./vip.js";
-    import { auth } from "./firebase.js";
-    import { onAuthStateChanged }
-      from "https://www.gstatic.com/firebasejs/9.23.0/firebase-auth.js";
+  const container = document.getElementById("vipList");
 
-    onAuthStateChanged(auth, (user) => {
-      if (!user) {
-        location.href = "auth.html";
-        return;
-      }
-      initVIPPage();
-    });
-  </script>
+  vipPlans.forEach(vip => {
+    const div = document.createElement("div");
+    div.className = "vip-card";
+
+    div.innerHTML = `
+      <h2>${vip.id.toUpperCase()}</h2>
+      <div class="price">Price: $${vip.price}</div>
+      <div class="profit">Daily Profit: ${vip.percent}</div>
+      <button class="btn" onclick="selectVIP('${vip.id}', ${vip.price})">Activate VIP</button>
+    `;
+
+    container.appendChild(div);
+  });
+
+  window.selectVIP = (vipId, price) => {
+    const user = auth.currentUser;
+    if (!user) { alert("Please login first"); return; }
+
+    // Redirect to upload screenshot page
+    location.href = `upload_proof.html?vip=${vipId}&price=${price}`;
+  };
+</script>
 
 </body>
 </html>
