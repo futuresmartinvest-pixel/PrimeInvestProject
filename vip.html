@@ -2,123 +2,76 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport"
-content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
-
-<title>VIP</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Select VIP</title>
 
 <style>
 body{
   margin:0;
-  font-family: system-ui, sans-serif;
-  background:#5b2fc2;
+  padding:16px;
+  font-family:system-ui;
+  background:#0f172a;
   color:#fff;
 }
-
-.header{
+h2{
+  text-align:center;
+  margin-bottom:20px;
+}
+.card{
+  background:#1e293b;
+  border-radius:16px;
   padding:16px;
+  margin-bottom:14px;
+}
+.price{
   font-size:22px;
   font-weight:700;
 }
-
-.vip-card{
-  background:#7351c9;
-  margin:16px;
-  padding:18px;
-  border-radius:20px;
-}
-
-.vip-title{
-  font-size:18px;
-  font-weight:700;
-}
-
-.vip-info{
-  margin-top:6px;
-  opacity:0.9;
-}
-
-.vip-btn{
-  margin-top:12px;
+.btn{
   width:100%;
   padding:12px;
+  margin-top:12px;
   border:none;
-  border-radius:14px;
-  background:#fff;
-  color:#5b2fc2;
-  font-size:16px;
+  border-radius:12px;
+  background:#22c55e;
   font-weight:700;
+  font-size:16px;
 }
 </style>
 </head>
 
 <body>
 
-<div class="header">VIP Plans</div>
+<h2>Select VIP Plan</h2>
 
-<div id="vipList"></div>
+<div class="card">
+  <div>VIP 1</div>
+  <div class="price">$30</div>
+  <button class="btn" onclick="go(1,30)">Choose</button>
+</div>
+
+<div class="card">
+  <div>VIP 2</div>
+  <div class="price">$100</div>
+  <button class="btn" onclick="go(2,100)">Choose</button>
+</div>
+
+<div class="card">
+  <div>VIP 3</div>
+  <div class="price">$499</div>
+  <button class="btn" onclick="go(3,499)">Choose</button>
+</div>
+
+<div class="card">
+  <div>VIP 4</div>
+  <div class="price">$999</div>
+  <button class="btn" onclick="go(4,999)">Choose</button>
+</div>
 
 <script>
-const VIP_PLANS = {
-  1:{price:30, rate:2.33},
-  2:{price:100, rate:3.33},
-  3:{price:499, rate:3.66},
-  4:{price:999, rate:3.99},
-  5:{price:4999, rate:4.33},
-  6:{price:9999, rate:4.99},
-  7:{price:49999, rate:6.99},
-  8:{price:99999, rate:7.33}
-};
-
-function getVIP(){
-  return JSON.parse(localStorage.getItem("userVIP") || "{}");
+function go(vip, price){
+  location.href = `deposit.html?vip=${vip}&price=${price}`;
 }
-function setVIP(v){
-  localStorage.setItem("userVIP", JSON.stringify(v));
-}
-
-const list = document.getElementById("vipList");
-const vip = getVIP();
-
-Object.entries(VIP_PLANS).forEach(([id,plan])=>{
-  const status = vip[id]?.status;
-
-  const div = document.createElement("div");
-  div.className = "vip-card";
-
-  div.innerHTML = `
-    <div class="vip-title">VIP ${id}</div>
-    <div class="vip-info">Price: $${plan.price}</div>
-    <div class="vip-info">Daily Profit: ${plan.rate}%</div>
-    <button class="vip-btn">
-      ${status === "active" ? "Activated" :
-        status === "pending" ? "Pending Approval" :
-        "Activate VIP"}
-    </button>
-  `;
-
-  const btn = div.querySelector("button");
-
-  if(!status){
-    btn.onclick = ()=>{
-      vip[id] = {
-        price: plan.price,
-        rate: plan.rate,
-        status: "pending",
-        start: 0,
-        lastProfit: 0
-      };
-      setVIP(vip);
-      window.open("https://t.me/SmartInvest202", "_blank");
-      alert("Send deposit screenshot to Telegram for approval");
-      location.reload();
-    };
-  }else{
-    btn.disabled = true;
-  }
-
-  list.appendChild(div);
-});
 </script>
 
 </body>
