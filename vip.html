@@ -3,88 +3,143 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>VIP</title>
+<title>Select VIP</title>
 
 <style>
-body{margin:0;padding:16px;font-family:system-ui;background:#fff;color:#000}
-.grid{display:grid;grid-template-columns:1fr 1fr;gap:14px}
-.box{border-radius:14px;padding:16px;background:#f5f5f5}
-button{margin-top:10px;width:100%;padding:10px;border:none;border-radius:10px;background:#22c55e;font-weight:800}
+body{
+  margin:0;
+  padding:16px;
+  font-family:system-ui;
+  background:#ffffff;
+  color:#000;
+}
+
+h2{
+  margin-bottom:14px;
+}
+
+.grid{
+  display:grid;
+  grid-template-columns:repeat(2, 1fr);
+  gap:14px;
+}
+
+.vip-box{
+  border-radius:16px;
+  padding:16px;
+  background:#f8fafc;
+  box-shadow:0 4px 14px rgba(0,0,0,0.08);
+  display:flex;
+  flex-direction:column;
+  justify-content:space-between;
+}
+
+.vip-title{
+  font-size:18px;
+  font-weight:800;
+}
+
+.vip-info{
+  margin-top:6px;
+  font-size:14px;
+  opacity:.85;
+}
+
+.vip-btn{
+  margin-top:12px;
+  padding:10px;
+  border:none;
+  border-radius:12px;
+  background:#22c55e;
+  font-weight:900;
+  cursor:pointer;
+}
 </style>
 </head>
 
 <body>
 
-<h2>VIP Plans</h2>
-<div class="grid" id="vipGrid"></div>
+<h2>Select VIP Plan</h2>
 
-<script type="module">
-import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-import {
-  getFirestore, collection, addDoc, onSnapshot, query, where
-} from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+<div class="grid">
+  <div class="vip-box">
+    <div>
+      <div class="vip-title">VIP 1</div>
+      <div class="vip-info">$30</div>
+      <div class="vip-info">2.33% Daily</div>
+    </div>
+    <button class="vip-btn" onclick="go(1,30)">Select</button>
+  </div>
 
-const firebaseConfig={
-  apiKey:"AIzaSyA1HZLZRY9UADNnDVBnoBIlG3b-bCkojxs",
-  authDomain:"primeinvestproject2.firebaseapp.com",
-  projectId:"primeinvestproject2",
-  storageBucket:"primeinvestproject2.firebasestorage.app",
-  messagingSenderId:"798977477628",
-  appId:"1:798977477628:web:c97d1fba72ad7865864079"
-};
+  <div class="vip-box">
+    <div>
+      <div class="vip-title">VIP 2</div>
+      <div class="vip-info">$100</div>
+      <div class="vip-info">3.33% Daily</div>
+    </div>
+    <button class="vip-btn" onclick="go(2,100)">Select</button>
+  </div>
 
-const app=initializeApp(firebaseConfig);
-const db=getFirestore(app);
+  <div class="vip-box">
+    <div>
+      <div class="vip-title">VIP 3</div>
+      <div class="vip-info">$499</div>
+      <div class="vip-info">3.66% Daily</div>
+    </div>
+    <button class="vip-btn" onclick="go(3,499)">Select</button>
+  </div>
 
-const VIPS=[
- {id:1,price:30,rate:2.33},
- {id:2,price:100,rate:3.33},
- {id:3,price:499,rate:3.66},
- {id:4,price:999,rate:3.99},
- {id:5,price:4999,rate:4.33},
- {id:6,price:9999,rate:4.99},
- {id:7,price:49999,rate:6.99},
- {id:8,price:99999,rate:7.33}
-];
+  <div class="vip-box">
+    <div>
+      <div class="vip-title">VIP 4</div>
+      <div class="vip-info">$999</div>
+      <div class="vip-info">3.99% Daily</div>
+    </div>
+    <button class="vip-btn" onclick="go(4,999)">Select</button>
+  </div>
 
-function uid(){
- let u=localStorage.getItem("uid");
- if(!u){u="user_"+Date.now()+"_"+Math.random().toString(36).slice(2,8);localStorage.setItem("uid",u)}
- return u;
+  <div class="vip-box">
+    <div>
+      <div class="vip-title">VIP 5</div>
+      <div class="vip-info">$4,999</div>
+      <div class="vip-info">4.33% Daily</div>
+    </div>
+    <button class="vip-btn" onclick="go(5,4999)">Select</button>
+  </div>
+
+  <div class="vip-box">
+    <div>
+      <div class="vip-title">VIP 6</div>
+      <div class="vip-info">$9,999</div>
+      <div class="vip-info">4.99% Daily</div>
+    </div>
+    <button class="vip-btn" onclick="go(6,9999)">Select</button>
+  </div>
+
+  <div class="vip-box">
+    <div>
+      <div class="vip-title">VIP 7</div>
+      <div class="vip-info">$49,999</div>
+      <div class="vip-info">6.99% Daily</div>
+    </div>
+    <button class="vip-btn" onclick="go(7,49999)">Select</button>
+  </div>
+
+  <div class="vip-box">
+    <div>
+      <div class="vip-title">VIP 8</div>
+      <div class="vip-info">$99,999</div>
+      <div class="vip-info">7.33% Daily</div>
+    </div>
+    <button class="vip-btn" onclick="go(8,99999)">Select</button>
+  </div>
+</div>
+
+<script>
+function go(vip, price){
+  location.href = `deposit.html?vip=${vip}&price=${price}`;
 }
-
-const grid=document.getElementById("vipGrid");
-
-VIPS.forEach(v=>{
- const d=document.createElement("div");
- d.className="box";
- d.innerHTML=`
-  <b>VIP ${v.id}</b><br>
-  $${v.price}<br>
-  ${v.rate}% daily
-  <button>Deposit</button>
- `;
- d.querySelector("button").onclick=()=>{
-   location.href=`deposit.html?vip=${v.id}&price=${v.price}`;
- };
- grid.appendChild(d);
-});
-
-/* AUTO ACTIVATE WHEN APPROVED */
-onSnapshot(
- query(collection(db,"vip_requests"), where("userId","==",uid()), where("status","==","approved")),
- snap=>{
-  snap.forEach(d=>{
-    const vip=d.data();
-    localStorage.setItem("activeVIP", JSON.stringify({
-      level: vip.vipLevel,
-      price: vip.price,
-      rate: VIPS.find(v=>v.id===vip.vipLevel).rate,
-      last: Date.now()
-    }));
-  });
- }
-);
 </script>
+
 </body>
 </html>
