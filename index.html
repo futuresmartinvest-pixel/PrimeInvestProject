@@ -17,13 +17,10 @@ html, body {
   font-family: system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
   background: #5b2fc2;
   color: #fff;
-
-  /* ✅ allow pull-to-refresh */
   overscroll-behavior-y: auto;
   -webkit-overflow-scrolling: touch;
 }
 
-/* COLORS */
 :root {
   --purple: #5b2fc2;
   --purple-card: #7351c9;
@@ -153,10 +150,10 @@ html, body {
   font-weight: 600;
 }
 
-/* 🔥 INVISIBLE FLOATING NAV LAYER */
+/* FLOATING NAV */
 .nav-wrapper {
   position: fixed;
-  bottom: 16px; /* 👈 moved UP */
+  bottom: 16px;
   left: 0;
   right: 0;
   display: flex;
@@ -166,7 +163,7 @@ html, body {
 
 .nav {
   width: calc(100% - 32px);
-  background: rgba(255,255,255,0.92); /* 👈 almost invisible */
+  background: rgba(255,255,255,0.92);
   backdrop-filter: blur(14px);
   display: flex;
   justify-content: space-around;
@@ -187,7 +184,6 @@ html, body {
   font-weight: 700;
 }
 
-/* SPACE so content doesn't hide under nav */
 .spacer {
   height: 120px;
 }
@@ -250,36 +246,19 @@ html, body {
 
 <div class="spacer"></div>
 
-<!-- FLOATING NAV -->
+<!-- NAV -->
 <div class="nav-wrapper">
   <div class="nav">
     <div class="nav-item active">Home</div>
     <div class="nav-item">Tasks</div>
     <div class="nav-item">Wallet</div>
     <div class="nav-item">Referral</div>
-    <div class="nav-item">VIP</div>
+    <div class="nav-item" onclick="location.href='VIP.html'">VIP</div>
   </div>
 </div>
+
 <script>
-/* ===============================
-   GLOBAL STORAGE STRUCTURE
-   ===============================
-
-localStorage.balance = "0.00"
-
-localStorage.userVIP = {
-  1: {
-    price: 30,
-    rate: 2.33,
-    status: "pending" | "active",
-    start: timestamp,
-    lastProfit: timestamp
-  }
-}
-
-=============================== */
-
-/* ===== VIP CONFIG ===== */
+/* ===== CONFIG ===== */
 const VIP_PLANS = {
   1:{price:30, rate:2.33},
   2:{price:100, rate:3.33},
@@ -291,61 +270,23 @@ const VIP_PLANS = {
   8:{price:99999, rate:7.33}
 };
 
-const DAY = 24 * 60 * 60 * 1000;
+const DAY = 86400000;
 
-/* ===== HELPERS ===== */
+/* ===== STORAGE ===== */
 function getBalance(){
   return Number(localStorage.getItem("balance") || 0);
 }
-
 function setBalance(v){
   localStorage.setItem("balance", Number(v).toFixed(2));
 }
-
 function getVIP(){
   return JSON.parse(localStorage.getItem("userVIP") || "{}");
 }
-
 function setVIP(v){
   localStorage.setItem("userVIP", JSON.stringify(v));
 }
 
-/* ===== USER CLICKS VIP ===== */
-window.requestVIP = function(vipId){
-  let vip = getVIP();
-  if(vip[vipId]) return alert("VIP already requested");
-
-  vip[vipId] = {
-    price: VIP_PLANS[vipId].price,
-    rate: VIP_PLANS[vipId].rate,
-    status: "pending",
-    start: 0,
-    lastProfit: 0
-  };
-
-  setVIP(vip);
-
-  window.open("https://t.me/SmartInvest202", "_blank");
-  alert("Send deposit screenshot to Telegram for approval");
-};
-
-/* ===== ADMIN ACTIVATES VIP (RUN IN CONSOLE) ===== */
-window.adminApproveVIP = function(vipId){
-  let vip = getVIP();
-  if(!vip[vipId] || vip[vipId].status !== "pending"){
-    console.log("No pending VIP");
-    return;
-  }
-
-  vip[vipId].status = "active";
-  vip[vipId].start = Date.now();
-  vip[vipId].lastProfit = Date.now();
-
-  setVIP(vip);
-  console.log("VIP ACTIVATED", vip[vipId]);
-};
-
-/* ===== DAILY PROFIT ENGINE ===== */
+/* ===== PROFIT ENGINE ===== */
 function applyDailyProfit(){
   let vip = getVIP();
   let balance = getBalance();
@@ -354,12 +295,9 @@ function applyDailyProfit(){
 
   Object.values(vip).forEach(v=>{
     if(v.status !== "active") return;
-
     let days = Math.floor((now - v.lastProfit) / DAY);
     if(days <= 0) return;
-
-    let dailyProfit = (v.price * v.rate / 100);
-    balance += dailyProfit * days;
+    balance += (v.price * v.rate / 100) * days;
     v.lastProfit += days * DAY;
     changed = true;
   });
@@ -370,14 +308,17 @@ function applyDailyProfit(){
   }
 }
 
-/* ===== WITHDRAW LOCK ===== */
-window.canWithdraw = function(){
-  let vip = getVIP();
-  return Object.values(vip).some(v=>v.status === "active");
-};
+/* ===== UI SYNC ===== */
+function refreshBalanceUI(){
+  const el = document.querySelector(".balance-amount");
+  if(el){
+    el.textContent = "$" + getBalance().toFixed(2);
+  }
+}
 
-/* ===== AUTO RUN ===== */
 applyDailyProfit();
+refreshBalanceUI();
 </script>
+
 </body>
 </html>
