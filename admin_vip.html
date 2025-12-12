@@ -1,1 +1,119 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Admin VIP Panel</title>
 
+<style>
+body{
+  margin:0;
+  padding:16px;
+  font-family:system-ui;
+  background:#0f172a;
+  color:#fff;
+}
+.card{
+  background:#1e293b;
+  padding:14px;
+  border-radius:14px;
+  margin-bottom:12px;
+}
+button{
+  margin-top:10px;
+  padding:10px;
+  border:none;
+  border-radius:10px;
+  font-weight:700;
+  background:#22c55e;
+}
+</style>
+</head>
+
+<body>
+
+<h2>VIP Requests</h2>
+<div id="list">Loading…</div>
+
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+import {
+  getFirestore,
+  collection,
+  getDocs,
+  doc,
+  updateDoc,
+  serverTimestamp
+} from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyA1HZLZRY9UADNnDVBnoBIlG3b-bCkojxs",
+  authDomain: "primeinvestproject2.firebaseapp.com",
+  projectId: "primeinvestproject2",
+  storageBucket: "primeinvestproject2.firebasestorage.app",
+  messagingSenderId: "798977477628",
+  appId: "1:798977477628:web:c97d1fba72ad7865864079"
+};
+
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
+
+const VIP_RATES = {
+  1:2.33, 2:3.33, 3:3.66, 4:3.99,
+  5:4.33, 6:4.99, 7:6.99, 8:7.33
+};
+
+const list = document.getElementById("list");
+
+async function load(){
+  const snap = await getDocs(collection(db, "vip_requests"));
+  list.innerHTML = "";
+
+  snap.forEach(d=>{
+    const v = d.data();
+    if(v.status !== "pending") return;
+
+    const div = document.createElement("div");
+    div.className = "card";
+
+    div.innerHTML = `
+      <div>User ID: ${v.userId}</div>
+      <div>VIP Level: ${v.vipLevel}</div>
+      <div>Price: $${v.price}</div>
+      <button>Approve</button>
+    `;
+
+    div.querySelector("button").onclick = async ()=>{
+      // 1️⃣ mark request approved
+      await updateDoc(doc(db,"vip_requests",d.id),{
+        status:"approved",
+        approvedAt: serverTimestamp()
+      });
+
+      // 2️⃣ activate VIP on user
+      await updateDoc(doc(db,"users",v.userId),{
+        vip:{
+          level: v.vipLevel,
+          price: v.price,
+          rate: VIP_RATES[v.vipLevel],
+          lastProfitAt: Date.now()
+        }
+      });
+
+      alert("VIP ACTIVATED");
+      load();
+    };
+
+    list.appendChild(div);
+  });
+
+  if(!list.innerHTML){
+    list.innerHTML = "No pending requests";
+  }
+}
+
+load();
+</script>
+
+</body>
+</html>
