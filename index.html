@@ -1,1 +1,125 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>PrimeInvest – Home</title>
 
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #f2f2f2;
+      margin: 0;
+      padding: 0;
+    }
+
+    .container {
+      padding: 20px;
+    }
+
+    .card {
+      background: white;
+      padding: 20px;
+      border-radius: 15px;
+      box-shadow: 0 3px 10px rgba(0,0,0,0.1);
+      margin-bottom: 20px;
+    }
+
+    h2 {
+      margin-top: 0;
+    }
+
+    .btn {
+      display: block;
+      width: 100%;
+      background: #1976d2;
+      color: white;
+      padding: 12px;
+      border-radius: 10px;
+      text-align: center;
+      text-decoration: none;
+      margin-bottom: 12px;
+      font-size: 18px;
+    }
+
+    .vip-btn {
+      background: #e6b800;
+      color: black;
+      font-weight: bold;
+    }
+
+    .logout {
+      background: red;
+    }
+
+    .balance-box {
+      font-size: 26px;
+      font-weight: bold;
+      margin-top: 10px;
+      text-align: center;
+    }
+  </style>
+</head>
+
+<body>
+
+  <div class="container">
+
+    <div class="card">
+      <h2>Welcome</h2>
+      <p><strong>Email:</strong> <span id="emailBox">Loading…</span></p>
+      <p class="balance-box">$<span id="balanceBox">0.00</span></p>
+    </div>
+
+    <div class="card">
+      <h2>Actions</h2>
+
+      <a class="btn" href="tasks.html">Daily Tasks</a>
+      <a class="btn vip-btn" href="vip.html">VIP Section</a>
+      <a class="btn" href="referral.html">Referral Program</a>
+      <a class="btn" href="deposit.html">Deposit</a>
+      <a class="btn" href="withdraw.html">Withdraw</a>
+
+      <a class="btn logout" id="logoutBtn">Logout</a>
+    </div>
+
+  </div>
+
+  <!-- LOAD SCRIPT -->
+  <script type="module">
+    import { auth, db } from "./firebase.js";
+    import { onAuthStateChanged, signOut } 
+      from "https://www.gstatic.com/firebasejs/9.23.0/firebase-auth.js";
+    import { doc, getDoc } 
+      from "https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore.js";
+
+    const balanceBox = document.getElementById("balanceBox");
+    const emailBox = document.getElementById("emailBox");
+    const logoutBtn = document.getElementById("logoutBtn");
+
+    // 🔒 AUTO REDIRECT IF NOT LOGGED IN
+    onAuthStateChanged(auth, async (user) => {
+      if (!user) {
+        location.href = "auth.html"; // This page handles login/register
+        return;
+      }
+
+      emailBox.textContent = user.email;
+
+      const snap = await getDoc(doc(db, "users", user.uid));
+
+      if (snap.exists()) {
+        const data = snap.data();
+        balanceBox.textContent = parseFloat(data.balance || 0).toFixed(2);
+      }
+    });
+
+    // 🔓 LOGOUT
+    logoutBtn.addEventListener("click", async () => {
+      await signOut(auth);
+      location.href = "auth.html";
+    });
+  </script>
+
+</body>
+</html>
