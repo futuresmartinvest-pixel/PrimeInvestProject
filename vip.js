@@ -1,3 +1,6 @@
+// -----------------------------------------------------
+// IMPORTS (Firebase v10 CDN)
+// -----------------------------------------------------
 import { auth, db } from "./firebase.js";
 
 import {
@@ -5,16 +8,20 @@ import {
   getDoc,
   setDoc,
   updateDoc,
-  collection,
   addDoc,
+  collection,
   query,
   where,
   getDocs
-} from "https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore.js";
+} from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
-// -----------------------------
-// LOAD USER DATA
-// -----------------------------
+import {
+  onAuthStateChanged
+} from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
+
+// -----------------------------------------------------
+// LOAD USER VIP STATUS
+// -----------------------------------------------------
 export async function loadVIPStatus(callback) {
   const user = auth.currentUser;
   if (!user) return callback({ loggedIn: false });
@@ -22,113 +29,81 @@ export async function loadVIPStatus(callback) {
   const userRef = doc(db, "users", user.uid);
   const snap = await getDoc(userRef);
 
-  if (!snap.exists()) return callback(null);
+  if (!snap.exists()) {
+    return callback({ loggedIn: false });
+  }
 
-  callback(snap.data());
+  const data = snap.data();
+
+  callback({
+    loggedIn: true,
+    vip: data.vip || false,
+    vipRequested: data.vipRequested || false
+  });
 }
 
-// -----------------------------
-// USER PRESSES "ACTIVATE VIP"
-// -----------------------------
+// -----------------------------------------------------
+// REQUEST VIP ACTIVATION (User clicks button)
+// -----------------------------------------------------
 export async function requestVIP() {
   const user = auth.currentUser;
+  if (!user) return alert("You must be logged in");
 
-  if (!user) {
-    alert("Please log in first.");
-    return;
-  }
+  const userRef = doc(db, "users", user.uid);
 
-  const uid = user.uid;
-  const email = user.email;
-
-  // -----------------------------------------
-  // 0. Ensure user document exists
-  // -----------------------------------------
-  const userRef = doc(db, "users", uid);
-  const userSnap = await getDoc(userRef);
-
-  if (!userSnap.exists()) {
-    await setDoc(userRef, {
-      email: email,
-      vipStatus: "none",
-      balance: 0,
-      referredUsers: []
-    });
-  }
-
-  // -----------------------------------------
-  // 1. Prevent duplicate pending requests
-  // -----------------------------------------
-  const q = query(
-    collection(db, "vipRequests"),
-    where("userId", "==", uid),
-    where("status", "==", "pending")
-  );
-
-  const existing = await getDocs(q);
-
-  if (!existing.empty) {
-    alert("Your VIP request is already pending.");
-    return;
-  }
-
-  // -----------------------------------------
-  // 2. Update user's VIP status → pending
-  // -----------------------------------------
   await updateDoc(userRef, {
-    vipStatus: "pending"
+    vipRequested: true
   });
 
-  // -----------------------------------------
-  // 3. Create new VIP request
-  // -----------------------------------------
-  await addDoc(collection(db, "vipRequests"), {
-    userId: uid,
-    email: email,
-    status: "pending",
-    timestamp: Date.now()
+  // Save message in VIP requests collection for admin to see
+  await addDoc(collection(db, "vip_requests"), {
+    uid: user.uid,
+    email: user.email,
+    requestedAt: new Date(),
+    approved: false
   });
 
-  alert("Your VIP activation request has been sent to the admin.");
+  alert("VIP request sent! Admin must approve it.");
 }
 
-// -----------------------------
+// -----------------------------------------------------
 // INITIALIZE VIP PAGE
-// -----------------------------
+// -----------------------------------------------------
 export function initVIPPage() {
-  const btn = document.getElementById("activateVIP");
-  const statusBox = document.getElementById("vipStatusText");
+  const vipBox = document.getElementById("vipStatus");
+  const vipBtn = document.getElementById("vipButton");
 
-  if (!btn) return;
-
-  btn.addEventListener("click", requestVIP);
-
-  loadVIPStatus((data) => {
-    if (!data) return;
-
-    switch (data.vipStatus) {
-
-      // MATCHES ADMIN APPROVAL STATUS NOW
-      case "approved":
-      case "active":
-        statusBox.innerText = "Your VIP is active ✔️";
-        btn.style.display = "none";
-        break;
-
-      case "pending":
-        statusBox.innerText = "VIP request pending ⏳";
-        btn.disabled = true;
-        break;
-
-      case "rejected":
-        statusBox.innerText =
-          "Your VIP request was rejected ❌\nYou may try again.";
-        btn.disabled = false;
-        break;
-
-      default:
-        statusBox.innerText = "VIP not activated.";
-        btn.disabled = false;
+  onAuthStateChanged(auth, async (user) => {
+    if (!user) {
+      vipBox.innerHTML = "<p>Please log in to access VIP.</p>";
+      return;
     }
+
+    loadVIPStatus((status) => {
+      if (!status.loggedIn) {
+        vipBox.innerHTML = "<p>Unable to load VIP data.</p>";
+        return;
+      }
+
+      // Already VIP
+      if (status.vip === true) {
+        vipBox.innerHTML = "<p>🎉 You are a VIP member!</p>";
+        vipBtn.style.display = "none";
+        return;
+      }
+
+      // Already requested
+      if (status.vipRequested === true) {
+        vipBox.innerHTML = "<p>⏳ VIP request pending...</p>";
+        vipBtn.style.display = "none";
+        return;
+      }
+
+      // Show button
+      vipBox.innerHTML = "<p>You are not VIP</p>";
+      vipBtn.style.display = "block";
+
+      vipBtn.onclick = requestVIP;
+    });
   });
 }
