@@ -10,21 +10,23 @@
     margin: 0;
     font-family: Arial, sans-serif;
     background: #f5f6fa;
+    padding-bottom: 110px; /* space for bottom nav */
   }
 
   /* TOP BAR */
   .top-bar {
     background: #1a1a1a;
     color: white;
-    padding: 15px;
+    padding: 15px 20px;
     display: flex;
     justify-content: space-between;
     align-items: center;
+    font-size: 20px;
   }
 
   .cube-icon {
-    width: 35px;
-    height: 35px;
+    width: 32px;
+    height: 32px;
     cursor: pointer;
   }
 
@@ -32,21 +34,27 @@
   .balance-card {
     background: white;
     margin: 20px;
-    padding: 20px;
-    border-radius: 15px;
-    box-shadow: 0 3px 10px rgba(0,0,0,0.1);
+    padding: 25px;
+    border-radius: 20px;
+    box-shadow: 0 3px 10px rgba(0,0,0,0.08);
   }
 
   .balance-amount {
-    font-size: 34px;
+    font-size: 38px;
     font-weight: bold;
     text-align: center;
   }
 
   .balance-label {
     text-align: center;
-    color: #777;
+    color: #888;
     margin-bottom: 15px;
+  }
+
+  #dailyEarnings {
+    text-align:center; 
+    color:#2563EB; 
+    font-size:18px;
   }
 
   /* VIP SECTION */
@@ -55,7 +63,7 @@
     color: white;
     margin: 20px;
     padding: 15px;
-    border-radius: 12px;
+    border-radius: 15px;
   }
 
   .vip-item {
@@ -67,20 +75,19 @@
     border-bottom: none;
   }
 
-  /* BOTTOM NAVIGATION (Professional Style) */
+  /* ======== BOTTOM NAVIGATION ======== */
   .bottom-nav {
     position: fixed;
     bottom: 0;
     left: 0;
     right: 0;
-    height: 80px;
-    background: #fff;
+    height: 90px;
+    background: #ffffff;
     display: flex;
     justify-content: space-around;
     align-items: center;
     border-radius: 25px 25px 0 0;
-    box-shadow: 0px -5px 25px rgba(0, 0, 0, 0.12);
-    padding: 0 10px;
+    box-shadow: 0px -8px 20px rgba(0,0,0,0.12);
     z-index: 999;
   }
 
@@ -88,35 +95,36 @@
     display: flex;
     flex-direction: column;
     align-items: center;
-    font-size: 12px;
+    font-size: 13px;
     color: #808080;
     text-decoration: none;
     font-weight: 500;
   }
 
-  .nav-item img.nav-icon {
-    width: 28px;
-    height: 28px;
+  .nav-item svg {
+    width: 26px;
+    height: 26px;
     margin-bottom: 4px;
-    opacity: 0.7;
+    opacity: 0.75;
   }
 
   .nav-item.active {
-    color: #2563EB; 
+    color: #2563EB;
   }
 
-  .nav-item.active img.nav-icon {
+  .nav-item.active svg {
+    stroke: #2563EB;
     opacity: 1;
-    filter: brightness(1.25);
   }
 </style>
 </head>
-
 <body>
 
 <!-- TOP BAR -->
 <div class="top-bar">
   <div id="userName">User</div>
+
+  <!-- RUBIK CUBE BUTTON -->
   <img src="cube.png" class="cube-icon" onclick="location.href='cube.html'">
 </div>
 
@@ -124,46 +132,68 @@
 <div class="balance-card">
   <div class="balance-amount" id="balanceAmount">$0.00</div>
   <div class="balance-label">Total Balance</div>
-
-  <div id="dailyEarnings" style="text-align:center; color:#0066ff; font-size:18px;">
-    +$0.00 Today
-  </div>
+  <div id="dailyEarnings">+$0.00 Today</div>
 </div>
 
 <!-- VIP STATUS SECTION -->
 <div class="vip-box">
-  <h3 style="margin-top:0; text-align:center;">Active VIP Plans</h3>
-  <div id="vipList"></div>
+  <h3 style="text-align:center;margin-top:0;">Active VIP Plans</h3>
+  <div id="vipList">No active VIP plans.</div>
 </div>
 
-<!-- BOTTOM NAVIGATION (FINAL VERSION) -->
+
+<!-- ======== BOTTOM NAVIGATION WITH INLINE ICONS ======== -->
 <nav class="bottom-nav">
+
   <a href="index.html" class="nav-item active">
-    <img src="icons/home.svg" class="nav-icon">
+    <!-- HOME ICON -->
+    <svg fill="none" stroke="#808080" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M3 9.5L12 3l9 6.5V20a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1V9.5z"/>
+    </svg>
     <span>Home</span>
   </a>
 
   <a href="tasks.html" class="nav-item">
-    <img src="icons/tasks.svg" class="nav-icon">
+    <!-- TASKS ICON -->
+    <svg fill="none" stroke="#808080" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M9 11l3 3L22 4" />
+      <path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11" />
+    </svg>
     <span>Tasks</span>
   </a>
 
   <a href="wallet.html" class="nav-item">
-    <img src="icons/wallet.svg" class="nav-icon">
+    <!-- WALLET ICON -->
+    <svg fill="none" stroke="#808080" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M3 7h18v10H3z"/>
+      <path d="M16 12h2"/>
+      <path d="M3 7l9-4 9 4"/>
+    </svg>
     <span>Wallet</span>
   </a>
 
   <a href="referral.html" class="nav-item">
-    <img src="icons/referral.svg" class="nav-icon">
+    <!-- REFERRAL ICON -->
+    <svg fill="none" stroke="#808080" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <circle cx="12" cy="7" r="4" />
+      <path d="M5.5 21a6.5 6.5 0 0 1 13 0" />
+    </svg>
     <span>Referral</span>
   </a>
 
   <a href="VIP.html" class="nav-item">
-    <img src="icons/crown.svg" class="nav-icon">
+    <!-- VIP CROWN ICON -->
+    <svg fill="none" stroke="#808080" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M3 18l2-10 5 3 4-3 5 3 2-10" />
+      <path d="M2 18h20v3H2z" />
+    </svg>
     <span>VIP</span>
   </a>
+
 </nav>
 
+
+<!-- FIREBASE LOGIC -->
 <script type="module">
   import { auth, db } from "./firebase.js";
   import { doc, getDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
@@ -175,17 +205,14 @@
     }
 
     const userDoc = await getDoc(doc(db, "users", user.uid));
+
     if (!userDoc.exists()) return;
 
     const data = userDoc.data();
 
-    document.getElementById("userName").innerText = data.name;
-
-    document.getElementById("balanceAmount").innerText =
-      "$" + (data.balance || 0).toFixed(2);
-
-    document.getElementById("dailyEarnings").innerText =
-      "+$" + (data.todayEarned || 0).toFixed(2) + " Today";
+    document.getElementById("userName").innerText = data.name || "User";
+    document.getElementById("balanceAmount").innerText = "$" + (data.balance || 0).toFixed(2);
+    document.getElementById("dailyEarnings").innerText = "+$" + (data.todayEarned || 0).toFixed(2) + " Today";
 
     const vipBox = document.getElementById("vipList");
     vipBox.innerHTML = "";
@@ -205,7 +232,6 @@
         `;
       }
     });
-
   });
 </script>
 
