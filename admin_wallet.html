@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<title>Admin Wallet Panel</title>
+
+<style>
+  body { font-family: Arial; padding: 20px; background: #f2f2f2; }
+  h1 { text-align: center; }
+
+  .card {
+    background: white;
+    padding: 20px;
+    margin-bottom: 20px;
+    border-radius: 12px;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+  }
+
+  .transaction-box {
+    padding: 12px;
+    background: white;
+    border-radius: 8px;
+    margin-bottom: 15px;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.1);
+  }
+
+  button {
+    padding: 10px;
+    border: none;
+    margin-right: 10px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-weight: bold;
+  }
+
+  .approve-btn { background: #28a745; color: white; }
+  .reject-btn { background: #d9534f; color: white; }
+</style>
+</head>
+
+<body>
+
+<h1>Admin Wallet Manager</h1>
+<p><b>Admin UID:</b> <span id="adminUID"></span></p>
+
+<hr>
+
+<h2>Pending Deposits</h2>
+<div id="pendingDeposits"></div>
+
+<hr>
+
+<h2>Pending Withdrawals</h2>
+<div id="pendingWithdrawals"></div>
+
+<script type="module" src="./admin_wallet.js"></script>
+
+</body>
+</html>
