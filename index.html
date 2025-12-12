@@ -4,260 +4,58 @@
 <meta charset="UTF-8">
 
 <meta name="viewport"
-content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
+content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
 
 <title>PrimeGlobalPro</title>
 
 <style>
-html, body {
-  margin: 0;
-  padding: 0;
-  height: 100%;
-  font-family: system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
-  background: #5b2fc2;
-  color: #fff;
-  overscroll-behavior-y: auto;
-  -webkit-overflow-scrolling: touch;
+body{
+  margin:0;
+  font-family:system-ui;
+  background:#5b2fc2;
+  color:#fff;
 }
-
-:root {
-  --purple: #5b2fc2;
-  --purple-card: #7351c9;
-  --orange: #ff6f5c;
+.balance-card{
+  margin:16px;
+  padding:20px;
+  background:#7351c9;
+  border-radius:24px;
 }
-
-/* HEADER */
-.header {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  padding: 16px;
+.balance-amount{
+  font-size:44px;
+  font-weight:800;
 }
-
-.avatar {
-  width: 44px;
-  height: 44px;
-  border-radius: 50%;
-  background: orange;
+.nav{
+  position:fixed;
+  bottom:16px;
+  left:16px;
+  right:16px;
+  background:#fff;
+  color:#000;
+  display:flex;
+  justify-content:space-around;
+  padding:12px;
+  border-radius:26px;
 }
-
-.username {
-  font-size: 22px;
-  font-weight: 600;
-}
-
-/* BALANCE CARD */
-.balance-card {
-  margin: 16px;
-  padding: 20px;
-  border-radius: 24px;
-  background: var(--purple-card);
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-}
-
-.balance-text {
-  font-size: 18px;
-  opacity: 0.8;
-}
-
-.balance-amount {
-  font-size: 44px;
-  font-weight: 800;
-}
-
-.actions {
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-}
-
-.action-btn {
-  background: rgba(255,255,255,0.25);
-  color: #fff;
-  border: none;
-  padding: 10px 18px;
-  border-radius: 18px;
-  font-size: 16px;
-}
-
-/* CARD */
-.bank-card {
-  margin: 16px;
-  padding: 22px;
-  border-radius: 28px;
-  background: var(--orange);
-}
-
-.card-chip {
-  width: 46px;
-  height: 36px;
-  border-radius: 8px;
-  background: rgba(255,255,255,0.5);
-  margin-bottom: 18px;
-}
-
-.card-number {
-  font-size: 26px;
-  letter-spacing: 2px;
-  margin-bottom: 10px;
-}
-
-.card-holder {
-  font-size: 14px;
-  opacity: 0.9;
-}
-
-/* EXPENSES */
-.section-title {
-  margin: 20px 16px 10px;
-  font-size: 20px;
-  font-weight: 600;
-}
-
-.expense {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  margin: 12px 16px;
-}
-
-.expense-left {
-  display: flex;
-  align-items: center;
-  gap: 14px;
-}
-
-.expense-icon {
-  width: 46px;
-  height: 46px;
-  border-radius: 14px;
-  background: rgba(255,255,255,0.25);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-weight: 700;
-}
-
-.expense-name {
-  font-size: 18px;
-}
-
-.expense-amount {
-  font-size: 18px;
-  font-weight: 600;
-}
-
-/* FLOATING NAV */
-.nav-wrapper {
-  position: fixed;
-  bottom: 16px;
-  left: 0;
-  right: 0;
-  display: flex;
-  justify-content: center;
-  pointer-events: none;
-}
-
-.nav {
-  width: calc(100% - 32px);
-  background: rgba(255,255,255,0.92);
-  backdrop-filter: blur(14px);
-  display: flex;
-  justify-content: space-around;
-  padding: 12px 0;
-  border-radius: 26px;
-  box-shadow: 0 10px 30px rgba(0,0,0,0.2);
-  pointer-events: auto;
-}
-
-.nav-item {
-  text-align: center;
-  font-size: 14px;
-  color: #444;
-}
-
-.nav-item.active {
-  color: var(--purple);
-  font-weight: 700;
-}
-
-.spacer {
-  height: 120px;
-}
+.nav div{font-weight:600}
 </style>
 </head>
 
 <body>
 
-<!-- HEADER -->
-<div class="header">
-  <div class="avatar"></div>
-  <div class="username">Alex</div>
-</div>
-
-<!-- BALANCE -->
 <div class="balance-card">
-  <div>
-    <div class="balance-text">Balance</div>
-    <div class="balance-amount">$0.00</div>
-  </div>
-  <div class="actions">
-    <button class="action-btn">Withdraw</button>
-    <button class="action-btn">Send</button>
-  </div>
+  <div>Balance</div>
+  <div class="balance-amount">$0.00</div>
 </div>
 
-<!-- CARD -->
-<div class="bank-card">
-  <div class="card-chip"></div>
-  <div class="card-number">1234 5678 9123 0000</div>
-  <div class="card-holder">Card Holder</div>
+<div class="nav">
+  <div>Home</div>
+  <div onclick="location.href='tasks.html'">Tasks</div>
+  <div onclick="location.href='wallet.html'">Wallet</div>
+  <div onclick="location.href='referral.html'">Referral</div>
+  <div onclick="location.href='deposit.html'">VIP</div>
 </div>
 
-<!-- EXPENSES -->
-<div class="section-title">This month expenses</div>
-
-<div class="expense">
-  <div class="expense-left">
-    <div class="expense-icon">S</div>
-    <div class="expense-name">Shopping</div>
-  </div>
-  <div class="expense-amount">$8.00</div>
-</div>
-
-<div class="expense">
-  <div class="expense-left">
-    <div class="expense-icon">M</div>
-    <div class="expense-name">Movies</div>
-  </div>
-  <div class="expense-amount">$1.00</div>
-</div>
-
-<div class="expense">
-  <div class="expense-left">
-    <div class="expense-icon">F</div>
-    <div class="expense-name">Food</div>
-  </div>
-  <div class="expense-amount">$3.00</div>
-</div>
-
-<div class="spacer"></div>
-
-<!-- NAV -->
-<div class="nav-wrapper">
-  <div class="nav">
-    <div class="nav-item active">Home</div>
-    <div class="nav-item">Tasks</div>
-    <div class="nav-item">Wallet</div>
-    <div class="nav-item">Referral</div>
-    <!-- ✅ FIXED: GO TO VIP SELECTION -->
-    <div class="nav-item" onclick="location.href='vip.html'">VIP</div>
-  </div>
-</div>
-
-<!-- GLOBAL FIRESTORE PROFIT ENGINE -->
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
 import {
@@ -269,6 +67,7 @@ import {
   serverTimestamp
 } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
+/* FIREBASE */
 const firebaseConfig = {
   apiKey: "AIzaSyA1HZLZRY9UADNnDVBnoBIlG3b-bCkojxs",
   authDomain: "primeinvestproject2.firebaseapp.com",
@@ -283,54 +82,68 @@ const db = getFirestore(app);
 
 const DAY = 86400000;
 
-function getOrCreateUserId(){
+/* USER ID */
+function uid(){
   let id = localStorage.getItem("userId");
   if(!id){
-    id = "user_" + Math.random().toString(36).slice(2, 10) + "_" + Date.now();
+    id = "user_"+Date.now()+"_"+Math.random().toString(36).slice(2,8);
     localStorage.setItem("userId", id);
   }
   return id;
 }
 
-const userId = getOrCreateUserId();
-const userRef = doc(db, "users", userId);
+const userRef = doc(db,"users",uid());
 
-async function ensureUserDoc(){
+/* ENSURE USER */
+async function ensureUser(){
   const snap = await getDoc(userRef);
   if(!snap.exists()){
-    await setDoc(userRef, { balance: 0, createdAt: serverTimestamp() }, { merge:true });
+    await setDoc(userRef,{balance:0,createdAt:serverTimestamp()});
   }
 }
 
-async function applyVIPProfit(){
+/* VIP CHECK + AUTO EXPIRE + PROFIT */
+async function processVIP(){
   const snap = await getDoc(userRef);
   if(!snap.exists()) return;
+
   const user = snap.data();
   if(!user.vip) return;
 
   const now = Date.now();
-  const last = user.vip.lastProfitAt?.toMillis?.() || now;
-  const days = Math.floor((now - last) / DAY);
-  if(days <= 0) return;
+  const expiresAt = user.vip.expiresAt?.toMillis?.() || 0;
 
-  const profit = user.vip.price * (user.vip.rate / 100) * days;
+  /* ❌ VIP EXPIRED */
+  if(now > expiresAt){
+    await updateDoc(userRef,{ vip:null });
+    return;
+  }
+
+  /* ✅ APPLY PROFIT */
+  const last = user.vip.lastProfitAt?.toMillis?.() || now;
+  const days = Math.floor((now-last)/DAY);
+  if(days<=0) return;
+
+  const daily = user.vip.price * (user.vip.rate/100);
+  const profit = daily * days;
 
   await updateDoc(userRef,{
-    balance: (user.balance || 0) + profit,
-    "vip.lastProfitAt": serverTimestamp()
+    balance:(user.balance||0)+profit,
+    "vip.lastProfitAt":serverTimestamp()
   });
 }
 
-async function refreshBalanceUI(){
+/* UI */
+async function refresh(){
   const snap = await getDoc(userRef);
   if(!snap.exists()) return;
   document.querySelector(".balance-amount").innerText =
-    "$" + Number(snap.data().balance || 0).toFixed(2);
+    "$"+(snap.data().balance||0).toFixed(2);
 }
 
-await ensureUserDoc();
-await applyVIPProfit();
-await refreshBalanceUI();
+await ensureUser();
+await processVIP();
+await refresh();
 </script>
 
 </body>
