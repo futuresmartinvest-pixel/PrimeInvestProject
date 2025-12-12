@@ -66,9 +66,8 @@
   .vip-item:last-child {
     border-bottom: none;
   }
-<!-- ======== BOTTOM NAVIGATION START ======== -->
 
-<style>
+  /* BOTTOM NAVIGATION (Professional Style) */
   .bottom-nav {
     position: fixed;
     bottom: 0;
@@ -103,7 +102,7 @@
   }
 
   .nav-item.active {
-    color: #2563EB;  /* Blue highlight */
+    color: #2563EB; 
   }
 
   .nav-item.active img.nav-icon {
@@ -111,7 +110,33 @@
     filter: brightness(1.25);
   }
 </style>
+</head>
 
+<body>
+
+<!-- TOP BAR -->
+<div class="top-bar">
+  <div id="userName">User</div>
+  <img src="cube.png" class="cube-icon" onclick="location.href='cube.html'">
+</div>
+
+<!-- BALANCE CARD -->
+<div class="balance-card">
+  <div class="balance-amount" id="balanceAmount">$0.00</div>
+  <div class="balance-label">Total Balance</div>
+
+  <div id="dailyEarnings" style="text-align:center; color:#0066ff; font-size:18px;">
+    +$0.00 Today
+  </div>
+</div>
+
+<!-- VIP STATUS SECTION -->
+<div class="vip-box">
+  <h3 style="margin-top:0; text-align:center;">Active VIP Plans</h3>
+  <div id="vipList"></div>
+</div>
+
+<!-- BOTTOM NAVIGATION (FINAL VERSION) -->
 <nav class="bottom-nav">
   <a href="index.html" class="nav-item active">
     <img src="icons/home.svg" class="nav-icon">
@@ -139,47 +164,9 @@
   </a>
 </nav>
 
-<!-- ======== BOTTOM NAVIGATION END ======== -->
-  
-
-<!-- TOP BAR -->
-<div class="top-bar">
-  <div id="userName">User</div>
-
-  <!-- RUBIK CUBE -->
-  <img src="cube.png" class="cube-icon" onclick="location.href='cube.html'">
-</div>
-
-<!-- BALANCE CARD -->
-<div class="balance-card">
-  <div class="balance-amount" id="balanceAmount">$0.00</div>
-  <div class="balance-label">Total Balance</div>
-
-  <div id="dailyEarnings" style="text-align:center; color:#0066ff; font-size:18px;">
-    +$0.00 Today
-  </div>
-</div>
-
-<!-- VIP STATUS SECTION -->
-<div class="vip-box">
-  <h3 style="margin-top:0; text-align:center;">Active VIP Plans</h3>
-  <div id="vipList"></div>
-</div>
-
-<!-- BOTTOM NAVIGATION -->
-<div class="bottom-nav">
-  <div class="nav-btn active" onclick="location.href='index.html'">Home</div>
-  <div class="nav-btn" onclick="location.href='tasks.html'">Tasks</div>
-  <div class="nav-btn" onclick="location.href='vip.html'">VIP</div>
-  <div class="nav-btn" onclick="location.href='profile.html'">Profile</div>
-</div>
-
 <script type="module">
   import { auth, db } from "./firebase.js";
-  import {
-    doc,
-    getDoc
-  } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+  import { doc, getDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
   auth.onAuthStateChanged(async (user) => {
     if (!user) {
@@ -188,23 +175,18 @@
     }
 
     const userDoc = await getDoc(doc(db, "users", user.uid));
-
     if (!userDoc.exists()) return;
 
     const data = userDoc.data();
 
-    // Show name
     document.getElementById("userName").innerText = data.name;
 
-    // Show balance
     document.getElementById("balanceAmount").innerText =
       "$" + (data.balance || 0).toFixed(2);
 
-    // Daily earnings
     document.getElementById("dailyEarnings").innerText =
       "+$" + (data.todayEarned || 0).toFixed(2) + " Today";
 
-    // Show active VIPs
     const vipBox = document.getElementById("vipList");
     vipBox.innerHTML = "";
 
@@ -218,12 +200,12 @@
       if (plan.active) {
         vipBox.innerHTML += `
           <div class="vip-item">
-            <strong>${key.toUpperCase()}</strong>  
-            — $${plan.amount} earning ${plan.percent}% daily
+            <strong>${key.toUpperCase()}</strong> — $${plan.amount} earning ${plan.percent}% daily
           </div>
         `;
       }
     });
+
   });
 </script>
 
