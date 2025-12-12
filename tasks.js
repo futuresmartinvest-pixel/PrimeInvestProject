@@ -1,153 +1,110 @@
-import { auth, db } from "./firebase.js";
+// ------------------------------------------------------
+// Firebase Imports
+// ------------------------------------------------------
+import { db, auth } from "./firebase.js";
 
 import {
   collection,
   doc,
+  setDoc,
   getDoc,
   getDocs,
-  setDoc,
-  addDoc,
-  updateDoc,
-  query,
-  where
-} from "https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore.js";
+  updateDoc
+} from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
-// -----------------------------
-// LOAD AND DISPLAY ALL TASKS
-// -----------------------------
-export async function loadTasks() {
-  const taskContainer = document.getElementById("taskContainer");
-  taskContainer.innerHTML = "Loading tasks…";
+// ------------------------------------------------------
+// Load Tasks on Tasks Page
+// ------------------------------------------------------
+export async function initTasksPage() {
+  const container = document.getElementById("taskContainer");
+  container.innerHTML = "Loading tasks...";
 
-  const snap = await getDocs(collection(db, "tasks"));
-
-  if (snap.empty) {
-    taskContainer.innerHTML = "<p>No tasks available right now.</p>";
+  const user = auth.currentUser;
+  if (!user) {
+    container.innerHTML = "<p>Please log in to see tasks.</p>";
     return;
   }
 
-  taskContainer.innerHTML = "";
+  // Load tasks from Firestore
+  const snap = await getDocs(collection(db, "tasks"));
+
+  if (snap.empty) {
+    container.innerHTML = "<p>No tasks available today.</p>";
+    return;
+  }
+
+  container.innerHTML = "";
 
   snap.forEach((docSnap) => {
     const task = docSnap.data();
-    const taskId = docSnap.id;
-
-    const card = document.createElement("div");
-    card.className = "task-card";
-
-    card.innerHTML = `
-      <img src="${task.imageUrl}" class="task-img" />
-
-      <h3>${task.title}</h3>
-      <p>${task.description}</p>
-
-      <p><strong>Reward:</strong> $${task.reward.toFixed(2)}</p>
-      <p><strong>Timer:</strong> ${task.timer} seconds</p>
-
-      <button class="task-btn" onclick="startTask('${taskId}')">
-        Start Task
-      </button>
-
-      <div id="timer_${taskId}" class="timer-box"></div>
-
-      <button id="complete_${taskId}" class="complete-btn" disabled>
-        Complete Task
-      </button>
-    `;
-
-    taskContainer.appendChild(card);
+    const card = createTaskCard(task, docSnap.id);
+    container.appendChild(card);
   });
 }
 
-// -----------------------------
-// START TASK (USER PRESSES START)
-// -----------------------------
-window.startTask = async function (taskId) {
+// ------------------------------------------------------
+// Create Task Card UI
+// ------------------------------------------------------
+function createTaskCard(task, taskId) {
+  const card = document.createElement("div");
+  card.className = "task-card";
+
+  card.innerHTML = `
+    <img src="${task.image}" class="task-img" />
+
+    <h3>${task.title}</h3>
+
+    <button class="task-btn" onclick="window.open('${task.link}', '_blank')">
+      Open Task
+    </button>
+
+    <button class="complete-btn" id="complete-${taskId}">
+      Complete Task (+$${task.reward})
+    </button>
+
+    <div class="timer-box" id="timer-${taskId}"></div>
+  `;
+
+  // Add functionality
+  setupTaskCompletion(taskId, task.reward);
+
+  return card;
+}
+
+// ------------------------------------------------------
+// Completion Logic
+// ------------------------------------------------------
+async function setupTaskCompletion(taskId, reward) {
   const user = auth.currentUser;
-  if (!user) return alert("You must log in.");
+  if (!user) return;
 
-  const taskRef = doc(db, "tasks", taskId);
-  const taskSnap = await getDoc(taskRef);
+  const btn = document.getElementById(`complete-${taskId}`);
+  const timerBox = document.getElementById(`timer-${taskId}`);
 
-  if (!taskSnap.exists()) return;
+  const userTaskRef = doc(db, "users", user.uid, "completedTasks", taskId);
+  const userTaskSnap = await getDoc(userTaskRef);
 
-  const task = taskSnap.data();
-  const timerBox = document.getElementById(`timer_${taskId}`);
-  const completeBtn = document.getElementById(`complete_${taskId}`);
-
-  let timeLeft = task.timer;
-
-  timerBox.innerHTML = `⏳ ${timeLeft} seconds remaining`;
-  completeBtn.disabled = true;
-
-  const countdown = setInterval(() => {
-    timeLeft--;
-    timerBox.innerHTML = `⏳ ${timeLeft} seconds remaining`;
-
-    if (timeLeft <= 0) {
-      clearInterval(countdown);
-      timerBox.innerHTML = "✅ You can now complete the task";
-      completeBtn.disabled = false;
-      completeBtn.onclick = () => completeTask(taskId);
-    }
-  }, 1000);
-
-  // OPEN LINK
-  window.open(task.linkUrl, "_blank");
-};
-
-// -----------------------------
-// COMPLETE TASK (REWARD ADDED)
-// -----------------------------
-async function completeTask(taskId) {
-  const user = auth.currentUser;
-  if (!user) return alert("You must log in.");
-
-  const uid = user.uid;
-
-  // Prevent duplicate completion
-  const q = query(
-    collection(db, "completedTasks"),
-    where("taskId", "==", taskId),
-    where("userId", "==", uid)
-  );
-
-  const existing = await getDocs(q);
-
-  if (!existing.empty) {
-    return alert("You have already completed this task.");
+  if (userTaskSnap.exists()) {
+    btn.disabled = true;
+    timerBox.textContent = "Completed ✔";
+    return;
   }
 
-  // Get task reward
-  const taskData = await getDoc(doc(db, "tasks", taskId));
-  const reward = taskData.data().reward;
+  btn.onclick = async () => {
+    btn.disabled = true;
+    timerBox.textContent = "Processing...";
 
-  // Add to completed tasks
-  await addDoc(collection(db, "completedTasks"), {
-    taskId: taskId,
-    userId: uid,
-    completedAt: Date.now()
-  });
+    // Save task completion
+    await setDoc(userTaskRef, {
+      completedAt: Date.now(),
+      reward
+    });
 
-  // Add reward to user wallet
-  await updateDoc(doc(db, "users", uid), {
-    balance: (await getUserBalance(uid)) + reward
-  });
+    // Update balance
+    await updateDoc(doc(db, "users", user.uid), {
+      balance: (userTaskSnap.data()?.balance || 0) + reward
+    });
 
-  alert(`Task completed! You earned $${reward.toFixed(2)}`);
-}
-
-// -----------------------------
-// GET USER BALANCE
-// -----------------------------
-async function getUserBalance(uid) {
-  const snap = await getDoc(doc(db, "users", uid));
-  return snap.exists() ? snap.data().balance || 0 : 0;
-}
-
-// -----------------------------
-// INITIALIZE PAGE
-// -----------------------------
-export function initTasksPage() {
-  loadTasks();
+    timerBox.textContent = "Completed ✔";
+  };
 }
