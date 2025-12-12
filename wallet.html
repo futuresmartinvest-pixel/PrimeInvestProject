@@ -1,132 +1,45 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Wallet</title>
+  <title>Your Wallet</title>
 
   <style>
-    body {
-      font-family: Arial, sans-serif;
-      background: #f2f2f2;
-      padding: 20px;
-      margin: 0;
-    }
+    body { font-family: Arial; background: #f4f4f4; padding: 20px; }
+    .card { background: white; padding: 20px; border-radius: 10px; margin-bottom: 20px; }
 
-    h1, h2, h3 {
-      text-align: center;
-      color: #222;
-    }
-
-    .card {
+    .history-card {
       background: white;
-      border-radius: 12px;
-      box-shadow: 0 2px 6px rgba(0,0,0,0.1);
-      padding: 20px;
-      margin-bottom: 20px;
-    }
-
-    .balance-box {
-      font-size: 24px;
-      font-weight: bold;
-      color: #16a34a;
-      text-align: center;
-    }
-
-    input, select {
-      width: 100%;
       padding: 10px;
-      margin-bottom: 12px;
-      border-radius: 6px;
-      border: 1px solid #ccc;
+      margin-top: 10px;
+      border-radius: 8px;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
     }
 
     button {
       width: 100%;
       padding: 12px;
+      background: #1976d2;
+      color: white;
       border: none;
-      background: #1976d2;
-      color: white;
       border-radius: 6px;
-      cursor: pointer;
-      font-size: 16px;
+      margin-top: 10px;
     }
-
-    button:hover {
-      background: #0d5cbf;
-    }
-
-    .withdraw-btn {
-      background: #d9534f;
-    }
-
-    .withdraw-btn:hover {
-      background: #c9302c;
-    }
-
-    table {
-      width: 100%;
-      border-collapse: collapse;
-    }
-
-    th, td {
-      text-align: left;
-      padding: 10px;
-      border-bottom: 1px solid #ddd;
-    }
-
-    th {
-      background: #1976d2;
-      color: white;
-    }
-
-    .status-pending { color: orange; }
-    .status-approved { color: green; }
-    .status-rejected { color: red; }
   </style>
 </head>
 
 <body>
 
-  <h1>My Wallet</h1>
+  <h1>Your Wallet</h1>
 
-  <!-- BALANCE DISPLAY -->
   <div class="card">
-    <h2>Your Balance</h2>
-    <div class="balance-box" id="walletBalance">Loading...</div>
+    <h2>Balance: £<span id="balanceAmount">0.00</span></h2>
+    <button onclick="requestWithdrawal()">Withdraw</button>
   </div>
 
-  <!-- DEPOSIT SECTION -->
-  <div class="card">
-    <h3>Add Deposit (Fake Transaction)</h3>
-    <input type="number" id="depositAmount" placeholder="Enter deposit amount" />
-    <button id="depositBtn">Request Deposit</button>
-  </div>
+  <h2>Transaction History</h2>
+  <div id="historyList"></div>
 
-  <!-- WITHDRAW SECTION -->
-  <div class="card">
-    <h3>Request Withdrawal</h3>
-    <input type="number" id="withdrawAmount" placeholder="Enter withdrawal amount" />
-    <button id="withdrawBtn" class="withdraw-btn">Request Withdrawal</button>
-  </div>
-
-  <!-- HISTORY SECTION -->
-  <div class="card">
-    <h3>Transaction History</h3>
-    <table>
-      <thead>
-        <tr>
-          <th>Type</th>
-          <th>Amount</th>
-          <th>Status</th>
-          <th>Date</th>
-        </tr>
-      </thead>
-      <tbody id="transactionTable"></tbody>
-    </table>
-  </div>
-
-  <!-- LINK TO JS FILE -->
   <script type="module" src="./wallet.js"></script>
 
 </body>
