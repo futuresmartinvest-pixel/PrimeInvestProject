@@ -2,239 +2,119 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>PrimeGlobalPro</title>
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>VIP Membership</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
 
 <style>
-:root {
-  --purple: #5b2fc2;
-  --purple-light: #6f4bcf;
-  --purple-card: #7452c8;
-  --white: #ffffff;
-  --muted: rgba(255,255,255,0.7);
+body{
+  margin:0;
+  font-family: system-ui, sans-serif;
+  background:#f5f5f5;
 }
 
-* {
-  box-sizing: border-box;
-  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+.header{
+  background:#b7ff2c;
+  padding:20px;
+  font-size:22px;
+  font-weight:700;
 }
 
-body {
-  margin: 0;
-  background: var(--purple);
-  color: white;
+.container{
+  padding:16px;
 }
 
-/* HEADER */
-.header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 16px;
+.vip-card{
+  background:#fff;
+  border-radius:16px;
+  padding:16px;
+  margin-bottom:14px;
+  box-shadow:0 4px 12px rgba(0,0,0,0.08);
 }
 
-.user {
-  display: flex;
-  align-items: center;
-  gap: 10px;
+.vip-title{
+  font-size:18px;
+  font-weight:700;
 }
 
-.avatar {
-  width: 40px;
-  height: 40px;
-  border-radius: 50%;
-  background: orange;
+.vip-info{
+  margin-top:6px;
+  color:#555;
 }
 
-.menu {
-  font-size: 24px;
+.vip-btn{
+  margin-top:12px;
+  background:#000;
+  color:#fff;
+  border:none;
+  padding:12px;
+  width:100%;
+  border-radius:12px;
+  font-size:16px;
 }
 
-/* BALANCE CARD */
-.balance-card {
-  margin: 16px;
-  padding: 20px;
-  border-radius: 20px;
-  background: var(--purple-card);
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
+.vip-btn:disabled{
+  background:#999;
 }
 
-.balance-left small {
-  color: var(--muted);
-}
-
-.balance-left h1 {
-  margin: 8px 0 0;
-  font-size: 36px;
-}
-
-.balance-actions {
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-}
-
-.action-btn {
-  padding: 10px 18px;
-  border-radius: 14px;
-  background: rgba(255,255,255,0.2);
-  color: white;
-  border: none;
-  font-size: 14px;
-}
-
-/* BANK CARD */
-.bank-card {
-  margin: 16px;
-  padding: 20px;
-  border-radius: 20px;
-  background: white;
-  color: #333;
-}
-
-.chip {
-  width: 40px;
-  height: 30px;
-  background: #eee;
-  border-radius: 6px;
-  margin-bottom: 16px;
-}
-
-.card-number {
-  font-size: 20px;
-  letter-spacing: 2px;
-  margin-bottom: 8px;
-}
-
-/* EXPENSES */
-.section {
-  padding: 0 16px;
-}
-
-.section h3 {
-  margin: 20px 0 10px;
-  font-weight: normal;
-}
-
-.expense {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  margin-bottom: 14px;
-}
-
-.icon {
-  width: 36px;
-  height: 36px;
-  border-radius: 12px;
-  background: rgba(255,255,255,0.2);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-weight: bold;
-}
-
-.expense-left {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-}
-
-/* BOTTOM NAV */
-.bottom-nav {
-  position: fixed;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  background: white;
-  display: flex;
-  justify-content: space-around;
-  padding: 10px 0;
-  border-top-left-radius: 20px;
-  border-top-right-radius: 20px;
-}
-
-.nav-item {
-  text-align: center;
-  font-size: 12px;
-  color: #666;
-}
-
-.nav-item.active {
-  color: var(--purple);
+.back{
+  padding:12px;
+  display:block;
+  text-decoration:none;
+  color:#000;
 }
 </style>
 </head>
 
 <body>
 
-<!-- HEADER -->
-<div class="header">
-  <div class="user">
-    <div class="avatar"></div>
-    <strong>Alex</strong>
-  </div>
-  <div class="menu">≡</div>
-</div>
+<div class="header">VIP Membership</div>
+<a class="back" href="index.html">← Back to Home</a>
 
-<!-- BALANCE -->
-<div class="balance-card">
-  <div class="balance-left">
-    <small>Balance</small>
-    <h1>$0.00</h1>
-  </div>
-  <div class="balance-actions">
-    <button class="action-btn">Withdraw</button>
-    <button class="action-btn">Send</button>
-  </div>
-</div>
+<div class="container" id="vipList"></div>
 
-<!-- BANK CARD -->
-<div class="bank-card">
-  <div class="chip"></div>
-  <div class="card-number">1234 5678 9123 0000</div>
-  <small>Card Holder</small>
-</div>
+<script>
+const vipPlans = [
+ {id:1, price:30, rate:2.33},
+ {id:2, price:100, rate:3.33},
+ {id:3, price:499, rate:3.66},
+ {id:4, price:999, rate:3.99},
+ {id:5, price:4999, rate:4.33},
+ {id:6, price:9999, rate:4.99},
+ {id:7, price:49999, rate:6.99},
+ {id:8, price:99999, rate:7.33},
+];
 
-<!-- EXPENSES -->
-<div class="section">
-  <h3>This month expenses</h3>
+const userVIP = JSON.parse(localStorage.getItem("userVIP")) || {};
 
-  <div class="expense">
-    <div class="expense-left">
-      <div class="icon">S</div>
-      <span>Shopping</span>
-    </div>
-    <span>$8.00</span>
-  </div>
+const vipList = document.getElementById("vipList");
 
-  <div class="expense">
-    <div class="expense-left">
-      <div class="icon">M</div>
-      <span>Movies</span>
-    </div>
-    <span>$1.00</span>
-  </div>
+vipPlans.forEach(vip=>{
+  const active = userVIP[vip.id];
 
-  <div class="expense">
-    <div class="expense-left">
-      <div class="icon">F</div>
-      <span>Food</span>
-    </div>
-    <span>$3.00</span>
-  </div>
-</div>
+  const div = document.createElement("div");
+  div.className="vip-card";
 
-<!-- BOTTOM NAV -->
-<div class="bottom-nav">
-  <div class="nav-item active">🏠<br>Home</div>
-  <div class="nav-item">📝<br>Tasks</div>
-  <div class="nav-item">💼<br>Wallet</div>
-  <div class="nav-item">👥<br>Referral</div>
-  <div class="nav-item">⭐<br>VIP</div>
-</div>
+  div.innerHTML = `
+    <div class="vip-title">VIP ${vip.id}</div>
+    <div class="vip-info">Price: $${vip.price}</div>
+    <div class="vip-info">Daily Rate: ${vip.rate}%</div>
+    <button class="vip-btn" ${active?"disabled":""}>
+      ${active ? "Activated" : "Activate VIP"}
+    </button>
+  `;
+
+  if(!active){
+    div.querySelector("button").onclick = ()=>{
+      userVIP[vip.id] = "pending";
+      localStorage.setItem("userVIP", JSON.stringify(userVIP));
+      alert("VIP request sent. Please complete deposit and wait for admin approval.");
+      location.reload();
+    };
+  }
+
+  vipList.appendChild(div);
+});
+</script>
 
 </body>
 </html>
