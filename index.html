@@ -1,219 +1,90 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>PrimeGlobalPro</title>
 
 <style>
-*{box-sizing:border-box}
+* { box-sizing: border-box; }
 
-html,body{
-  margin:0;
-  height:100vh;
-  overflow:hidden;
-  font-family:system-ui,-apple-system,Segoe UI,Roboto,sans-serif;
-  background:#e9e3ff;
+html, body {
+  margin: 0;
+  height: 100%;
+  overflow: hidden;
+  font-family: system-ui, -apple-system, Segoe UI, Roboto, sans-serif;
+  background: #ffffff;
 }
 
-/* ===== APP ===== */
-.app{
-  height:100vh;
-  display:flex;
-  flex-direction:column;
+/* APP WRAPPER */
+.app {
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
 }
 
-/* ===== TOP PURPLE PANEL ===== */
-.top{
-  background:#5b2bbd;
-  margin:14px;
-  border-radius:28px;
-  padding:20px;
-  color:#fff;
+/* ===== TOP BALANCE CARD ===== */
+.top-card {
+  margin: 16px;
+  padding: 20px;
+  background: #6f42c1;
+  border-radius: 26px;
+  color: white;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
 }
 
-/* header */
-.header{
-  display:flex;
-  align-items:center;
-  gap:12px;
+.balance-text {
+  font-size: 16px;
+  opacity: 0.9;
 }
 
-.avatar{
-  width:42px;
-  height:42px;
-  border-radius:50%;
-  background:linear-gradient(135deg,#ff9800,#ff5722);
+.balance-amount {
+  font-size: 42px;
+  font-weight: 700;
+  margin-top: 4px;
 }
 
-.username{
-  font-weight:600;
+.balance-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
 }
 
-/* balance */
-.balance-box{
-  margin-top:16px;
-  background:#6d3ed1;
-  border-radius:20px;
-  padding:16px;
-  display:flex;
-  justify-content:space-between;
-  align-items:center;
+.action-btn {
+  background: rgba(255,255,255,0.2);
+  padding: 10px 18px;
+  border-radius: 16px;
+  font-size: 15px;
+  text-align: center;
 }
 
-.balance-info{
-  font-size:14px;
+/* ===== MAIN WHITE AREA ===== */
+.main {
+  flex: 1;
+  background: white;
 }
-
-.balance-amount{
-  font-size:32px;
-  font-weight:700;
-}
-
-.balance-actions{
-  display:flex;
-  flex-direction:column;
-  gap:10px;
-}
-
-.action{
-  background:#7b55da;
-  padding:8px 14px;
-  border-radius:12px;
-  font-size:13px;
-  text-align:center;
-}
-
-/* ===== SOLAR AREA ===== */
-.solar-wrap{
-  margin-top:18px;
-  display:flex;
-  justify-content:center;
-}
-
-.solar{
-  position:relative;
-  width:220px;
-  height:220px;
-}
-
-.sun{
-  position:absolute;
-  top:50%;
-  left:50%;
-  transform:translate(-50%,-50%);
-  width:56px;
-  height:56px;
-  border-radius:50%;
-  background:radial-gradient(circle,#fff7c2,#fbbf24,#f59e0b);
-  box-shadow:0 0 30px rgba(251,191,36,.9);
-}
-
-.orbit{
-  position:absolute;
-  border:1px dashed rgba(255,255,255,.4);
-  border-radius:50%;
-  animation:spin linear infinite;
-}
-
-.orbit.earth{
-  width:160px;
-  height:160px;
-  top:30px;
-  left:30px;
-  animation-duration:18s;
-}
-
-.earth-body{
-  position:absolute;
-  top:-14px;
-  left:50%;
-  transform:translateX(-50%);
-  width:30px;
-  height:30px;
-  border-radius:50%;
-  background:radial-gradient(circle at 30% 30%,#7dd3fc,#1e40af);
-}
-
-.orbit.moon{
-  width:60px;
-  height:60px;
-  top:-18px;
-  left:-18px;
-  animation-duration:6s;
-}
-
-.moon-body{
-  position:absolute;
-  top:-6px;
-  left:50%;
-  transform:translateX(-50%);
-  width:12px;
-  height:12px;
-  border-radius:50%;
-  background:radial-gradient(circle,#fff,#9ca3af);
-}
-
-@keyframes spin{
-  from{transform:rotate(0deg)}
-  to{transform:rotate(360deg)}
-}
-
-/* ===== MAIN CONTENT ===== */
-.content{
-  flex:1;
-  background:#fff;
-  margin-top:-20px;
-  border-top-left-radius:28px;
-  border-top-right-radius:28px;
-  padding:20px;
-  display:flex;
-  flex-direction:column;
-  justify-content:space-between;
-}
-
-/* tasks */
-.tasks{
-  display:flex;
-  flex-direction:column;
-  gap:14px;
-}
-
-.task{
-  display:flex;
-  align-items:center;
-  gap:14px;
-}
-
-.task-icon{
-  width:46px;
-  height:46px;
-  border-radius:14px;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  font-weight:700;
-  color:#fff;
-}
-
-.t1{background:#2563eb}
-.t2{background:#16a34a}
-.t3{background:#facc15;color:#000}
 
 /* ===== BOTTOM NAV ===== */
-.nav{
-  height:70px;
-  background:#fff;
-  display:flex;
-  justify-content:space-around;
-  align-items:center;
-  box-shadow:0 -8px 20px rgba(0,0,0,.12);
-  font-size:12px;
+.nav {
+  height: 72px;
+  background: white;
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  box-shadow: 0 -8px 20px rgba(0,0,0,0.12);
+  font-size: 12px;
 }
 
-.nav span{
-  font-size:22px;
-  display:block;
+.nav-item {
+  text-align: center;
+  color: #444;
+}
+
+.nav-item span {
+  display: block;
+  font-size: 22px;
 }
 </style>
 </head>
@@ -223,65 +94,27 @@ html,body{
 <div class="app">
 
   <!-- TOP -->
-  <div class="top">
-
-    <div class="header">
-      <div class="avatar"></div>
-      <div class="username">Alex</div>
+  <div class="top-card">
+    <div>
+      <div class="balance-text">Balance</div>
+      <div class="balance-amount">$0.00</div>
     </div>
-
-    <div class="balance-box">
-      <div>
-        <div class="balance-info">Balance</div>
-        <div class="balance-amount">$0.00</div>
-      </div>
-      <div class="balance-actions">
-        <div class="action">Withdraw</div>
-        <div class="action">Deposit</div>
-      </div>
+    <div class="balance-actions">
+      <div class="action-btn">Withdraw</div>
+      <div class="action-btn">Deposit</div>
     </div>
-
-    <div class="solar-wrap">
-      <div class="solar">
-        <div class="sun"></div>
-
-        <div class="orbit earth">
-          <div class="earth-body">
-            <div class="orbit moon">
-              <div class="moon-body"></div>
-            </div>
-          </div>
-        </div>
-
-      </div>
-    </div>
-
   </div>
 
-  <!-- CONTENT -->
-  <div class="content">
+  <!-- WHITE AREA -->
+  <div class="main"></div>
 
-    <div class="tasks">
-      <div class="task">
-        <div class="task-icon t1">1</div> Task 1
-      </div>
-      <div class="task">
-        <div class="task-icon t2">2</div> Task 2
-      </div>
-      <div class="task">
-        <div class="task-icon t3">3</div> Task 3
-      </div>
-    </div>
-
-  </div>
-
-  <!-- NAV -->
+  <!-- BOTTOM NAV -->
   <div class="nav">
-    <div><span>🏠</span>Home</div>
-    <div><span>📝</span>Tasks</div>
-    <div><span>💼</span>Wallet</div>
-    <div><span>👥</span>Referral</div>
-    <div><span>⭐</span>VIP</div>
+    <div class="nav-item"><span>🏠</span>Home</div>
+    <div class="nav-item"><span>📝</span>Tasks</div>
+    <div class="nav-item"><span>💼</span>Wallet</div>
+    <div class="nav-item"><span>👥</span>Referral</div>
+    <div class="nav-item"><span>⭐</span>VIP</div>
   </div>
 
 </div>
