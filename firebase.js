@@ -1,50 +1,25 @@
-// Firebase v9 Modular SDK
-import { initializeApp } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-app.js";
-import {
-  getAuth,
-  createUserWithEmailAndPassword,
-  signInWithEmailAndPassword,
-  signOut,
-  onAuthStateChanged
-} from "https://www.gstatic.com/firebasejs/9.23.0/firebase-auth.js";
+// -------------------------
+// Firebase v10 CDN imports
+// -------------------------
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.0/firebase-app.js";
+import { getFirestore } from "https://www.gstatic.com/firebasejs/10.7.0/firebase-firestore.js";
+import { getAuth } from "https://www.gstatic.com/firebasejs/10.7.0/firebase-auth.js";
 
-import {
-  getFirestore,
-  doc,
-  setDoc,
-  getDoc,
-  updateDoc,
-  addDoc,
-  collection,
-  onSnapshot
-} from "https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore.js";
-
-// Your Firebase config
+// -------------------------
+// Your Firebase Config
+// -------------------------
 const firebaseConfig = {
-  apiKey: "AIzaSyAH7t_OO9N5rzXda0sU_rUqM-x0RDEiZtA",
-  authDomain: "primeinvestproject-aa94a.firebaseapp.com",
-  projectId: "primeinvestproject-aa94a",
-  storageBucket: "primeinvestproject-aa94a.appspot.com", // ✅ FIXED
-  messagingSenderId: "990540338824",
-  appId: "1:990540338824:web:ca0cc230736f078b72713d"
+  apiKey: "AIzaSyA1HZLZRY9UADNnDVBnB5nJ3mZyqqP4iY",
+  authDomain: "primeinvestproject2.firebaseapp.com",
+  projectId: "primeinvestproject2",
+  storageBucket: "primeinvestproject2.appspot.com",
+  messagingSenderId: "798977477628",
+  appId: "1:798977477628:web:c97d1fbd6da6e5b585c5f1"
 };
 
+// -------------------------
 // Initialize Firebase
+// -------------------------
 export const app = initializeApp(firebaseConfig);
-export const auth = getAuth(app);
 export const db = getFirestore(app);
-
-// Export Firebase functions to other files
-export {
-  createUserWithEmailAndPassword,
-  signInWithEmailAndPassword,
-  signOut,
-  onAuthStateChanged,
-  doc,
-  setDoc,
-  getDoc,
-  updateDoc,
-  addDoc,
-  collection,
-  onSnapshot
-};
+export const auth = getAuth(app);
