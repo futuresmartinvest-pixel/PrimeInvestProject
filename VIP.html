@@ -8,16 +8,23 @@
 <style>
 body{
   margin:0;
-  font-family:system-ui,sans-serif;
-  background:#f5f5f5;
+  font-family: system-ui, sans-serif;
+  background:#f4f4f4;
 }
+
 .header{
-  background:#b7ff2c;
-  padding:20px;
+  background:#111;
+  color:#fff;
+  padding:18px;
   font-size:22px;
   font-weight:700;
+  text-align:center;
 }
-.container{padding:16px;}
+
+.container{
+  padding:16px;
+}
+
 .vip-card{
   background:#fff;
   border-radius:16px;
@@ -25,27 +32,53 @@ body{
   margin-bottom:14px;
   box-shadow:0 4px 12px rgba(0,0,0,0.08);
 }
+
+.vip-title{
+  font-size:18px;
+  font-weight:700;
+}
+
+.vip-info{
+  margin-top:6px;
+  color:#555;
+}
+
 .vip-btn{
-  margin-top:12px;
+  margin-top:14px;
   background:#000;
   color:#fff;
   border:none;
-  padding:12px;
+  padding:14px;
   width:100%;
   border-radius:12px;
   font-size:16px;
+  cursor:pointer;
 }
-.vip-btn:disabled{background:#999;}
-.status{margin-top:8px;font-weight:600;}
+
+.vip-btn:hover{
+  opacity:0.9;
+}
+
+.back{
+  padding:14px;
+  display:block;
+  text-decoration:none;
+  color:#000;
+}
 </style>
 </head>
 
 <body>
 
 <div class="header">VIP Membership</div>
+<a class="back" href="index.html">← Back to Home</a>
+
 <div class="container" id="vipList"></div>
 
-<script>
+<script type="module">
+import { auth } from "./firebase.js";
+import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
+
 const vipPlans = [
  {id:1, price:30, rate:2.33},
  {id:2, price:100, rate:3.33},
@@ -57,68 +90,49 @@ const vipPlans = [
  {id:8, price:99999, rate:7.33},
 ];
 
-let wallet = JSON.parse(localStorage.getItem("wallet")) || {balance:0};
-let userVIP = JSON.parse(localStorage.getItem("userVIP")) || {};
+const vipList = document.getElementById("vipList");
 
-function applyDailyProfit(){
-  const now = Date.now();
-  Object.values(userVIP).forEach(vip=>{
-    if(vip.status!=="active") return;
-    if(now > vip.expiry){
-      vip.status="expired";
-      return;
-    }
-    if(now - vip.lastProfit >= 86400000){
-      wallet.balance += vip.dailyProfit;
-      vip.lastProfit = now;
-    }
-  });
-  localStorage.setItem("wallet", JSON.stringify(wallet));
-  localStorage.setItem("userVIP", JSON.stringify(userVIP));
-}
-applyDailyProfit();
-
-const list = document.getElementById("vipList");
-
-vipPlans.forEach(vip=>{
-  const v = userVIP[vip.id];
-  const div = document.createElement("div");
-  div.className="vip-card";
-
-  let statusText = "Not active";
-  if(v){
-    if(v.status==="active") statusText="✅ Active";
-    if(v.status==="pending") statusText="⏳ Pending approval";
-    if(v.status==="expired") statusText="❌ Expired";
+onAuthStateChanged(auth, (user)=>{
+  if(!user){
+    location.href="auth.html";
+    return;
   }
 
-  div.innerHTML=`
-    <h3>VIP ${vip.id}</h3>
-    <div>Price: $${vip.price}</div>
-    <div>Daily Profit: ${(vip.price*vip.rate/100).toFixed(2)} USD</div>
-    <div class="status">${statusText}</div>
-    <button class="vip-btn" ${v?"disabled":""}>Activate VIP</button>
-  `;
+  vipPlans.forEach(vip=>{
+    const div = document.createElement("div");
+    div.className="vip-card";
 
-  if(!v){
-    div.querySelector("button").onclick=()=>{
-      userVIP[vip.id]={
-        status:"pending",
-        price:vip.price,
-        dailyProfit:(vip.price*vip.rate/100),
-        start:0,
-        expiry:0,
-        lastProfit:0
-      };
-      localStorage.setItem("userVIP",JSON.stringify(userVIP));
-      window.open("https://t.me/SmartInvest202","_blank");
-      alert("Send deposit proof to Telegram for approval");
-      location.reload();
+    div.innerHTML = `
+      <div class="vip-title">VIP ${vip.id}</div>
+      <div class="vip-info">Price: $${vip.price}</div>
+      <div class="vip-info">Daily Profit: ${vip.rate}%</div>
+      <button class="vip-btn">Activate VIP</button>
+    `;
+
+    div.querySelector("button").onclick = ()=>{
+      const msg = 
+`Hello Admin 👋
+
+I want to activate VIP ${vip.id}
+
+Price: $${vip.price}
+Daily Profit: ${vip.rate}%
+
+My Email: ${user.email}
+My UID: ${user.uid}
+
+I have attached the payment screenshot below.`;
+
+      const tgUrl = 
+`https://t.me/SmartInvest202?text=${encodeURIComponent(msg)}`;
+
+      window.open(tgUrl, "_blank");
     };
-  }
 
-  list.appendChild(div);
+    vipList.appendChild(div);
+  });
 });
 </script>
+
 </body>
 </html>
