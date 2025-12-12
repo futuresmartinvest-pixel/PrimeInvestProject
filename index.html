@@ -3,150 +3,238 @@
 <head>
 <meta charset="UTF-8">
 <title>PrimeGlobalPro</title>
-<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
 <style>
-:root{
-  --green:#C9FF3D;
-  --dark:#0d0f0c;
-  --black:#000;
-  --white:#fff;
+:root {
+  --purple: #5b2fc2;
+  --purple-light: #6f4bcf;
+  --purple-card: #7452c8;
+  --white: #ffffff;
+  --muted: rgba(255,255,255,0.7);
 }
 
-*{
-  box-sizing:border-box;
-  font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+* {
+  box-sizing: border-box;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
 }
 
-body{
-  margin:0;
-  background:#111;
+body {
+  margin: 0;
+  background: var(--purple);
+  color: white;
 }
 
-.app{
-  max-width:420px;
-  margin:auto;
-  min-height:100vh;
-  background:#111;
-  display:flex;
-  flex-direction:column;
+/* HEADER */
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 16px;
 }
 
-/* TOP GREEN CARD */
-.balance-card{
-  background:var(--green);
-  margin:16px;
-  padding:20px;
-  border-radius:28px;
+.user {
+  display: flex;
+  align-items: center;
+  gap: 10px;
 }
 
-.balance-card small{
-  font-weight:500;
+.avatar {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: orange;
 }
 
-.balance{
-  font-size:40px;
-  font-weight:800;
-  margin:8px 0 14px;
+.menu {
+  font-size: 24px;
 }
 
-.actions{
-  display:flex;
-  justify-content:space-between;
+/* BALANCE CARD */
+.balance-card {
+  margin: 16px;
+  padding: 20px;
+  border-radius: 20px;
+  background: var(--purple-card);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
 }
 
-.action{
-  background:#000;
-  color:#fff;
-  border-radius:14px;
-  padding:10px 14px;
-  font-size:13px;
-  text-align:center;
+.balance-left small {
+  color: var(--muted);
 }
 
-/* DARK BODY */
-.body{
-  flex:1;
-  background:#0b0b0b;
-  border-top-left-radius:28px;
-  border-top-right-radius:28px;
-  padding:18px;
-  color:white;
+.balance-left h1 {
+  margin: 8px 0 0;
+  font-size: 36px;
 }
 
-.section-title{
-  font-size:14px;
-  opacity:.7;
-  margin-bottom:12px;
+.balance-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
 }
 
-.item{
-  background:#141414;
-  padding:14px;
-  border-radius:14px;
-  margin-bottom:10px;
+.action-btn {
+  padding: 10px 18px;
+  border-radius: 14px;
+  background: rgba(255,255,255,0.2);
+  color: white;
+  border: none;
+  font-size: 14px;
+}
+
+/* BANK CARD */
+.bank-card {
+  margin: 16px;
+  padding: 20px;
+  border-radius: 20px;
+  background: white;
+  color: #333;
+}
+
+.chip {
+  width: 40px;
+  height: 30px;
+  background: #eee;
+  border-radius: 6px;
+  margin-bottom: 16px;
+}
+
+.card-number {
+  font-size: 20px;
+  letter-spacing: 2px;
+  margin-bottom: 8px;
+}
+
+/* EXPENSES */
+.section {
+  padding: 0 16px;
+}
+
+.section h3 {
+  margin: 20px 0 10px;
+  font-weight: normal;
+}
+
+.expense {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 14px;
+}
+
+.icon {
+  width: 36px;
+  height: 36px;
+  border-radius: 12px;
+  background: rgba(255,255,255,0.2);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: bold;
+}
+
+.expense-left {
+  display: flex;
+  align-items: center;
+  gap: 12px;
 }
 
 /* BOTTOM NAV */
-.nav{
-  background:var(--green);
-  display:flex;
-  justify-content:space-around;
-  align-items:center;
-  padding:10px 0;
-  border-top-left-radius:24px;
-  border-top-right-radius:24px;
+.bottom-nav {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: white;
+  display: flex;
+  justify-content: space-around;
+  padding: 10px 0;
+  border-top-left-radius: 20px;
+  border-top-right-radius: 20px;
 }
 
-.nav-item{
-  font-size:12px;
-  text-align:center;
+.nav-item {
+  text-align: center;
+  font-size: 12px;
+  color: #666;
 }
 
-.center-btn{
-  width:56px;
-  height:56px;
-  background:#000;
-  border-radius:50%;
-  color:#fff;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  margin-top:-30px;
+.nav-item.active {
+  color: var(--purple);
 }
 </style>
 </head>
 
 <body>
-<div class="app">
 
-  <!-- GREEN BALANCE -->
-  <div class="balance-card">
-    <small>Total Balance</small>
-    <div class="balance">$0.00</div>
-    <div class="actions">
-      <div class="action">Deposit</div>
-      <div class="action">Withdraw</div>
-      <div class="action">Transfer</div>
-      <div class="action">Crypto</div>
-    </div>
+<!-- HEADER -->
+<div class="header">
+  <div class="user">
+    <div class="avatar"></div>
+    <strong>Alex</strong>
   </div>
-
-  <!-- DARK SECTION -->
-  <div class="body">
-    <div class="section-title">Recent Activity</div>
-    <div class="item">No transactions yet</div>
-  </div>
-
-  <!-- NAV BAR -->
-  <div class="nav">
-    <div class="nav-item">Home</div>
-    <div class="nav-item">Tasks</div>
-    <div class="center-btn">+</div>
-    <div class="nav-item">Referral</div>
-    <div class="nav-item">VIP</div>
-  </div>
-
+  <div class="menu">≡</div>
 </div>
+
+<!-- BALANCE -->
+<div class="balance-card">
+  <div class="balance-left">
+    <small>Balance</small>
+    <h1>$0.00</h1>
+  </div>
+  <div class="balance-actions">
+    <button class="action-btn">Withdraw</button>
+    <button class="action-btn">Send</button>
+  </div>
+</div>
+
+<!-- BANK CARD -->
+<div class="bank-card">
+  <div class="chip"></div>
+  <div class="card-number">1234 5678 9123 0000</div>
+  <small>Card Holder</small>
+</div>
+
+<!-- EXPENSES -->
+<div class="section">
+  <h3>This month expenses</h3>
+
+  <div class="expense">
+    <div class="expense-left">
+      <div class="icon">S</div>
+      <span>Shopping</span>
+    </div>
+    <span>$8.00</span>
+  </div>
+
+  <div class="expense">
+    <div class="expense-left">
+      <div class="icon">M</div>
+      <span>Movies</span>
+    </div>
+    <span>$1.00</span>
+  </div>
+
+  <div class="expense">
+    <div class="expense-left">
+      <div class="icon">F</div>
+      <span>Food</span>
+    </div>
+    <span>$3.00</span>
+  </div>
+</div>
+
+<!-- BOTTOM NAV -->
+<div class="bottom-nav">
+  <div class="nav-item active">🏠<br>Home</div>
+  <div class="nav-item">📝<br>Tasks</div>
+  <div class="nav-item">💼<br>Wallet</div>
+  <div class="nav-item">👥<br>Referral</div>
+  <div class="nav-item">⭐<br>VIP</div>
+</div>
+
 </body>
 </html>
