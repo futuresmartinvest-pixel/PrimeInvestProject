@@ -1,47 +1,69 @@
+// ---------------------------------------------------------
+// Firebase Imports (v10 CDN)
+// ---------------------------------------------------------
 import { auth, db, storage } from "./firebase.js";
 
 import {
   onAuthStateChanged
-} from "https://www.gstatic.com/firebasejs/9.23.0/firebase-auth.js";
+} from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
 
 import {
   collection,
-  doc,
   addDoc,
-  updateDoc,
+  doc,
   deleteDoc,
+  updateDoc,
+  getDocs,
   onSnapshot
-} from "https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore.js";
+} from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
 import {
   ref,
   uploadBytes,
   getDownloadURL
-} from "https://www.gstatic.com/firebasejs/9.23.0/firebase-storage.js";
+} from "https://www.gstatic.com/firebasejs/10.8.0/firebase-storage.js";
 
-// ----------------------------
-// ADMIN UID
-// ----------------------------
-const ADMIN_UID = "za934MEck4Qd3IK2pHqplS6WPBe2";
-document.getElementById("adminUID").innerText = ADMIN_UID;
+// ---------------------------------------------------------
+// ADMIN UID — ONLY YOU CAN MANAGE TASKS
+// ---------------------------------------------------------
+const ADMIN_UID = "3xM6WyDqPTVkX0L4sOTNQ8f4VWO2"; // your admin UID
 
-// ----------------------------
-// AUTH CHECK
-// ----------------------------
+document.getElementById("adminUID").textContent = ADMIN_UID;
+
+// ---------------------------------------------------------
+// Check Admin Login
+// ---------------------------------------------------------
 onAuthStateChanged(auth, (user) => {
-  if (!user || user.uid !== ADMIN_UID) {
-    alert("ACCESS DENIED — Admin only");
+  if (!user) {
+    alert("Please log in as admin.");
     location.href = "index.html";
-  } else {
-    loadTasks();
+    return;
   }
+
+  if (user.uid !== ADMIN_UID) {
+    alert("ACCESS DENIED. Admin only.");
+    location.href = "index.html";
+    return;
+  }
+
+  loadTasks();
 });
 
-// ----------------------------
-// CREATE NEW TASK
-// ----------------------------
-document.getElementById("createTaskBtn").addEventListener("click", async () => {
+// ---------------------------------------------------------
+// Upload Image to Firebase Storage
+// ---------------------------------------------------------
+async function uploadTaskImage(file) {
+  const path = `tasks/${Date.now()}_${file.name}`;
+  const storageRef = ref(storage, path);
 
+  await uploadBytes(storageRef, file);
+  return await getDownloadURL(storageRef);
+}
+
+// ---------------------------------------------------------
+// Create New Task
+// ---------------------------------------------------------
+document.getElementById("createTaskBtn").onclick = async () => {
   const title = document.getElementById("taskTitle").value.trim();
   const description = document.getElementById("taskDescription").value.trim();
   const reward = parseFloat(document.getElementById("taskReward").value);
@@ -50,66 +72,91 @@ document.getElementById("createTaskBtn").addEventListener("click", async () => {
   const imageFile = document.getElementById("taskImage").files[0];
 
   if (!title || !description || !reward || !timer || !link || !imageFile) {
-    return alert("Please fill all fields and select an image.");
+    alert("Fill all fields and select an image.");
+    return;
   }
 
   // Upload image
-  const imgRef = ref(storage, "taskImages/" + Date.now() + "_" + imageFile.name);
-  await uploadBytes(imgRef, imageFile);
-  const imageUrl = await getDownloadURL(imgRef);
+  const imageURL = await uploadTaskImage(imageFile);
 
-  // Save task
+  // Save task in Firestore
   await addDoc(collection(db, "tasks"), {
     title,
     description,
     reward,
     timer,
-    linkUrl: link,
-    imageUrl,
+    link,
+    image: imageURL,
     createdAt: Date.now()
   });
 
-  alert("Task created successfully!");
-  document.querySelector("input, textarea").value = "";
-});
+  alert("Task Created!");
+  clearForm();
+};
 
-// ----------------------------
-// LOAD TASKS REAL-TIME
-// ----------------------------
+// ---------------------------------------------------------
+// Clear form after submit
+// ---------------------------------------------------------
+function clearForm() {
+  document.getElementById("taskTitle").value = "";
+  document.getElementById("taskDescription").value = "";
+  document.getElementById("taskReward").value = "";
+  document.getElementById("taskTimer").value = "";
+  document.getElementById("taskLink").value = "";
+  document.getElementById("taskImage").value = "";
+}
+
+// ---------------------------------------------------------
+// Load Existing Tasks (Real-time)
+// ---------------------------------------------------------
 function loadTasks() {
-  const list = document.getElementById("taskList");
+  const taskList = document.getElementById("taskList");
 
   onSnapshot(collection(db, "tasks"), (snapshot) => {
-    list.innerHTML = "";
+    taskList.innerHTML = "";
 
-    snapshot.forEach((docSnap) => {
-      const t = docSnap.data();
+    snapshot.docs.forEach((docSnap) => {
+      const task = docSnap.data();
+      const id = docSnap.id;
 
-      const box = document.createElement("div");
-      box.className = "task-card";
+      const card = document.createElement("div");
+      card.className = "task-card";
 
-      box.innerHTML = `
-        <img src="${t.imageUrl}">
-        <h3>${t.title}</h3>
-        <p>${t.description}</p>
-        <p><b>Reward:</b> $${t.reward.toFixed(2)}</p>
-        <p><b>Timer:</b> ${t.timer} seconds</p>
-        <p><b>Link:</b> ${t.linkUrl}</p>
-
-        <button class="delete-btn" onclick="deleteTask('${docSnap.id}')">Delete Task</button>
+      card.innerHTML = `
+        <img src="${task.image}" />
+        <h3>${task.title}</h3>
+        <p>${task.description}</p>
+        <p><b>Reward:</b> $${task.reward}</p>
+        <p><b>Timer:</b> ${task.timer} sec</p>
+        <button class="edit-btn" onclick="editTask('${id}')">Edit</button>
+        <button class="delete-btn" onclick="deleteTask('${id}')">Delete</button>
       `;
 
-      list.appendChild(box);
+      taskList.appendChild(card);
     });
   });
 }
 
-// ----------------------------
-// DELETE TASK
-// ----------------------------
+// ---------------------------------------------------------
+// Delete Task
+// ---------------------------------------------------------
 window.deleteTask = async function (taskId) {
   if (!confirm("Delete this task?")) return;
 
   await deleteDoc(doc(db, "tasks", taskId));
   alert("Task deleted.");
+};
+
+// ---------------------------------------------------------
+// Edit Task (Simple Example)
+// ---------------------------------------------------------
+window.editTask = async function (taskId) {
+  const newTitle = prompt("Enter new title:");
+  if (!newTitle) return;
+
+  await updateDoc(doc(db, "tasks", taskId), {
+    title: newTitle
+  });
+
+  alert("Task updated.");
 };
