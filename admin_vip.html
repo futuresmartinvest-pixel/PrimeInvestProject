@@ -10,33 +10,38 @@ body{
   margin:0;
   padding:16px;
   font-family:system-ui;
-  background:#0f172a;
+  background:#0b1220;
   color:#fff;
 }
-h2{margin-bottom:12px}
+h2{margin-bottom:16px}
 .card{
-  background:#1e293b;
-  border-radius:14px;
-  padding:14px;
-  margin-bottom:12px;
+  background:#141c2f;
+  border-radius:16px;
+  padding:16px;
+  margin-bottom:14px;
 }
-.card b{font-size:16px}
-.row{opacity:.85;margin-top:4px}
+.card b{font-size:18px}
+.card small{opacity:.8}
+.row{margin-top:6px}
 button{
-  margin-top:10px;
-  padding:10px 14px;
+  margin-top:12px;
+  padding:10px 16px;
   border:none;
-  border-radius:10px;
+  border-radius:12px;
   background:#22c55e;
-  font-weight:800;
+  font-weight:900;
   cursor:pointer;
+}
+button.reject{
+  background:#ef4444;
+  margin-left:8px;
 }
 </style>
 </head>
 
 <body>
 
-<h2>VIP Requests (Admin)</h2>
+<h2>VIP Deposit Requests</h2>
 <div id="list">Loading…</div>
 
 <script type="module">
@@ -44,7 +49,7 @@ import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebas
 import {
   getFirestore,
   collection,
-  onSnapshot,
+  getDocs,
   doc,
   updateDoc,
   serverTimestamp
@@ -63,46 +68,72 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 
-/* VIP RATES */
-const VIP_RATES = {
-  1:2.33, 2:3.33, 3:3.66, 4:3.99,
-  5:4.33, 6:4.99, 7:6.99, 8:7.33
+/* VIP PLANS */
+const VIPS = {
+  1:{rate:2.33},
+  2:{rate:3.33},
+  3:{rate:3.66},
+  4:{rate:3.99},
+  5:{rate:4.33},
+  6:{rate:4.99},
+  7:{rate:6.99},
+  8:{rate:7.33}
 };
 
 const list = document.getElementById("list");
 
-/* REALTIME LISTENER */
-onSnapshot(collection(db,"vip_requests"), snap=>{
-  list.innerHTML="";
+/* LOAD REQUESTS */
+async function load(){
+  const snap = await getDocs(collection(db,"vip_requests"));
+  list.innerHTML = "";
+
+  if(snap.empty){
+    list.innerHTML = "No pending requests.";
+    return;
+  }
+
   snap.forEach(docSnap=>{
     const d = docSnap.data();
     if(d.status !== "pending") return;
 
-    const div=document.createElement("div");
+    const div = document.createElement("div");
     div.className="card";
-    div.innerHTML=`
-      <b>User ID:</b> ${d.userId}<br>
-      <div class="row">VIP: ${d.vipLevel}</div>
-      <div class="row">Price: $${d.price}</div>
-      <button>Approve VIP</button>
+    div.innerHTML = `
+      <b>VIP ${d.vipLevel}</b>
+      <div class="row">User ID: <small>${d.userId}</small></div>
+      <div class="row">Amount: $${d.price}</div>
+      <div class="row">Daily Rate: ${VIPS[d.vipLevel].rate}%</div>
+      <button>Approve</button>
+      <button class="reject">Reject</button>
     `;
 
+    /* APPROVE */
     div.querySelector("button").onclick = async ()=>{
       await updateDoc(doc(db,"vip_requests",docSnap.id),{
         status:"approved",
-        approvedAt: serverTimestamp(),
-        rate: VIP_RATES[d.vipLevel]
+        approvedAt: serverTimestamp()
       });
-      alert("VIP Approved");
+
+      alert("VIP approved");
+      load();
+    };
+
+    /* REJECT */
+    div.querySelector(".reject").onclick = async ()=>{
+      await updateDoc(doc(db,"vip_requests",docSnap.id),{
+        status:"rejected",
+        rejectedAt: serverTimestamp()
+      });
+
+      alert("VIP rejected");
+      load();
     };
 
     list.appendChild(div);
   });
+}
 
-  if(!list.innerHTML){
-    list.innerHTML="No pending requests";
-  }
-});
+load();
 </script>
 
 </body>
