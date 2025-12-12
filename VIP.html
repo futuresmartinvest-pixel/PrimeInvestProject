@@ -1,104 +1,119 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>VIP Plans</title>
+<meta charset="UTF-8">
+<title>VIP Membership</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
 
 <style>
-  body {
-    font-family: Arial, sans-serif;
-    background: #f7f7f7;
-    margin: 0;
-    padding: 15px;
-  }
+body{
+  margin:0;
+  font-family: system-ui, sans-serif;
+  background:#f5f5f5;
+}
 
-  h1 {
-    text-align: center;
-    margin-bottom: 15px;
-  }
+.header{
+  background:#b7ff2c;
+  padding:20px;
+  font-size:22px;
+  font-weight:700;
+}
 
-  .vip-card {
-    background: white;
-    border-radius: 12px;
-    padding: 15px;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-    margin-bottom: 15px;
-  }
+.container{
+  padding:16px;
+}
 
-  .vip-card h2 {
-    margin: 0;
-    font-size: 22px;
-  }
+.vip-card{
+  background:#fff;
+  border-radius:16px;
+  padding:16px;
+  margin-bottom:14px;
+  box-shadow:0 4px 12px rgba(0,0,0,0.08);
+}
 
-  .price {
-    font-size: 18px;
-    margin-top: 5px;
-    color: #444;
-  }
+.vip-title{
+  font-size:18px;
+  font-weight:700;
+}
 
-  .profit {
-    font-size: 16px;
-    color: green;
-    margin-bottom: 10px;
-  }
+.vip-info{
+  margin-top:6px;
+  color:#555;
+}
 
-  .btn {
-    width: 100%;
-    padding: 12px;
-    background: #007bff;
-    color: white;
-    border: none;
-    border-radius: 8px;
-    font-size: 16px;
-    cursor: pointer;
-  }
+.vip-btn{
+  margin-top:12px;
+  background:#000;
+  color:#fff;
+  border:none;
+  padding:12px;
+  width:100%;
+  border-radius:12px;
+  font-size:16px;
+}
+
+.vip-btn:disabled{
+  background:#999;
+}
+
+.back{
+  padding:12px;
+  display:block;
+  text-decoration:none;
+  color:#000;
+}
 </style>
 </head>
 
 <body>
 
-<h1>VIP Plans</h1>
+<div class="header">VIP Membership</div>
+<a class="back" href="index.html">← Back to Home</a>
 
-<div id="vipList"></div>
+<div class="container" id="vipList"></div>
 
-<script type="module">
-  import { auth } from "./firebase.js";
+<script>
+const vipPlans = [
+ {id:1, price:30, rate:2.33},
+ {id:2, price:100, rate:3.33},
+ {id:3, price:499, rate:3.66},
+ {id:4, price:999, rate:3.99},
+ {id:5, price:4999, rate:4.33},
+ {id:6, price:9999, rate:4.99},
+ {id:7, price:49999, rate:6.99},
+ {id:8, price:99999, rate:7.33},
+];
 
-  const vipPlans = [
-    { id: "vip1", price: 30, percent: "2.33%" },
-    { id: "vip2", price: 100, percent: "3.33%" },
-    { id: "vip3", price: 499, percent: "3.66%" },
-    { id: "vip4", price: 999, percent: "3.99%" },
-    { id: "vip5", price: 4999, percent: "4.33%" },
-    { id: "vip6", price: 9999, percent: "4.99%" },
-    { id: "vip7", price: 49999, percent: "6.99%" },
-    { id: "vip8", price: 99999, percent: "7.33%" }
-  ];
+const userVIP = JSON.parse(localStorage.getItem("userVIP")) || {};
 
-  const container = document.getElementById("vipList");
+const vipList = document.getElementById("vipList");
 
-  vipPlans.forEach(vip => {
-    const div = document.createElement("div");
-    div.className = "vip-card";
+vipPlans.forEach(vip=>{
+  const active = userVIP[vip.id];
 
-    div.innerHTML = `
-      <h2>${vip.id.toUpperCase()}</h2>
-      <div class="price">Price: $${vip.price}</div>
-      <div class="profit">Daily Profit: ${vip.percent}</div>
-      <button class="btn" onclick="selectVIP('${vip.id}', ${vip.price})">Activate VIP</button>
-    `;
+  const div = document.createElement("div");
+  div.className="vip-card";
 
-    container.appendChild(div);
-  });
+  div.innerHTML = `
+    <div class="vip-title">VIP ${vip.id}</div>
+    <div class="vip-info">Price: $${vip.price}</div>
+    <div class="vip-info">Daily Rate: ${vip.rate}%</div>
+    <button class="vip-btn" ${active?"disabled":""}>
+      ${active ? "Activated" : "Activate VIP"}
+    </button>
+  `;
 
-  window.selectVIP = (vipId, price) => {
-    const user = auth.currentUser;
-    if (!user) { alert("Please login first"); return; }
+  if(!active){
+    div.querySelector("button").onclick = ()=>{
+      userVIP[vip.id] = "pending";
+      localStorage.setItem("userVIP", JSON.stringify(userVIP));
+      alert("VIP request sent. Please complete deposit and wait for admin approval.");
+      location.reload();
+    };
+  }
 
-    // Redirect to upload screenshot page
-    location.href = `upload_proof.html?vip=${vipId}&price=${price}`;
-  };
+  vipList.appendChild(div);
+});
 </script>
 
 </body>
