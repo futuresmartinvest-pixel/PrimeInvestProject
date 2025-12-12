@@ -1,101 +1,149 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Admin VIP Panel – PrimeGlobalPro</title>
-  <style>
-    body {
-      font-family: system-ui, -apple-system, sans-serif;
-      background: #0b0b0b;
-      color: #fff;
-      margin: 0;
-      padding: 20px;
-    }
-    h1 {
-      text-align: center;
-      color: #b7ff2c;
-    }
-    .card {
-      background: #1c1c1c;
-      padding: 16px;
-      border-radius: 12px;
-      margin-bottom: 12px;
-      box-shadow: 0 0 10px rgba(0,0,0,0.4);
-    }
-    button {
-      background: #b7ff2c;
-      color: #000;
-      font-weight: 700;
-      padding: 8px 16px;
-      border: none;
-      border-radius: 8px;
-      cursor: pointer;
-    }
-    button:hover {
-      background: #d9ff6e;
-    }
-  </style>
+<meta charset="UTF-8" />
+<title>Admin VIP Panel</title>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+
+<style>
+body {
+  margin: 0;
+  padding: 16px;
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+  background: #0f172a;
+  color: #fff;
+}
+
+h2 {
+  margin-bottom: 16px;
+}
+
+.card {
+  background: #1e293b;
+  border-radius: 14px;
+  padding: 14px;
+  margin-bottom: 12px;
+}
+
+.card div {
+  margin-bottom: 6px;
+}
+
+button {
+  background: #22c55e;
+  color: #000;
+  border: none;
+  padding: 10px 14px;
+  border-radius: 10px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+button:disabled {
+  background: #555;
+  cursor: not-allowed;
+}
+</style>
 </head>
+
 <body>
-  <h1>Admin VIP Approvals</h1>
-  <div id="vipList">Loading...</div>
 
-  <!-- Firebase -->
-  <script type="module">
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-app.js";
-    import { getFirestore, collection, getDocs, updateDoc, doc, serverTimestamp } 
-      from "https://www.gstatic.com/firebasejs/11.0.1/firebase-firestore.js";
+<h2>🔥 VIP Requests (Admin)</h2>
+<div id="vipList"></div>
 
-    // ✅ Your Firebase config (paste yours below if changed)
-    const firebaseConfig = {
-      apiKey: "YOUR_API_KEY",
-      authDomain: "YOUR_PROJECT_ID.firebaseapp.com",
-      projectId: "YOUR_PROJECT_ID",
-      storageBucket: "YOUR_PROJECT_ID.appspot.com",
-      messagingSenderId: "YOUR_SENDER_ID",
-      appId: "YOUR_APP_ID"
-    };
+<!-- ================= FIREBASE ================= -->
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+import {
+  getFirestore,
+  collection,
+  getDocs,
+  updateDoc,
+  setDoc,
+  doc,
+  serverTimestamp
+} from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
-    const app = initializeApp(firebaseConfig);
-    const db = getFirestore(app);
+/* 🔐 FIREBASE CONFIG */
+const firebaseConfig = {
+  apiKey: "AIzaSyA1HZLZRY9UADNnDVBnoBIlG3b-bCkojxs",
+  authDomain: "primeinvestproject2.firebaseapp.com",
+  projectId: "primeinvestproject2",
+  storageBucket: "primeinvestproject2.firebasestorage.app",
+  messagingSenderId: "798977477628",
+  appId: "1:798977477628:web:c97d1fba72ad7865864079"
+};
 
-    const vipList = document.getElementById("vipList");
+/* INIT */
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
 
-    async function loadRequests() {
-      vipList.innerHTML = "Loading...";
-      const snap = await getDocs(collection(db, "vip_requests"));
-      vipList.innerHTML = "";
+const vipList = document.getElementById("vipList");
 
-      snap.forEach((docSnap) => {
-        const data = docSnap.data();
-        const div = document.createElement("div");
-        div.className = "card";
+/* ================= LOAD REQUESTS ================= */
+async function loadRequests() {
+  vipList.innerHTML = "";
 
-        div.innerHTML = `
-          <div><b>User:</b> ${data.userId}</div>
-          <div><b>VIP Level:</b> ${data.vipLevel}</div>
-          <div><b>Price:</b> $${data.price}</div>
-          <div><b>Status:</b> ${data.status}</div>
-          ${data.status === "pending" ? `<button>Approve</button>` : ""}
-        `;
+  const snap = await getDocs(collection(db, "vip_requests"));
 
-        if (data.status === "pending") {
-          div.querySelector("button").onclick = async () => {
-            await updateDoc(doc(db, "vip_requests", docSnap.id), {
-              status: "approved",
-              approvedAt: serverTimestamp()
-            });
-            alert("✅ VIP Approved");
-            loadRequests();
-          };
-        }
+  if (snap.empty) {
+    vipList.innerHTML = "<p>No VIP requests</p>";
+    return;
+  }
 
-        vipList.appendChild(div);
-      });
+  snap.forEach((docSnap) => {
+    const data = docSnap.data();
+
+    const div = document.createElement("div");
+    div.className = "card";
+
+    div.innerHTML = `
+      <div><b>User ID:</b> ${data.userId}</div>
+      <div><b>VIP Level:</b> ${data.vipLevel}</div>
+      <div><b>Price:</b> $${data.price}</div>
+      <div><b>Status:</b> ${data.status}</div>
+      ${
+        data.status === "pending"
+          ? `<button>Approve VIP</button>`
+          : `<button disabled>Approved</button>`
+      }
+    `;
+
+    if (data.status === "pending") {
+      div.querySelector("button").onclick = async () => {
+        // 1️⃣ Update request status
+        await updateDoc(doc(db, "vip_requests", docSnap.id), {
+          status: "approved",
+          approvedAt: serverTimestamp()
+        });
+
+        // 2️⃣ Activate VIP globally for user
+        await setDoc(
+          doc(db, "users", data.userId),
+          {
+            vip: {
+              level: data.vipLevel,
+              price: data.price,
+              status: "active",
+              startAt: serverTimestamp(),
+              lastProfitAt: serverTimestamp()
+            }
+          },
+          { merge: true }
+        );
+
+        alert("✅ VIP Approved & Activated");
+        loadRequests();
+      };
     }
 
-    loadRequests();
-  </script>
+    vipList.appendChild(div);
+  });
+}
+
+/* RUN */
+loadRequests();
+</script>
+
 </body>
 </html>
