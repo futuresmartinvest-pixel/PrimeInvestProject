@@ -1,16 +1,16 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8" />
+<meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-<title>PrimeGlobalPro – Home</title>
+<title>PrimeGlobalPro</title>
 
 <style>
 :root{
   --bg:#ffffff;
   --text:#000;
-  --green:#22c55e;
-  --glass:rgba(0,0,0,0.06);
+  --green-light:#c9f7d3;
+  --glass:rgba(0,0,0,0.05);
 }
 
 *{box-sizing:border-box}
@@ -23,41 +23,39 @@ body{
   padding-bottom:120px;
 }
 
-/* ===== TOP ===== */
-.top{
-  padding:22px;
+/* ===== BALANCE CARD ===== */
+.balance-card{
+  margin:20px;
+  background:var(--green-light);
+  border-radius:24px;
+  padding:18px;
+}
+
+/* header inside card */
+.card-header{
   display:flex;
   justify-content:space-between;
   align-items:center;
+  margin-bottom:14px;
 }
 
 .user{
   display:flex;
   align-items:center;
-  gap:12px;
+  gap:10px;
+  font-weight:600;
 }
 
 .avatar{
-  width:42px;
-  height:42px;
+  width:38px;
+  height:38px;
   border-radius:50%;
   background:linear-gradient(135deg,#ff9800,#ff5722);
 }
 
-.menu{font-size:26px}
-
-/* ===== BALANCE ===== */
-.balance-card{
-  margin:0 18px;
-  background:var(--green);
-  border-radius:22px;
-  padding:22px;
-  color:#000;
-}
-
-.balance-title{
-  font-size:14px;
-  opacity:.9;
+.menu{
+  font-size:26px;
+  cursor:pointer;
 }
 
 .balance-row{
@@ -82,37 +80,73 @@ body{
   border-radius:12px;
   padding:10px 18px;
   font-size:14px;
+  text-align:center;
 }
 
-/* ===== GLOBAL ANIMATION ===== */
-.globe-wrap{
-  margin:28px auto;
-  width:160px;
-  height:160px;
+/* ===== SOLAR SYSTEM ===== */
+.solar-wrap{
+  margin:30px auto;
+  width:180px;
+  height:180px;
   position:relative;
 }
 
-.globe{
-  width:100%;
-  height:100%;
+.sun{
+  width:26px;
+  height:26px;
+  background:#facc15;
   border-radius:50%;
-  border:4px solid #22c55e;
   position:absolute;
+  top:50%;
+  left:50%;
+  transform:translate(-50%,-50%);
+  box-shadow:0 0 20px #facc15;
 }
 
 .orbit{
   position:absolute;
-  inset:-14px;
+  border:1px dashed rgba(0,0,0,.2);
   border-radius:50%;
-  border:2px dashed #22c55e;
-  animation:spin 12s linear infinite;
+  animation:spin linear infinite;
 }
 
-.orbit2{
-  inset:-28px;
-  animation-duration:18s;
-  opacity:.6;
+.orbit.one{
+  width:90px;
+  height:90px;
+  top:45px;
+  left:45px;
+  animation-duration:6s;
 }
+
+.orbit.two{
+  width:130px;
+  height:130px;
+  top:25px;
+  left:25px;
+  animation-duration:10s;
+}
+
+.orbit.three{
+  width:170px;
+  height:170px;
+  top:5px;
+  left:5px;
+  animation-duration:14s;
+}
+
+.planet{
+  width:10px;
+  height:10px;
+  background:#2563eb;
+  border-radius:50%;
+  position:absolute;
+  top:-5px;
+  left:50%;
+  transform:translateX(-50%);
+}
+
+.orbit.two .planet{background:#16a34a}
+.orbit.three .planet{background:#f59e0b}
 
 @keyframes spin{
   from{transform:rotate(0deg)}
@@ -125,7 +159,6 @@ body{
 }
 
 .section-title{
-  font-size:16px;
   font-weight:600;
   margin-bottom:14px;
 }
@@ -152,7 +185,7 @@ body{
 .t2{background:#16a34a}
 .t3{background:#facc15;color:#000}
 
-/* ===== FLOATING NAV WINDOW ===== */
+/* ===== FLOATING NAV ===== */
 .nav-wrapper{
   position:fixed;
   bottom:18px;
@@ -191,18 +224,17 @@ body{
 
 <body>
 
-<!-- TOP -->
-<div class="top">
-  <div class="user">
-    <div class="avatar"></div>
-    <div>Alex</div>
-  </div>
-  <div class="menu">≡</div>
-</div>
-
 <!-- BALANCE -->
 <div class="balance-card">
-  <div class="balance-title">Balance</div>
+
+  <div class="card-header">
+    <div class="user">
+      <div class="avatar"></div>
+      Alex
+    </div>
+    <div class="menu">⋮</div>
+  </div>
+
   <div class="balance-row">
     <div class="balance-amount">$0.00</div>
     <div class="balance-actions">
@@ -212,11 +244,21 @@ body{
   </div>
 </div>
 
-<!-- GLOBAL ANIMATION -->
-<div class="globe-wrap">
-  <div class="orbit"></div>
-  <div class="orbit orbit2"></div>
-  <div class="globe"></div>
+<!-- SOLAR SYSTEM -->
+<div class="solar-wrap">
+  <div class="sun"></div>
+
+  <div class="orbit one">
+    <div class="planet"></div>
+  </div>
+
+  <div class="orbit two">
+    <div class="planet"></div>
+  </div>
+
+  <div class="orbit three">
+    <div class="planet"></div>
+  </div>
 </div>
 
 <!-- TASKS -->
@@ -225,17 +267,17 @@ body{
 
   <div class="task">
     <div class="task-icon t1">1</div>
-    <div>Task 1</div>
+    Task 1
   </div>
 
   <div class="task">
     <div class="task-icon t2">2</div>
-    <div>Task 2</div>
+    Task 2
   </div>
 
   <div class="task">
     <div class="task-icon t3">3</div>
-    <div>Task 3</div>
+    Task 3
   </div>
 </div>
 
