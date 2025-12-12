@@ -1,17 +1,18 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>PrimeGlobalPro</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PrimeGlobalPro – Home</title>
 
 <style>
 :root{
-  --dark:#2f343b;
-  --blue:#2fa4ff;
-  --bg:#f4f6fb;
-  --text:#111827;
-  --muted:#6b7280;
+  --purple:#5b2bbd;
+  --purple-dark:#4a21a8;
+  --card:#ffffff22;
+  --orange:#ff8a65;
+  --text:#ffffff;
+  --muted:#d1c4e9;
 }
 
 *{box-sizing:border-box}
@@ -19,105 +20,151 @@
 body{
   margin:0;
   font-family:system-ui,-apple-system,Segoe UI,Roboto,sans-serif;
-  background:var(--bg);
-  padding-bottom:100px;
+  background:var(--purple);
+  color:var(--text);
+  padding-bottom:90px;
 }
 
-/* ===== TOP CURVED BALANCE HEADER ===== */
-.balance-header{
-  background:var(--dark);
-  color:#fff;
-  padding:30px 20px 80px;
-  border-bottom-left-radius:36px;
-  border-bottom-right-radius:36px;
-  position:relative;
-  text-align:center;
+/* ===== TOP ===== */
+.top{
+  padding:22px;
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
 }
 
-.balance-header h2{
-  margin:0;
+.user{
+  display:flex;
+  align-items:center;
+  gap:10px;
+}
+
+.avatar{
+  width:36px;
+  height:36px;
+  border-radius:50%;
+  background:linear-gradient(135deg,#ff9800,#ff5722);
+}
+
+.menu{
+  font-size:26px;
+}
+
+/* ===== BALANCE CARD ===== */
+.balance-card{
+  margin:0 18px;
+  background:var(--card);
+  border-radius:20px;
+  padding:20px;
+}
+
+.balance-title{
   font-size:14px;
-  letter-spacing:1px;
-  color:#cbd5e1;
+  color:var(--muted);
+}
+
+.balance-row{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
 }
 
 .balance-amount{
-  font-size:42px;
+  font-size:32px;
   font-weight:700;
-  margin:16px 0;
 }
 
-.balance-ring{
-  width:160px;
-  height:160px;
-  border-radius:50%;
-  border:2px dashed rgba(255,255,255,.25);
-  margin:0 auto;
+.balance-actions{
+  display:flex;
+  flex-direction:column;
+  gap:10px;
+}
+
+.balance-btn{
+  background:#ffffff33;
+  border-radius:10px;
+  padding:8px 14px;
+  font-size:13px;
+}
+
+/* ===== BANK CARD ===== */
+.bank-card{
+  margin:20px 18px;
+  height:170px;
+  border-radius:22px;
+  background:linear-gradient(135deg,#ff7043,#ff5252);
+  padding:20px;
   position:relative;
-  display:flex;
-  align-items:center;
-  justify-content:center;
 }
 
-.balance-ring::before,
-.balance-ring::after{
-  content:"";
-  position:absolute;
-  width:10px;
-  height:10px;
+.bank-chip{
+  width:42px;
+  height:32px;
   background:#fff;
-  border-radius:50%;
+  border-radius:6px;
+  opacity:.85;
 }
 
-.balance-ring::before{
-  top:-6px;
+.bank-number{
+  margin-top:30px;
+  letter-spacing:3px;
+  font-size:18px;
 }
 
-.balance-ring::after{
-  bottom:-6px;
+.bank-holder{
+  margin-top:10px;
+  opacity:.9;
 }
 
-/* ===== ACTION BUTTONS ===== */
-.actions{
-  display:flex;
-  justify-content:space-around;
-  margin-top:-30px;
-  padding:0 20px;
-}
-
-.action-btn{
-  background:#fff;
-  border-radius:14px;
-  padding:14px 22px;
-  box-shadow:0 10px 25px rgba(0,0,0,.1);
-  font-weight:600;
-  color:#111;
-  min-width:120px;
-  text-align:center;
-}
-
-.action-send{color:#2563eb}
-.action-receive{color:#16a34a}
-
-/* ===== TRANSACTIONS PLACEHOLDER ===== */
-.content{
-  margin:30px 18px;
+/* ===== EXPENSES ===== */
+.section{
+  margin:20px 18px;
 }
 
 .section-title{
-  font-size:16px;
-  font-weight:600;
+  font-size:15px;
   margin-bottom:10px;
 }
 
+.expense{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  margin-bottom:14px;
+}
+
+.exp-left{
+  display:flex;
+  align-items:center;
+  gap:12px;
+}
+
+.exp-icon{
+  width:40px;
+  height:40px;
+  border-radius:12px;
+  background:#ffffff33;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-weight:700;
+}
+
+.exp-name{
+  font-size:14px;
+}
+
+.exp-amount{
+  font-weight:600;
+}
+
 /* ===== BOTTOM NAV ===== */
-.navbar{
+.nav{
   position:fixed;
   bottom:0;
   left:0;
   right:0;
   background:#fff;
-  border-top:1px solid #e5e7eb;
   display:flex;
   justify-content:space-around;
   padding:10px 0 14px;
@@ -126,83 +173,109 @@ body{
 .nav-item{
   text-align:center;
   font-size:12px;
-  color:#9ca3af;
+  color:#6b7280;
 }
 
 .nav-item.active{
-  color:#2563eb;
+  color:#5b2bbd;
   font-weight:600;
 }
 
 .nav-icon{
   font-size:22px;
   display:block;
-  margin-bottom:2px;
 }
 </style>
 </head>
 
 <body>
 
-<!-- TOP BALANCE -->
-<div class="balance-header">
-  <h2>BALANCE</h2>
+<!-- TOP -->
+<div class="top">
+  <div class="user">
+    <div class="avatar"></div>
+    <div id="username">User name</div>
+  </div>
+  <div class="menu">≡</div>
+</div>
 
-  <div class="balance-ring">
+<!-- BALANCE -->
+<div class="balance-card">
+  <div class="balance-title">Balance</div>
+  <div class="balance-row">
     <div class="balance-amount" id="balance">$0.00</div>
+    <div class="balance-actions">
+      <div class="balance-btn">Withdraw</div>
+      <div class="balance-btn">Send</div>
+    </div>
   </div>
 </div>
 
-<!-- ACTIONS -->
-<div class="actions">
-  <div class="action-btn action-send">Send</div>
-  <div class="action-btn action-receive">Receive</div>
+<!-- BANK CARD -->
+<div class="bank-card">
+  <div class="bank-chip"></div>
+  <div class="bank-number">12345 6789 123 0000</div>
+  <div class="bank-holder">Card Holder</div>
 </div>
 
-<!-- CONTENT -->
-<div class="content">
-  <div class="section-title">Transactions</div>
-  <!-- We’ll add real transactions later -->
+<!-- EXPENSES -->
+<div class="section">
+  <div class="section-title">This month expenses</div>
+
+  <div class="expense">
+    <div class="exp-left">
+      <div class="exp-icon">S</div>
+      <div class="exp-name">Shopping</div>
+    </div>
+    <div class="exp-amount">$8.00</div>
+  </div>
+
+  <div class="expense">
+    <div class="exp-left">
+      <div class="exp-icon">M</div>
+      <div class="exp-name">Movies</div>
+    </div>
+    <div class="exp-amount">$1.00</div>
+  </div>
+
+  <div class="expense">
+    <div class="exp-left">
+      <div class="exp-icon">F</div>
+      <div class="exp-name">Food</div>
+    </div>
+    <div class="exp-amount">$3.00</div>
+  </div>
 </div>
 
 <!-- BOTTOM NAV -->
-<div class="navbar">
-  <div class="nav-item active">
-    <span class="nav-icon">🏠</span>Home
-  </div>
-  <div class="nav-item">
-    <span class="nav-icon">📝</span>Tasks
-  </div>
-  <div class="nav-item">
-    <span class="nav-icon">💼</span>Wallet
-  </div>
-  <div class="nav-item">
-    <span class="nav-icon">👥</span>Referral
-  </div>
-  <div class="nav-item">
-    <span class="nav-icon">⭐</span>VIP
-  </div>
+<div class="nav">
+  <div class="nav-item active"><span class="nav-icon">🏠</span>Home</div>
+  <div class="nav-item"><span class="nav-icon">📝</span>Tasks</div>
+  <div class="nav-item"><span class="nav-icon">💼</span>Wallet</div>
+  <div class="nav-item"><span class="nav-icon">👥</span>Referral</div>
+  <div class="nav-item"><span class="nav-icon">⭐</span>VIP</div>
 </div>
 
-<!-- FIREBASE (SAFE / UNCHANGED LOGIC) -->
+<!-- FIREBASE -->
 <script type="module">
 import { auth, db } from "./firebase.js";
 import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
 import { doc, getDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
 const balanceEl = document.getElementById("balance");
+const userEl = document.getElementById("username");
 
-onAuthStateChanged(auth, async (user)=>{
+onAuthStateChanged(auth, async(user)=>{
   if(!user){
     location.href="auth.html";
     return;
   }
-
   const snap = await getDoc(doc(db,"users",user.uid));
   if(!snap.exists()) return;
 
   const data = snap.data();
-  balanceEl.textContent = "$" + (data.balance || 0).toFixed(2);
+  balanceEl.textContent = "$" + (data.balance||0).toFixed(2);
+  userEl.textContent = data.name || "User name";
 });
 </script>
 
