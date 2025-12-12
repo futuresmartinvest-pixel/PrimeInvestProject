@@ -1,93 +1,145 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Admin – VIP Requests</title>
+<meta charset="UTF-8">
+<title>Admin VIP Approval</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
 
-  <style>
-    body {
-      font-family: Arial, sans-serif;
-      padding: 20px;
-      background: #f2f2f2;
-    }
+<style>
+body{
+  margin:0;
+  font-family:system-ui, sans-serif;
+  background:#0b0b0b;
+  color:#fff;
+}
 
-    h1 {
-      text-align: center;
-      margin-bottom: 10px;
-    }
+.header{
+  background:#b7ff2c;
+  color:#000;
+  padding:18px;
+  font-size:20px;
+  font-weight:700;
+  text-align:center;
+}
 
-    #loading {
-      text-align: center;
-      color: #555;
-      font-size: 18px;
-      margin-top: 20px;
-    }
+.container{
+  padding:16px;
+}
 
-    .request-box {
-      background: white;
-      padding: 15px;
-      border-radius: 10px;
-      margin-bottom: 15px;
-      box-shadow: 0 0 5px rgba(0,0,0,0.1);
-    }
+.card{
+  background:#151515;
+  border-radius:14px;
+  padding:16px;
+  margin-bottom:14px;
+  box-shadow:0 6px 20px rgba(0,0,0,.4);
+}
 
-    .btn {
-      padding: 8px 12px;
-      margin-right: 5px;
-      border: none;
-      border-radius: 5px;
-      cursor: pointer;
-      font-weight: bold;
-    }
+.card h3{
+  margin:0 0 8px;
+}
 
-    .approve {
-      background: #28a745;
-      color: white;
-    }
+.btn{
+  width:100%;
+  padding:12px;
+  border:none;
+  border-radius:10px;
+  font-size:16px;
+  font-weight:600;
+  cursor:pointer;
+}
 
-    .reject {
-      background: #dc3545;
-      color: white;
-    }
+.approve{
+  background:#2cff4d;
+  color:#000;
+}
 
-    .nav {
-      text-align: center;
-      margin-bottom: 20px;
-    }
+.reject{
+  background:#ff3b3b;
+  color:#fff;
+  margin-top:8px;
+}
 
-    .nav a {
-      text-decoration: none;
-      background: #007bff;
-      color: white;
-      padding: 8px 12px;
-      border-radius: 5px;
-    }
-  </style>
+.small{
+  font-size:13px;
+  opacity:.8;
+}
+</style>
 </head>
 
 <body>
 
-  <h1>VIP Requests – Admin Panel</h1>
+<div class="header">ADMIN – VIP APPROVAL</div>
 
-  <div class="nav">
-    <a href="index.html">← Back to Home</a>
-  </div>
+<div class="container" id="list"></div>
 
-  <h3>Your Admin UID:</h3>
-  <p style="font-weight:bold; color:#333;">
-    <span id="adminUID"></span>
-  </p>
+<script>
+/*
+  DEMO DATA STRUCTURE (stored by VIP page)
+  localStorage.userVIP = {
+    "1": "pending",
+    "2": "active"
+  }
+*/
 
-  <hr />
+const vipPlans = {
+  1:{price:30, rate:2.33},
+  2:{price:100, rate:3.33},
+  3:{price:499, rate:3.66},
+  4:{price:999, rate:3.99},
+  5:{price:4999, rate:4.33},
+  6:{price:9999, rate:4.99},
+  7:{price:49999, rate:6.99},
+  8:{price:99999, rate:7.33},
+};
 
-  <h2>Pending VIP Requests</h2>
+const vipData = JSON.parse(localStorage.getItem("userVIP")) || {};
+const list = document.getElementById("list");
 
-  <div id="loading">Loading requests…</div>
+Object.keys(vipData).forEach(vipId=>{
+  if(vipData[vipId] !== "pending") return;
 
-  <div id="requests"></div>
+  const vip = vipPlans[vipId];
 
-  <script type="module" src="./admin_vip.js"></script>
+  const div = document.createElement("div");
+  div.className = "card";
+
+  div.innerHTML = `
+    <h3>VIP ${vipId}</h3>
+    <div class="small">Price: $${vip.price}</div>
+    <div class="small">Daily Profit: ${vip.rate}%</div>
+    <div class="small">Proof received on Telegram</div>
+
+    <button class="btn approve">Approve VIP</button>
+    <button class="btn reject">Reject</button>
+  `;
+
+  div.querySelector(".approve").onclick = ()=>{
+    vipData[vipId] = "active";
+
+    localStorage.setItem("userVIP", JSON.stringify(vipData));
+
+    const vipStart = JSON.parse(localStorage.getItem("vipStart")) || {};
+    vipStart[vipId] = Date.now();
+    localStorage.setItem("vipStart", JSON.stringify(vipStart));
+
+    alert("VIP ACTIVATED");
+    location.reload();
+  };
+
+  div.querySelector(".reject").onclick = ()=>{
+    delete vipData[vipId];
+    localStorage.setItem("userVIP", JSON.stringify(vipData));
+    alert("VIP REJECTED");
+    location.reload();
+  };
+
+  list.appendChild(div);
+});
+
+if(list.innerHTML === ""){
+  list.innerHTML = "<p style='opacity:.6'>No pending VIP requests</p>";
+}
+</script>
 
 </body>
 </html>
