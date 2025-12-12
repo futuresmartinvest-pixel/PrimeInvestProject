@@ -7,16 +7,20 @@
 
 <style>
 :root{
-  --lime:#C9FF3D;
-  --black:#0b0b0b;
-  --soft:#f5f5f5;
+  --green:#C9FF3D;
+  --dark:#0d0f0c;
+  --black:#000;
+  --white:#fff;
 }
 
-*{box-sizing:border-box;font-family:system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}
+*{
+  box-sizing:border-box;
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+}
 
 body{
   margin:0;
-  background:#eaeaea;
+  background:#111;
 }
 
 .app{
@@ -28,42 +32,40 @@ body{
   flex-direction:column;
 }
 
-/* TOP BALANCE CARD */
+/* TOP GREEN CARD */
 .balance-card{
-  background:var(--lime);
+  background:var(--green);
   margin:16px;
+  padding:20px;
   border-radius:28px;
-  padding:18px;
 }
 
-.balance-card h4{
-  margin:0;
+.balance-card small{
   font-weight:500;
 }
 
 .balance{
-  font-size:42px;
+  font-size:40px;
   font-weight:800;
-  margin:6px 0 14px;
+  margin:8px 0 14px;
 }
 
 .actions{
   display:flex;
-  gap:10px;
+  justify-content:space-between;
 }
 
 .action{
-  flex:1;
   background:#000;
   color:#fff;
-  padding:10px;
-  border-radius:999px;
+  border-radius:14px;
+  padding:10px 14px;
+  font-size:13px;
   text-align:center;
-  font-size:14px;
 }
 
-/* DARK CONTENT */
-.content{
+/* DARK BODY */
+.body{
   flex:1;
   background:#0b0b0b;
   border-top-left-radius:28px;
@@ -72,34 +74,26 @@ body{
   color:white;
 }
 
-/* PLACEHOLDER SECTIONS */
-.section{
-  margin-bottom:22px;
-}
-
 .section-title{
   font-size:14px;
   opacity:.7;
-  margin-bottom:10px;
+  margin-bottom:12px;
 }
 
-/* TRANSACTIONS */
-.tx{
-  display:flex;
-  justify-content:space-between;
+.item{
   background:#141414;
-  padding:12px;
+  padding:14px;
   border-radius:14px;
   margin-bottom:10px;
 }
 
 /* BOTTOM NAV */
 .nav{
-  background:var(--lime);
-  padding:10px 0;
+  background:var(--green);
   display:flex;
   justify-content:space-around;
   align-items:center;
+  padding:10px 0;
   border-top-left-radius:24px;
   border-top-right-radius:24px;
 }
@@ -109,12 +103,12 @@ body{
   text-align:center;
 }
 
-.fab{
-  background:#000;
-  color:#fff;
+.center-btn{
   width:56px;
   height:56px;
+  background:#000;
   border-radius:50%;
+  color:#fff;
   display:flex;
   align-items:center;
   justify-content:center;
@@ -126,9 +120,9 @@ body{
 <body>
 <div class="app">
 
-  <!-- BALANCE -->
+  <!-- GREEN BALANCE -->
   <div class="balance-card">
-    <h4>Total Balance</h4>
+    <small>Total Balance</small>
     <div class="balance">$0.00</div>
     <div class="actions">
       <div class="action">Deposit</div>
@@ -138,27 +132,17 @@ body{
     </div>
   </div>
 
-  <!-- DARK BODY -->
-  <div class="content">
-    <div class="section">
-      <div class="section-title">Recent Activity</div>
-      <div class="tx"><span>Deposit</span><span>+$0.00</span></div>
-      <div class="tx"><span>Withdraw</span><span>$0.00</span></div>
-    </div>
-
-    <div class="section">
-      <div class="section-title">Tasks</div>
-      <div class="tx">Task 1</div>
-      <div class="tx">Task 2</div>
-      <div class="tx">Task 3</div>
-    </div>
+  <!-- DARK SECTION -->
+  <div class="body">
+    <div class="section-title">Recent Activity</div>
+    <div class="item">No transactions yet</div>
   </div>
 
-  <!-- NAV -->
+  <!-- NAV BAR -->
   <div class="nav">
     <div class="nav-item">Home</div>
-    <div class="nav-item">Wallet</div>
-    <div class="fab">+</div>
+    <div class="nav-item">Tasks</div>
+    <div class="center-btn">+</div>
     <div class="nav-item">Referral</div>
     <div class="nav-item">VIP</div>
   </div>
