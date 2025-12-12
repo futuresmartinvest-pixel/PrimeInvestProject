@@ -5,6 +5,9 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <title>PrimeGlobalPro</title>
 
+<!-- Chart.js -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
 <style>
 :root {
   --bg: #f8fafc;
@@ -27,12 +30,9 @@ body {
 
 /* ===== TOP BAR ===== */
 .topbar {
-  background: linear-gradient(135deg, #0f172a, #111827);
+  background: linear-gradient(135deg, #020617, #111827);
   color: #fff;
-  padding: 16px;
-}
-
-.topbar .user {
+  padding: 14px 16px;
   font-size: 18px;
   font-weight: 600;
 }
@@ -43,7 +43,7 @@ body {
   margin: 18px;
   padding: 22px;
   border-radius: var(--radius);
-  box-shadow: 0 12px 28px rgba(0,0,0,.08);
+  box-shadow: 0 10px 25px rgba(0,0,0,.06);
 }
 
 /* ===== BALANCE ===== */
@@ -58,44 +58,13 @@ body {
   text-align: center;
   color: var(--blue);
   font-weight: 500;
-  margin-top: 6px;
 }
 
-/* ===== VIP CARD ===== */
-.vip-card {
-  background: linear-gradient(135deg, #0f172a, #020617);
-  color: #fff;
-  margin: 18px;
-  padding: 24px;
-  border-radius: var(--radius);
-}
-
-.vip-title {
-  font-size: 20px;
+/* ===== CHART ===== */
+.chart-title {
+  font-size: 18px;
   font-weight: 600;
-  margin-bottom: 18px;
-}
-
-.vip-badge {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-}
-
-.vip-emblem {
-  width: 150px;
-  margin-bottom: 14px;
-}
-
-.vip-shields {
-  display: flex;
-  gap: 8px;
-  flex-wrap: wrap;
-  justify-content: center;
-}
-
-.vip-shields img {
-  width: 40px;
+  margin-bottom: 12px;
 }
 
 /* ===== BOTTOM NAV ===== */
@@ -104,11 +73,11 @@ body {
   bottom: 0;
   left: 0;
   right: 0;
-  background: #ffffff;
+  background: #fff;
   border-top: 1px solid #e5e7eb;
   display: flex;
   justify-content: space-around;
-  padding: 10px 0 8px;
+  padding: 10px 0;
 }
 
 .nav-item {
@@ -123,9 +92,7 @@ body {
 }
 
 .nav-item img {
-  width: 30px;
-  height: 30px;
-  object-fit: contain;
+  width: 28px;
   margin-bottom: 4px;
 }
 </style>
@@ -134,65 +101,60 @@ body {
 <body>
 
 <!-- TOP -->
-<div class="topbar">
-  <div class="user">User</div>
-</div>
+<div class="topbar" id="userName">User</div>
 
 <!-- BALANCE -->
 <div class="card balance">
-  <h1>$0.00</h1>
-  <span>+$0.00 Today</span>
+  <h1 id="balance">$0.00</h1>
+  <span id="today">+$0.00 Today</span>
 </div>
 
-<!-- VIP -->
-<div class="vip-card">
-  <div class="vip-title">Active VIP</div>
-
-  <div class="vip-badge">
-    <img src="vip-emblem.png" class="vip-emblem" alt="VIP Emblem" />
-
-    <div class="vip-shields"></div>
-  </div>
+<!-- CHART (REPLACED VIP WINDOW) -->
+<div class="card">
+  <div class="chart-title">Balance Overview</div>
+  <canvas id="balanceChart" height="120"></canvas>
 </div>
 
 <!-- BOTTOM NAV -->
 <div class="navbar">
   <div class="nav-item active">
-    <img src="icon-home.png" alt="Home">
+    <img src="icon-home.png">
     Home
   </div>
 
   <div class="nav-item">
-    <img src="icon-tasks.png" alt="Tasks">
+    <img src="icon-tasks.png">
     Tasks
   </div>
 
   <div class="nav-item">
-    <img src="icon-wallet.png" alt="Wallet">
+    <img src="icon-wallet.png">
     Wallet
   </div>
 
   <div class="nav-item">
-    <img src="icon-referral.png" alt="Referral">
+    <img src="icon-referral.png">
     Referral
   </div>
 
   <div class="nav-item">
-    <img src="icon-vip.png" alt="VIP">
+    <img src="icon-vip.png">
     VIP
   </div>
 </div>
 
-<!-- FIREBASE -->
 <script type="module">
 import { auth, db } from "./firebase.js";
 import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
 import { doc, getDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
-const userNameEl = document.querySelector(".user");
-const balanceEl = document.querySelector(".balance h1");
-const todayEl = document.querySelector(".balance span");
-const shieldsBox = document.querySelector(".vip-shields");
+const nameEl = document.getElementById("userName");
+const balanceEl = document.getElementById("balance");
+const todayEl = document.getElementById("today");
+
+const ctx = document.getElementById("balanceChart");
+
+let chart;
 
 onAuthStateChanged(auth, async (user) => {
   if (!user) {
@@ -205,18 +167,38 @@ onAuthStateChanged(auth, async (user) => {
 
   const data = snap.data();
 
-  userNameEl.textContent = data.name || "User";
+  nameEl.textContent = data.name || "User";
   balanceEl.textContent = "$" + (data.balance || 0).toFixed(2);
   todayEl.textContent = "+$" + (data.todayEarned || 0).toFixed(2) + " Today";
 
-  shieldsBox.innerHTML = "";
-  const vipLevel = data.vipLevel || 0;
+  const chartData = [
+    0,
+    (data.balance || 0) * 0.3,
+    (data.balance || 0) * 0.6,
+    data.balance || 0
+  ];
 
-  for (let i = 0; i < vipLevel; i++) {
-    const img = document.createElement("img");
-    img.src = "vip-shield.png";
-    shieldsBox.appendChild(img);
-  }
+  if (chart) chart.destroy();
+
+  chart = new Chart(ctx, {
+    type: "line",
+    data: {
+      labels: ["Start", "Week 1", "Week 2", "Now"],
+      datasets: [{
+        data: chartData,
+        borderColor: "#2563eb",
+        backgroundColor: "rgba(37,99,235,0.15)",
+        fill: true,
+        tension: 0.4
+      }]
+    },
+    options: {
+      plugins: { legend: { display: false } },
+      scales: {
+        y: { ticks: { callback: v => "$" + v } }
+      }
+    }
+  });
 });
 </script>
 
