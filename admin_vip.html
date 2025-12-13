@@ -1,9 +1,14 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
 <meta charset="UTF-8">
 <title>Admin VIP Panel</title>
+
 <meta name="viewport" content="width=device-width, initial-scale=1">
+
+<meta http-equiv="Cache-Control" content="no-store, no-cache, must-revalidate">
+<meta http-equiv="Pragma" content="no-cache">
+<meta http-equiv="Expires" content="0">
 
 <style>
 body{
@@ -12,6 +17,9 @@ body{
   background:#0b1220;
   color:#fff;
   padding:16px;
+}
+h2{
+  margin-bottom:16px;
 }
 .card{
   background:#141c2f;
@@ -34,12 +42,15 @@ button{
   border-radius:999px;
   font-size:12px;
 }
+.hidden{
+  display:none;
+}
 </style>
 </head>
 
 <body>
 
-<h2>VIP Requests</h2>
+<h2>VIP Requests (Admin Only)</h2>
 <div id="list"></div>
 
 <script type="module">
@@ -53,8 +64,13 @@ import {
   setDoc,
   serverTimestamp
 } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+import {
+  getAuth,
+  signInWithEmailAndPassword,
+  onAuthStateChanged
+} from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
 
-/* FIREBASE */
+/* FIREBASE CONFIG */
 const firebaseConfig = {
   apiKey: "AIzaSyA1HZLZRY9UADNnDVBnoBIlG3b-bCkojxs",
   authDomain: "primeinvestproject2.firebaseapp.com",
@@ -66,57 +82,89 @@ const firebaseConfig = {
 
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
+const auth = getAuth(app);
 
-/* VIP RATES */
+/* SIMPLE ADMIN LOGIN */
+const email = prompt("Admin email:");
+const password = prompt("Admin password:");
+
+await signInWithEmailAndPassword(auth, email, password);
+
+/* VERIFY ADMIN CLAIM */
+onAuthStateChanged(auth, async (user)=>{
+  if(!user){
+    alert("Authentication failed");
+    return;
+  }
+
+  const token = await user.getIdTokenResult();
+  if(!token.claims.admin){
+    alert("Access denied: not admin");
+    auth.signOut();
+    return;
+  }
+
+  loadRequests();
+});
+
+/* VIP MULTIPLIERS */
 const VIP_RATES = {
-  1:5, 2:10, 3:20, 4:40,
-  5:80, 6:800, 7:8000, 8:80000
+  1:5,
+  2:10,
+  3:20,
+  4:40,
+  5:80,
+  6:800,
+  7:8000,
+  8:80000
 };
 
-/* LOAD REQUESTS */
-async function load(){
+/* LOAD VIP REQUESTS */
+async function loadRequests(){
   const snap = await getDocs(collection(db,"vip_requests"));
   const list = document.getElementById("list");
-  list.innerHTML="";
+  list.innerHTML = "";
 
-  snap.forEach(r=>{
-    const d=r.data();
-    if(d.status!=="pending") return;
+  snap.forEach(docSnap=>{
+    const d = docSnap.data();
+    if(d.status !== "pending") return;
 
-    const div=document.createElement("div");
-    div.className="card";
-    div.innerHTML=`
-      <div><b>User:</b> ${d.userId}</div>
-      <div><b>VIP:</b> ${d.vipLevel}</div>
+    const div = document.createElement("div");
+    div.className = "card";
+
+    div.innerHTML = `
+      <div><b>User ID:</b> ${d.userId}</div>
+      <div><b>VIP Level:</b> ${d.vipLevel}</div>
       <div><b>Price:</b> $${d.price}</div>
       <span class="badge">Pending</span><br><br>
       <button>Approve</button>
     `;
 
-    div.querySelector("button").onclick=async()=>{
-      /* ACTIVATE VIP */
-      await setDoc(doc(db,"users",d.userId),{
+    div.querySelector("button").onclick = async ()=>{
+      await setDoc(doc(db,"users", d.userId), {
         vip:{
-          level:d.vipLevel,
-          multiplier:VIP_RATES[d.vipLevel],
-          activatedAt:serverTimestamp()
+          level: d.vipLevel,
+          multiplier: VIP_RATES[d.vipLevel],
+          activatedAt: serverTimestamp()
         }
-      },{merge:true});
+      }, { merge:true });
 
-      /* UPDATE REQUEST */
-      await updateDoc(doc(db,"vip_requests",r.id),{
-        status:"approved",
-        approvedAt:serverTimestamp()
+      await updateDoc(doc(db,"vip_requests", docSnap.id), {
+        status: "approved",
+        approvedAt: serverTimestamp()
       });
 
       alert("VIP Activated");
-      load();
+      loadRequests();
     };
 
     list.appendChild(div);
   });
+
+  if(list.innerHTML === ""){
+    list.innerHTML = "<p>No pending VIP requests.</p>";
+  }
 }
-load();
 </script>
 
 </body>
