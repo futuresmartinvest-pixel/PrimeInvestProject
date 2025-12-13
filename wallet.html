@@ -34,7 +34,7 @@ body{
 /* HEADER */
 h1{
   text-align:center;
-  margin:20px 0;
+  margin:20px 0 16px;
   font-weight:800;
 }
 
@@ -42,73 +42,66 @@ h1{
 .container{
   max-width:420px;
   margin:auto;
-  padding:16px;
+  padding:0 16px;
 }
 
-/* BALANCE CARD */
-.balance-card{
-  padding:22px;
-  text-align:center;
+/* COIN ROW */
+.coin{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  padding:18px;
+  margin-bottom:14px;
 }
 
-.balance-label{
-  font-size:14px;
-  opacity:.85;
+.coin-left{
+  display:flex;
+  flex-direction:column;
+}
+.coin-name{
+  font-size:18px;
+  font-weight:700;
+}
+.coin-symbol{
+  font-size:13px;
+  opacity:.7;
 }
 
-.balance-amount{
-  font-size:42px;
-  font-weight:900;
+/* AMOUNT */
+.coin-balance{
+  text-align:right;
+}
+.coin-balance strong{
+  font-size:18px;
+}
+.coin-balance span{
+  font-size:13px;
+  opacity:.7;
+}
+
+/* BUTTONS */
+.actions{
+  display:flex;
+  gap:10px;
   margin-top:6px;
 }
-
-/* ACTIONS */
-.actions{
-  display:grid;
-  grid-template-columns:1fr 1fr;
-  gap:14px;
-  margin-top:18px;
-}
-
 button{
-  padding:14px;
+  flex:1;
+  padding:10px;
   border:none;
-  border-radius:16px;
-  font-size:16px;
-  font-weight:800;
+  border-radius:12px;
+  font-weight:700;
+  font-size:14px;
   cursor:pointer;
 }
-
 .deposit{
-  background:linear-gradient(135deg,#00e5ff,#4dd0e1);
+  background:linear-gradient(135deg,#00e5ff,#3b82f6);
   color:#000;
 }
-
 .withdraw{
   background:linear-gradient(135deg,#ffd36e,#ffb700);
   color:#000;
 }
-
-/* HISTORY */
-.history{
-  margin-top:20px;
-  padding:16px;
-}
-
-.history h3{
-  margin:0 0 12px;
-  font-size:18px;
-}
-
-.tx{
-  display:flex;
-  justify-content:space-between;
-  padding:10px 0;
-  border-bottom:1px solid rgba(255,255,255,.15);
-  font-size:14px;
-}
-
-.tx:last-child{border-bottom:none}
 
 /* NAV SPACE */
 .spacer{height:90px}
@@ -121,89 +114,89 @@ button{
 
 <div class="container">
 
-  <!-- BALANCE -->
-  <div class="glass balance-card">
-    <div class="balance-label">Available Balance</div>
-    <div class="balance-amount" id="balance">$0.00</div>
-
-    <div class="actions">
-      <button class="deposit" onclick="location.href='deposit.html'">
-        Deposit
-      </button>
-      <button class="withdraw" onclick="alert('Withdraw coming soon')">
-        Withdraw
-      </button>
+  <!-- BTC -->
+  <div class="glass coin">
+    <div class="coin-left">
+      <div class="coin-name">Bitcoin</div>
+      <div class="coin-symbol">BTC</div>
+    </div>
+    <div class="coin-balance">
+      <strong>0.000000</strong>
+      <span>BTC</span>
+      <div class="actions">
+        <button class="deposit">Deposit</button>
+        <button class="withdraw">Withdraw</button>
+      </div>
     </div>
   </div>
 
-  <!-- HISTORY -->
-  <div class="glass history">
-    <h3>Recent Activity</h3>
-
-    <div class="tx">
-      <span>Tap Earnings</span>
-      <span>+ $0.00</span>
+  <!-- ETH -->
+  <div class="glass coin">
+    <div class="coin-left">
+      <div class="coin-name">Ethereum</div>
+      <div class="coin-symbol">ETH</div>
     </div>
-
-    <div class="tx">
-      <span>VIP Bonus</span>
-      <span>+ $0.00</span>
+    <div class="coin-balance">
+      <strong>0.000000</strong>
+      <span>ETH</span>
+      <div class="actions">
+        <button class="deposit">Deposit</button>
+        <button class="withdraw">Withdraw</button>
+      </div>
     </div>
+  </div>
 
-    <div class="tx">
-      <span>Withdrawal</span>
-      <span>- $0.00</span>
+  <!-- USDT -->
+  <div class="glass coin">
+    <div class="coin-left">
+      <div class="coin-name">Tether</div>
+      <div class="coin-symbol">USDT</div>
+    </div>
+    <div class="coin-balance">
+      <strong>0.00</strong>
+      <span>USDT</span>
+      <div class="actions">
+        <button class="deposit">Deposit</button>
+        <button class="withdraw">Withdraw</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- SOL -->
+  <div class="glass coin">
+    <div class="coin-left">
+      <div class="coin-name">Solana</div>
+      <div class="coin-symbol">SOL</div>
+    </div>
+    <div class="coin-balance">
+      <strong>0.0000</strong>
+      <span>SOL</span>
+      <div class="actions">
+        <button class="deposit">Deposit</button>
+        <button class="withdraw">Withdraw</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- DOGE -->
+  <div class="glass coin">
+    <div class="coin-left">
+      <div class="coin-name">Dogecoin</div>
+      <div class="coin-symbol">DOGE</div>
+    </div>
+    <div class="coin-balance">
+      <strong>0.0000</strong>
+      <span>DOGE</span>
+      <div class="actions">
+        <button class="deposit">Deposit</button>
+        <button class="withdraw">Withdraw</button>
+      </div>
     </div>
   </div>
 
 </div>
 
 <div class="spacer"></div>
-
-<!-- FIREBASE BALANCE -->
-<script type="module">
-import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-import {
-  getFirestore,
-  doc,
-  getDoc
-} from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
-
-/* FIREBASE CONFIG */
-const firebaseConfig = {
-  apiKey: "AIzaSyA1HZLZRY9UADNnDVBnoBIlG3b-bCkojxs",
-  authDomain: "primeinvestproject2.firebaseapp.com",
-  projectId: "primeinvestproject2",
-  storageBucket: "primeinvestproject2.firebasestorage.app",
-  messagingSenderId: "798977477628",
-  appId: "1:798977477628:web:c97d1fba72ad7865864079"
-};
-
-const app = initializeApp(firebaseConfig);
-const db = getFirestore(app);
-
-/* USER ID */
-function uid(){
-  let id = localStorage.getItem("userId");
-  if(!id){
-    id="user_"+Date.now()+"_"+Math.random().toString(36).slice(2,8);
-    localStorage.setItem("userId",id);
-  }
-  return id;
-}
-
-async function loadBalance(){
-  const ref = doc(db,"users",uid());
-  const snap = await getDoc(ref);
-  if(snap.exists()){
-    const bal = snap.data().balance || 0;
-    document.getElementById("balance").innerText =
-      "$"+Number(bal).toFixed(2);
-  }
-}
-
-loadBalance();
-</script>
 
 </body>
 </html>
