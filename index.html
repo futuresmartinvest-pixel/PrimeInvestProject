@@ -266,38 +266,39 @@ setLang("en");
 
 onAuthStateChanged(auth, async user => {
 
-  // 🚫 Not logged in → force to auth page
+  const menuUser = document.getElementById("menuUser");
+  const menuEmail = document.getElementById("menuEmail");
+
+  // 🚫 NOT LOGGED IN
   if (!user) {
     loginBtn.style.display = "block";
     logoutBtn.style.display = "none";
     adminBtn.style.display = "none";
 
-    const loginStatus = document.getElementById("loginStatus");
-    if (loginStatus) {
-      loginStatus.textContent = "Not logged in";
-    }
+    if (menuUser) menuUser.style.display = "none";
 
-    
+    document.getElementById("app").style.display = "none";
     return;
   }
 
-  // ✅ Logged in
+  // ✅ LOGGED IN
   loginBtn.style.display = "none";
   logoutBtn.style.display = "block";
-  adminBtn.style.display = "none";
 
-  // 🔹 Show logged-in status (email)
-  const loginStatus = document.getElementById("loginStatus");
-  if (loginStatus) {
-    loginStatus.textContent = `Logged in as: ${user.email}`;
+  if (menuUser && menuEmail) {
+    menuUser.style.display = "block";
+    menuEmail.textContent = user.email;
   }
 
-  // Existing Firestore logic
+  // Load user data
   const snap = await getDoc(doc(db, "users", user.uid));
   const u = snap.exists() ? snap.data() : {};
 
   vipEl.textContent = "VIP: " + (u.vip?.level || "None");
+
+  // Admin only
   adminBtn.style.display = u.role === "admin" ? "block" : "none";
+
   document.getElementById("app").style.display = "block";
 });
 </script>
