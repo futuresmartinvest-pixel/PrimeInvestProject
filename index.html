@@ -179,15 +179,17 @@ body{
   <hr style="border:0;border-top:1px solid rgba(255,255,255,.15)">
 
   <!-- ACTIONS -->
-  <button id="loginBtn" onclick="location.href='auth.html'">🔐 Login</button>
-  <div id="loginEmailInfo"
+<button id="loginBtn" onclick="location.href='auth.html'">🔐 Login</button>
+
+<div id="loginEmailInfo"
      style="
        display:none;
        font-size:12px;
-       opacity:.7;
-       padding:6px 12px 10px 12px;
+       opacity:.75;
+       padding:6px 12px 10px;
        word-break:break-all;
      ">
+</div>
   </div>
   <button id="logoutBtn" onclick="logout()">🚪 Logout</button>
   <button id="adminBtn" onclick="location.href='admin_vip.html'">🛠 Admin Panel</button>
@@ -243,35 +245,40 @@ window.logout = async () => { await signOut(auth); location.href="auth.html"; };
 window.setLang = ()=>{};
 
 onAuthStateChanged(auth, async user => {
+  const loginEmailInfo = document.getElementById("loginEmailInfo");
+
   if (!user) {
     loginBtn.style.display = "block";
-logoutBtn.style.display = "none";
-adminBtn.style.display = "none";
-menuUser.style.display = "none";
+    logoutBtn.style.display = "none";
+    adminBtn.style.display = "none";
+    menuUser.style.display = "none";
 
-const loginEmailInfo = document.getElementById("loginEmailInfo");
-loginEmailInfo.style.display = "none";
-loginEmailInfo.textContent = "";
+    loginEmailInfo.style.display = "none";
+    loginEmailInfo.textContent = "";
+
+    document.getElementById("app").style.display = "none";
     return;
   }
 
-  loginBtn.style.display = "none";
+  // USER LOGGED IN
+  loginBtn.style.display = "block";      // keep Login visible
   logoutBtn.style.display = "block";
   menuUser.style.display = "block";
+
   menuEmail.textContent = user.email;
-  const loginEmailInfo = document.getElementById("loginEmailInfo");
 
+  loginEmailInfo.style.display = "block";
+  loginEmailInfo.textContent = user.email;
 
-loginEmailInfo.style.display = "block";
-loginEmailInfo.textContent = user.email;
-
-  const snap = await getDoc(doc(db,"users",user.uid));
+  const snap = await getDoc(doc(db, "users", user.uid));
   const u = snap.exists() ? snap.data() : {};
+
   vipEl.textContent = "VIP: " + (u.vip?.level || "None");
   adminBtn.style.display = u.role === "admin" ? "block" : "none";
 
   document.getElementById("app").style.display = "block";
 });
+
 </script>
 <div class="bottom-nav">
   <button class="active" onclick="go('index.html')">
