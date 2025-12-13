@@ -1,42 +1,91 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-
-<meta name="viewport"
-content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" />
 
 <title>PrimeGlobalPro</title>
 
 <style>
+:root{
+  --glass-bg: rgba(255,255,255,0.15);
+  --glass-border: rgba(255,255,255,0.25);
+}
+
+*{box-sizing:border-box}
+
 body{
   margin:0;
-  font-family:system-ui;
-  background:#5b2fc2;
+  height:100vh;
+  font-family:system-ui,-apple-system,BlinkMacSystemFont;
+  background: radial-gradient(circle at top left,#7b5cff,#3a1c71,#000);
   color:#fff;
+  overflow:hidden;
+}
+
+/* GLASS */
+.glass{
+  background:var(--glass-bg);
+  backdrop-filter: blur(18px);
+  -webkit-backdrop-filter: blur(18px);
+  border:1px solid var(--glass-border);
+  border-radius:22px;
+}
+
+/* HEADER */
+.header{
+  padding:20px;
+  font-size:22px;
+  font-weight:700;
 }
 
 /* BALANCE */
 .balance-card{
   margin:16px;
-  padding:20px;
-  background:#7351c9;
-  border-radius:24px;
+  padding:22px;
 }
-.balance-title{opacity:.85}
-.balance-amount{
-  font-size:44px;
+.balance-label{opacity:.8}
+.balance-value{
+  font-size:42px;
   font-weight:800;
+  margin-top:6px;
 }
 
-/* VIP CARD */
-.vip-card{
-  margin:16px;
-  padding:16px;
-  border-radius:20px;
-  background:#ff6f5c;
+/* ROBOT AREA */
+.robot-area{
+  margin:20px;
+  padding:24px;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  gap:14px;
 }
-.vip-card b{font-size:18px}
+
+.robot{
+  width:160px;
+  height:160px;
+  border-radius:50%;
+  background:
+    radial-gradient(circle at 30% 30%,#9ff,#58f,#214);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-size:72px;
+  cursor:pointer;
+  box-shadow:0 0 40px rgba(130,100,255,.8);
+  transition:transform .1s;
+}
+.robot:active{
+  transform:scale(.95);
+}
+
+.tap-text{opacity:.8}
+
+/* SCORE */
+.score{
+  font-size:18px;
+  font-weight:600;
+}
 
 /* NAV */
 .nav{
@@ -44,15 +93,17 @@ body{
   bottom:16px;
   left:16px;
   right:16px;
-  background:#fff;
-  color:#000;
+  padding:14px 0;
   display:flex;
   justify-content:space-around;
-  padding:12px;
+  background:rgba(255,255,255,.9);
   border-radius:26px;
 }
-.nav div{
-  font-weight:600;
+
+.nav button{
+  background:none;
+  border:none;
+  font-size:22px;
   cursor:pointer;
 }
 </style>
@@ -60,120 +111,64 @@ body{
 
 <body>
 
+<div class="header">Home</div>
+
 <!-- BALANCE -->
-<div class="balance-card">
-  <div class="balance-title">Balance</div>
-  <div class="balance-amount" id="balance">$0.00</div>
+<div class="glass balance-card">
+  <div class="balance-label">Balance</div>
+  <div class="balance-value">$<span id="balance">0.00</span></div>
 </div>
 
-<!-- VIP STATUS -->
-<div class="vip-card" id="vipCard">
-  <div><b>VIP:</b> None</div>
-  <div id="vipInfo">No active VIP</div>
+<!-- ROBOT -->
+<div class="glass robot-area">
+  <div class="robot" id="robot">🤖</div>
+  <div class="tap-text">Tap the robot to earn</div>
+  <div class="score">
+    Score: <span id="score">0</span>
+  </div>
+  <small>100,000 score = $1</small>
 </div>
 
 <!-- NAV -->
 <div class="nav">
-  <div>Home</div>
-  <div onclick="location.href='tasks.html'">Tasks</div>
-  <div onclick="location.href='wallet.html'">Wallet</div>
-  <div onclick="location.href='referral.html'">Referral</div>
-  <div onclick="location.href='deposit.html'">VIP</div>
+  <button>🏠</button>
+  <button onclick="location.href='tasks.html'">📋</button>
+  <button onclick="location.href='wallet.html'">💼</button>
+  <button onclick="location.href='referral.html'">👥</button>
+  <button onclick="location.href='deposit.html'">⭐</button>
 </div>
 
-<!-- 🔥 GLOBAL FIREBASE LOGIC -->
-<script type="module">
-import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-import {
-  getFirestore,
-  doc,
-  getDoc,
-  setDoc,
-  updateDoc,
-  serverTimestamp
-} from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+<script>
+/* LOCAL DEMO LOGIC (READY FOR FIREBASE LATER) */
 
-/* FIREBASE CONFIG */
-const firebaseConfig = {
-  apiKey: "AIzaSyA1HZLZRY9UADNnDVBnoBIlG3b-bCkojxs",
-  authDomain: "primeinvestproject2.firebaseapp.com",
-  projectId: "primeinvestproject2",
-  storageBucket: "primeinvestproject2.firebasestorage.app",
-  messagingSenderId: "798977477628",
-  appId: "1:798977477628:web:c97d1fba72ad7865864079"
+let score = Number(localStorage.getItem("score") || 0);
+let balance = Number(localStorage.getItem("balance") || 0);
+
+const scoreEl = document.getElementById("score");
+const balanceEl = document.getElementById("balance");
+const robot = document.getElementById("robot");
+
+function refresh(){
+  scoreEl.textContent = score.toLocaleString();
+  balanceEl.textContent = balance.toFixed(2);
+}
+
+robot.onclick = () => {
+  score += 10;
+
+  if(score >= 100000){
+    const dollars = Math.floor(score / 100000);
+    balance += dollars;
+    score = score % 100000;
+  }
+
+  localStorage.setItem("score", score);
+  localStorage.setItem("balance", balance);
+
+  refresh();
 };
 
-const app = initializeApp(firebaseConfig);
-const db = getFirestore(app);
-const DAY = 86400000;
-
-/* GLOBAL USER ID */
-function getUserId(){
-  let id = localStorage.getItem("userId");
-  if(!id){
-    id = "user_"+Math.random().toString(36).slice(2,10)+"_"+Date.now();
-    localStorage.setItem("userId", id);
-  }
-  return id;
-}
-const userId = getUserId();
-const userRef = doc(db,"users",userId);
-
-/* ENSURE USER EXISTS */
-async function ensureUser(){
-  const snap = await getDoc(userRef);
-  if(!snap.exists()){
-    await setDoc(userRef,{
-      balance:0,
-      createdAt:serverTimestamp()
-    });
-  }
-}
-
-/* APPLY VIP PROFIT */
-async function applyVIPProfit(){
-  const snap = await getDoc(userRef);
-  if(!snap.exists()) return;
-  const user = snap.data();
-
-  if(!user.vip || user.vip.status !== "active") return;
-
-  const now = Date.now();
-  const last = user.vip.lastProfitAt?.toMillis?.() || now;
-  const days = Math.floor((now-last)/DAY);
-  if(days<=0) return;
-
-  const daily = user.vip.price * (user.vip.rate/100);
-  const profit = daily * days;
-
-  await updateDoc(userRef,{
-    balance:(user.balance||0)+profit,
-    "vip.lastProfitAt":serverTimestamp()
-  });
-}
-
-/* UPDATE UI */
-async function refreshUI(){
-  const snap = await getDoc(userRef);
-  if(!snap.exists()) return;
-  const user = snap.data();
-
-  document.getElementById("balance").innerText =
-    "$"+Number(user.balance||0).toFixed(2);
-
-  const vipBox = document.getElementById("vipInfo");
-  if(user.vip && user.vip.status==="active"){
-    vipBox.innerText =
-      "VIP "+user.vip.level+" — "+user.vip.rate+"% daily";
-  }else{
-    vipBox.innerText = "No active VIP";
-  }
-}
-
-/* RUN */
-await ensureUser();
-await applyVIPProfit();
-await refreshUI();
+refresh();
 </script>
 
 </body>
