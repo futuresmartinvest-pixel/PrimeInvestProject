@@ -1,5 +1,4 @@
-lick", async ()=>{
- <!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8" />
@@ -73,12 +72,15 @@ content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no,
       radial-gradient(circle at 70% 75%, rgba(170,110,255,.55), transparent 48%),
       rgba(255,255,255,0.08);
     backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
     box-shadow:0 22px 60px rgba(0,0,0,.45);
     display:flex;
     align-items:center;
     justify-content:center;
     user-select:none;
+    -webkit-tap-highlight-color: transparent;
   }
+  .orb:active{transform:scale(.985)}
   .tap-text{font-weight:900; letter-spacing:2px}
 
   .stats{
@@ -93,6 +95,7 @@ content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no,
     justify-content:space-between;
     font-weight:700;
   }
+  .row span{opacity:.85}
   .mono{font-variant-numeric:tabular-nums}
 
   .nav-wrap{
@@ -113,6 +116,7 @@ content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no,
     background:rgba(255,255,255,0.14);
     border:1px solid rgba(255,255,255,0.22);
     backdrop-filter: blur(18px);
+    -webkit-backdrop-filter: blur(18px);
   }
   .nav button{
     all:unset;
@@ -157,25 +161,26 @@ content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no,
 
 <div class="nav-wrap">
   <div class="nav">
-    <button class="active" onclick="location.href='index.html'">
+    <button class="active" title="Home" onclick="location.href='index.html'">
       <svg class="ico" viewBox="0 0 24 24"><path d="M12 3 2 12h3v8h6v-5h2v5h6v-8h3z"/></svg>
     </button>
-    <button onclick="location.href='tasks.html'">
-      <svg class="ico" viewBox="0 0 24 24"><path d="M7 7h14v2H7V7zm0 4h14v2H7v-2zm0 4h14v2H7v-2zM3 7h2v2H3V7z"/></svg>
+    <button title="Tasks" onclick="location.href='tasks.html'">
+      <svg class="ico" viewBox="0 0 24 24"><path d="M7 7h14v2H7V7zm0 4h14v2H7v-2zm0 4h14v2H7v-2zM3 7h2v2H3V7zm0 4h2v2H3v-2zm0 4h2v2H3v-2z"/></svg>
     </button>
-    <button onclick="location.href='wallet.html'">
-      <svg class="ico" viewBox="0 0 24 24"><path d="M3 7a3 3 0 0 1 3-3h12a2 2 0 0 1 2 2v2h-5a3 3 0 0 0 0 6h5v2a2 2 0 0 1-2 2H6a3 3 0 0 1-3-3V7z"/></svg>
+    <button title="Wallet" onclick="location.href='wallet.html'">
+      <svg class="ico" viewBox="0 0 24 24"><path d="M3 7a3 3 0 0 1 3-3h12a2 2 0 0 1 2 2v2h-5a3 3 0 0 0 0 6h5v2a2 2 0 0 1-2 2H6a3 3 0 0 1-3-3V7zm18 5h-5a1 1 0 0 0 0 2h5v-2z"/></svg>
     </button>
-    <button onclick="location.href='referral.html'">
-      <svg class="ico" viewBox="0 0 24 24"><path d="M10 13a5 5 0 0 1 0-7l1-1a5 5 0 0 1 7 7l-1 1-1.4-1.4 1-1a3 3 0 1 0-4.2-4.2l-1 1a3 3 0 0 0 0 4.2z"/></svg>
+    <button title="Referral" onclick="location.href='referral.html'">
+      <svg class="ico" viewBox="0 0 24 24"><path d="M10 13a5 5 0 0 1 0-7l1-1a5 5 0 0 1 7 7l-1 1-1.4-1.4 1-1a3 3 0 1 0-4.2-4.2l-1 1a3 3 0 0 0 0 4.2L10 13zm4-2a5 5 0 0 1 0 7l-1 1a5 5 0 0 1-7-7l1-1 1.4 1.4-1 1a3 3 0 1 0 4.2 4.2l1-1a3 3 0 0 0 0-4.2L14 11z"/></svg>
     </button>
-    <button onclick="location.href='vip.html'">
-      <svg class="ico" viewBox="0 0 24 24"><path d="M12 2 9 7 3 8l4 4-1 6 6-3 6 3-1-6 4-4-6-1z"/></svg>
+    <button title="VIP" onclick="location.href='vip.html'">
+      <svg class="ico" viewBox="0 0 24 24"><path d="M12 2 9 7 3 8l4 4-1 6 6-3 6 3-1-6 4-4-6-1-3-5z"/></svg>
     </button>
   </div>
 </div>
 
-<script type="module">
+<!-- IMPORTANT: defer prevents Android Chrome from leaking module code to the screen -->
+<script type="module" defer>
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
 import {
   getFirestore, doc, getDoc, setDoc, runTransaction, serverTimestamp
@@ -199,7 +204,17 @@ const TAP_INTERVAL = 120;
 const SCORE_PER_USD = 10000000;
 const NONVIP_DAILY_LIMIT = 500000;
 
-const MULT = {0:1,1:5,2:10,3:20,4:40,5:80,6:800,7:8000,8:80000};
+const MULT = {
+  0: 1,
+  1: 5,
+  2: 10,
+  3: 20,
+  4: 40,
+  5: 80,
+  6: 800,
+  7: 8000,
+  8: 80000
+};
 
 function getOrCreateUserId(){
   let id = localStorage.getItem("userId");
@@ -214,7 +229,10 @@ const userRef = doc(db,"users",userId);
 
 function todayKey(){
   const d = new Date();
-  return d.toISOString().slice(0,10);
+  const y = d.getFullYear();
+  const m = String(d.getMonth()+1).padStart(2,"0");
+  const da = String(d.getDate()).padStart(2,"0");
+  return `${y}-${m}-${da}`;
 }
 
 const elBalance = document.getElementById("balanceUsd");
@@ -225,62 +243,93 @@ const elToday = document.getElementById("todayText");
 const elScoreUsd = document.getElementById("scoreUsd");
 const tapBtn = document.getElementById("tapBtn");
 
+function safeNum(v){
+  const n = Number(v);
+  return Number.isFinite(n) ? n : 0;
+}
+
 async function ensureUser(){
   const snap = await getDoc(userRef);
   if(!snap.exists()){
     await setDoc(userRef,{
-      score:0,
-      tapsToday:0,
-      tapsDate:todayKey(),
-      createdAt:serverTimestamp()
-    },{merge:true});
+      score: 0,
+      tapsToday: 0,
+      tapsDate: todayKey(),
+      createdAt: serverTimestamp()
+    }, {merge:true});
   }
 }
 
 async function refreshUI(){
   const snap = await getDoc(userRef);
   if(!snap.exists()) return;
-  const u = snap.data();
+  const u = snap.data() || {};
 
-  const vipLevel = u.vip?.level || 0;
-  const power = MULT[vipLevel];
+  const vipLevel = u.vip?.level ? Number(u.vip.level) : 0;
+  const power = MULT[vipLevel] || 1;
 
   const tk = todayKey();
-  const tapsToday = u.tapsDate === tk ? u.tapsToday : 0;
+  const tapsDate = u.tapsDate || tk;
+  const tapsToday = (tapsDate === tk) ? safeNum(u.tapsToday) : 0;
 
-  const score = u.score || 0;
+  const score = safeNum(u.score);
   const usdFromScore = score / SCORE_PER_USD;
+
+  // Balance is derived ONLY from score (prevents fake balance)
+  const shownBalance = usdFromScore;
 
   elVip.textContent = vipLevel ? `VIP: ${vipLevel}` : "VIP: None";
   elPower.textContent = `${power}×`;
-  elScore.textContent = Math.floor(score);
+
+  elScore.textContent = String(Math.floor(score));
   elScoreUsd.textContent = "$" + usdFromScore.toFixed(2);
-  elBalance.textContent = "$" + usdFromScore.toFixed(2);
-  elToday.textContent = vipLevel === 0 ? `${tapsToday} / ${NONVIP_DAILY_LIMIT}` : `${tapsToday} / ∞`;
+  elBalance.textContent = "$" + shownBalance.toFixed(2);
+
+  elToday.textContent = (vipLevel === 0)
+    ? `${tapsToday} / ${NONVIP_DAILY_LIMIT}`
+    : `${tapsToday} / ∞`;
 }
 
 async function tap(){
   const tk = todayKey();
+
   await runTransaction(db, async (tx)=>{
     const snap = await tx.get(userRef);
+    if(!snap.exists()){
+      tx.set(userRef,{
+        score:0, tapsToday:0, tapsDate:tk, createdAt:serverTimestamp()
+      },{merge:true});
+      return;
+    }
+
     const u = snap.data() || {};
 
-    const vipLevel = u.vip?.level || 0;
-    const power = MULT[vipLevel];
+    const vipLevel = u.vip?.level ? Number(u.vip.level) : 0;
+    const power = MULT[vipLevel] || 1;
 
-    let tapsToday = u.tapsDate === tk ? (u.tapsToday || 0) : 0;
+    let tapsDate = u.tapsDate || tk;
+    let tapsToday = safeNum(u.tapsToday);
+
+    if(tapsDate !== tk){
+      tapsDate = tk;
+      tapsToday = 0;
+    }
 
     if(vipLevel === 0 && tapsToday >= NONVIP_DAILY_LIMIT){
       throw new Error("LIMIT");
     }
 
+    const score = safeNum(u.score);
+    const newScore = score + Math.min(power, MULT[vipLevel] || 1);
+
     tx.update(userRef,{
-      score:(u.score || 0) + Math.min(power, MULT[vipLevel]),
-      tapsToday:tapsToday + 1,
-      tapsDate:tk
+      score: newScore,
+      tapsToday: tapsToday + 1,
+      tapsDate: tapsDate
     });
   });
-  refreshUI();
+
+  await refreshUI();
 }
 
 tapBtn.addEventListener("click", async ()=>{
@@ -291,21 +340,11 @@ tapBtn.addEventListener("click", async ()=>{
   try{
     await tap();
   }catch(e){
-    if(e.message === "LIMIT"){
+    if(e?.message === "LIMIT"){
       alert("Daily limit reached");
+    }else{
+      alert("Tap failed");
     }
-  }
-});
-
-await ensureUser();
-await refreshUI();
-</script>
-
-</body>
-</html> try{
-    await tap();
-  }catch(e){
-    alert(e?.message || "Tap failed");
   }
 });
 
