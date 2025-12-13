@@ -218,7 +218,7 @@ const db = getFirestore(app);
 
 const SCORE_PER_USD = 10000000;
 const NONVIP_DAILY_LIMIT = 500000;
-
+let authReady = false;
 let state = {
   score:0,balance:0,tapsToday:0,
   day:new Date().toDateString(),
@@ -227,7 +227,11 @@ let state = {
 
 function todayKey(){ return new Date().toDateString(); }
 
-const elScore=score, elPower=power, elToday=today, elUsd=usd, elBalance=balance;
+const elScore   = document.getElementById("score");
+const elPower   = document.getElementById("power");
+const elToday   = document.getElementById("today");
+const elUsd     = document.getElementById("usd");
+const elBalance = document.getElementById("balance");
 
 function refresh(){
   const usdVal = state.score / SCORE_PER_USD;
