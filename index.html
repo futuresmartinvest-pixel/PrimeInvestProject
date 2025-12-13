@@ -7,73 +7,145 @@ content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no"
 
 <title>PrimeGlobalPro</title>
 
-<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet">
-
 <style>
 body{
   margin:0;
   font-family:system-ui;
-  background:linear-gradient(135deg,#120f2e,#3b2fa3);
+  background:linear-gradient(135deg,#5b2fc2,#7c3aed);
   color:#fff;
-  padding-bottom:120px;
-}
-.balance-box{
-  margin:24px;
-  padding:26px;
-  border-radius:28px;
-  background:rgba(255,255,255,.18);
-  backdrop-filter:blur(20px);
   text-align:center;
+  overflow:hidden;
 }
-.balance{font-size:44px;font-weight:900}
-.score{text-align:center;opacity:.85}
-.robot-wrap{display:flex;justify-content:center;margin-top:40px}
+
+/* GLASS */
+.glass{
+  margin:20px;
+  padding:20px;
+  border-radius:24px;
+  background:rgba(255,255,255,.15);
+  backdrop-filter:blur(18px);
+}
+
+.balance{
+  font-size:38px;
+  font-weight:900;
+}
+
+.vip{
+  margin-top:6px;
+  font-size:14px;
+  font-weight:800;
+  background:linear-gradient(135deg,#facc15,#f59e0b);
+  color:#000;
+  padding:6px 14px;
+  border-radius:999px;
+  display:inline-block;
+}
+
+/* ROBOT */
+.robot-wrap{
+  margin-top:28px;
+  display:flex;
+  justify-content:center;
+  position:relative;
+}
+
 .robot{
-  width:180px;height:180px;border-radius:50%;
-  background:radial-gradient(circle at top,#9ae6ff,#3b82f6);
-  display:flex;align-items:center;justify-content:center;
-  font-size:80px;cursor:pointer;
+  width:190px;
+  height:190px;
+  border-radius:50%;
+  background:radial-gradient(circle,#fff,#cbd5f5);
+  font-size:92px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  cursor:pointer;
+  animation:float 4s ease-in-out infinite;
+  transition:transform .08s, box-shadow .08s;
 }
-.nav-wrap{position:fixed;bottom:18px;left:0;right:0;display:flex;justify-content:center}
+
+.robot.tap{
+  transform:scale(.9);
+  box-shadow:0 0 60px rgba(255,255,255,.9);
+}
+
+@keyframes float{
+  0%{transform:translateY(0)}
+  50%{transform:translateY(-14px)}
+  100%{transform:translateY(0)}
+}
+
+/* PARTICLES */
+.particle{
+  position:absolute;
+  width:8px;
+  height:8px;
+  border-radius:50%;
+  animation:fly .7s forwards;
+}
+
+@keyframes fly{
+  to{
+    transform:translate(var(--x),var(--y)) scale(0);
+    opacity:0;
+  }
+}
+
+/* SCORE */
+.score{
+  margin-top:14px;
+  font-weight:700;
+}
+
+/* NAV (ICONS ONLY) */
 .nav{
-  width:calc(100% - 48px);max-width:420px;height:64px;
-  background:rgba(255,255,255,.9);
-  border-radius:999px;display:flex;justify-content:space-around;align-items:center
+  position:fixed;
+  bottom:14px;
+  left:14px;
+  right:14px;
+  background:rgba(255,255,255,.92);
+  backdrop-filter:blur(16px);
+  display:flex;
+  justify-content:space-around;
+  padding:14px 0;
+  border-radius:28px;
+  box-shadow:0 10px 30px rgba(0,0,0,.25);
 }
-.nav i{color:#666;font-size:22px}
-.nav i.active{color:#3b2fa3}
-.tap-fx{position:absolute;font-weight:800;animation:float 1s forwards}
-@keyframes float{to{opacity:0;transform:translateY(-60px)}}
+
+.nav div{
+  font-size:22px;
+  cursor:pointer;
+}
 </style>
 </head>
 
 <body>
 
-<div class="balance-box">
-  <div>Balance</div>
+<!-- TOP -->
+<div class="glass">
   <div class="balance" id="balance">$0.00</div>
+  <div class="vip" id="vipBadge">NO VIP</div>
+</div>
+
+<!-- ROBOT -->
+<div class="robot-wrap" id="wrap">
+  <div class="robot" id="bot">🤖</div>
 </div>
 
 <div class="score">
-  Score: <span id="score">0</span>
+  Today score: <span id="score">0</span>
 </div>
 
-<div class="robot-wrap">
-  <div class="robot" id="robot">🤖</div>
-</div>
-
-<div class="nav-wrap">
-  <div class="nav">
-    <i class="fa-solid fa-house active"></i>
-    <i class="fa-solid fa-list-check"></i>
-    <i class="fa-solid fa-robot"></i>
-    <i class="fa-solid fa-users"></i>
-    <i class="fa-solid fa-crown" onclick="location.href='deposit.html'"></i>
-  </div>
+<!-- NAV ICONS -->
+<div class="nav">
+  <div>🏠</div>
+  <div onclick="location.href='tasks.html'">📋</div>
+  <div onclick="location.href='wallet.html'">💼</div>
+  <div onclick="location.href='referral.html'">👥</div>
+  <div onclick="location.href='deposit.html'">💎</div>
 </div>
 
 <script type="module">
-/* ===== FIREBASE ===== */
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
 import {
   getFirestore,
@@ -84,6 +156,7 @@ import {
   serverTimestamp
 } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
+/* FIREBASE */
 const firebaseConfig = {
   apiKey: "AIzaSyA1HZLZRY9UADNnDVBnoBIlG3b-bCkojxs",
   authDomain: "primeinvestproject2.firebaseapp.com",
@@ -92,97 +165,108 @@ const firebaseConfig = {
   messagingSenderId: "798977477628",
   appId: "1:798977477628:web:c97d1fba72ad7865864079"
 };
-
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 
-/* ===== RULES ===== */
-const SCORE_PER_DOLLAR = 10000000;
-const DAILY_LIMIT_NO_VIP = 500000;
+/* CONSTANTS */
+const SCORE_TO_USD = 10000000;
+const DAILY_LIMIT = 500000;
 const MULTI = {0:1,1:5,2:10,3:20,4:40,5:80,6:800,7:8000,8:80000};
+const TAP_DELAY = 120;
 
-/* ===== USER ===== */
+/* USER ID */
 function uid(){
-  let id = localStorage.getItem("userId");
+  let id = localStorage.getItem("uid");
   if(!id){
-    id = "user_"+Math.random().toString(36).slice(2,10)+"_"+Date.now();
-    localStorage.setItem("userId", id);
+    id="user_"+Date.now()+"_"+Math.random().toString(36).slice(2,8);
+    localStorage.setItem("uid",id);
   }
   return id;
 }
-const userId = uid();
-const userRef = doc(db,"users",userId);
+const ref = doc(db,"users",uid());
 
-/* ===== INIT USER ===== */
-async function ensureUser(){
-  const snap = await getDoc(userRef);
+let user;
+let today = new Date().toISOString().slice(0,10);
+let lastTap = 0;
+
+/* SOUND */
+const audio = new Audio("data:audio/wav;base64,UklGRhQAAABXQVZFZm10IBAAAAABAAEAESsAACJWAAACABAAZGF0YRAAAA==");
+
+/* INIT */
+async function init(){
+  const snap = await getDoc(ref);
   if(!snap.exists()){
-    await setDoc(userRef,{
+    await setDoc(ref,{
       balance:0,
-      score:0,
-      today:new Date().toDateString(),
-      todayScore:0,
-      createdAt:serverTimestamp()
+      score:{},
+      createdAt:serverTimestamp(),
+      withdrawLocked:true   // 🔒 withdrawal rule
     });
   }
-}
-await ensureUser();
-
-/* ===== LOAD USER ===== */
-let userData = (await getDoc(userRef)).data();
-let vipLevel = userData?.vip?.level || 0;
-
-/* ===== RESET DAILY ===== */
-const today = new Date().toDateString();
-if(userData.today !== today){
-  await updateDoc(userRef,{ today, todayScore:0 });
-  userData.today = today;
-  userData.todayScore = 0;
+  user=(await getDoc(ref)).data();
+  render();
 }
 
 /* UI */
-const balanceEl = document.getElementById("balance");
-const scoreEl = document.getElementById("score");
-function refresh(){
-  balanceEl.textContent = "$"+(userData.balance||0).toFixed(2);
-  scoreEl.textContent = (userData.score||0).toLocaleString();
+function render(){
+  balance.innerText="$"+(user.balance||0).toFixed(2);
+  const lvl=user.vip?.level||0;
+  vipBadge.innerText=lvl?`VIP ${lvl} ×${MULTI[lvl]}`:"NO VIP";
+  score.innerText=user.score?.[today]||0;
 }
-refresh();
 
-/* ===== TAP ===== */
-document.getElementById("robot").onclick = async (e)=>{
-  const gain = MULTI[vipLevel] || 1;
+/* PARTICLES */
+function sparks(x,y){
+  for(let i=0;i<6;i++){
+    const p=document.createElement("div");
+    p.className="particle";
+    p.style.left=x+"px";
+    p.style.top=y+"px";
+    p.style.background=`hsl(${Math.random()*60+40},100%,60%)`;
+    p.style.setProperty("--x",(Math.random()*100-50)+"px");
+    p.style.setProperty("--y",(Math.random()*100-50)+"px");
+    wrap.appendChild(p);
+    setTimeout(()=>p.remove(),700);
+  }
+}
 
-  if(vipLevel === 0 && (userData.todayScore + gain) > DAILY_LIMIT_NO_VIP){
-    alert("Daily limit reached. Upgrade VIP.");
+/* TAP (ANTI-BOT + LIMIT) */
+bot.onclick=async(e)=>{
+  const now=Date.now();
+  if(now-lastTap<TAP_DELAY) return;     // anti-bot
+  lastTap=now;
+
+  bot.classList.add("tap");
+  setTimeout(()=>bot.classList.remove("tap"),90);
+
+  audio.currentTime=0; audio.play();
+  navigator.vibrate?.(25);
+
+  sparks(e.clientX,e.clientY);
+
+  const lvl=user.vip?.level||0;
+  const mult=MULTI[lvl];
+
+  user.score ||= {};
+  user.score[today] ||= 0;
+
+  if(lvl===0 && user.score[today]>=DAILY_LIMIT){
+    alert("Daily tap limit reached");
     return;
   }
 
-  userData.score += gain;
-  userData.todayScore += gain;
+  user.score[today]+=mult;
+  user.balance=(user.balance||0)+(mult/SCORE_TO_USD);
 
-  if(userData.score >= SCORE_PER_DOLLAR){
-    const dollars = Math.floor(userData.score / SCORE_PER_DOLLAR);
-    userData.score -= dollars * SCORE_PER_DOLLAR;
-    userData.balance += dollars;
-  }
-
-  await updateDoc(userRef,{
-    score:userData.score,
-    balance:userData.balance,
-    todayScore:userData.todayScore
+  await updateDoc(ref,{
+    score:user.score,
+    balance:user.balance
   });
 
-  refresh();
-
-  const fx=document.createElement("div");
-  fx.className="tap-fx";
-  fx.style.left=e.clientX+"px";
-  fx.style.top=e.clientY+"px";
-  fx.textContent="+"+gain;
-  document.body.appendChild(fx);
-  setTimeout(()=>fx.remove(),1000);
+  render();
 };
+
+init();
 </script>
 
 </body>
