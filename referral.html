@@ -16,9 +16,7 @@ body{
     radial-gradient(circle at 82% 75%, rgba(0,220,255,.35), transparent 45%),
     linear-gradient(180deg,#05070f,#0a0f24);
 }
-
 .wrap{padding:18px 16px 120px; max-width:420px; margin:0 auto;}
-
 .glass{
   background:rgba(255,255,255,.12);
   border:1px solid rgba(255,255,255,.22);
@@ -27,16 +25,13 @@ body{
   padding:18px;
   margin-bottom:16px;
 }
-
 h2{text-align:center;margin:0 0 14px}
-
 .code{
   font-size:20px;
   font-weight:900;
   letter-spacing:2px;
   text-align:center;
 }
-
 .copy{
   margin-top:10px;
   width:100%;
@@ -46,7 +41,6 @@ h2{text-align:center;margin:0 0 14px}
   font-weight:700;
   cursor:pointer;
 }
-
 .stat{
   display:flex;
   justify-content:space-between;
@@ -63,7 +57,7 @@ h2{text-align:center;margin:0 0 14px}
   <div class="glass">
     <h2>Your Referral Code</h2>
     <div class="code" id="refCode">----</div>
-    <button class="copy" onclick="copyLink()">Copy Referral Link</button>
+    <button class="copy" id="copyBtn">Copy Referral Link</button>
   </div>
 
   <div class="glass">
@@ -72,30 +66,29 @@ h2{text-align:center;margin:0 0 14px}
     <div class="stat"><span>Referral Earnings</span><span id="refEarnings">$0.00</span></div>
   </div>
 
-  <!-- ✅ ADDED -->
   <div class="glass">
     <h2>Invited Users</h2>
     <div id="refList"></div>
   </div>
-  <!-- ✅ ADDED -->
 
 </div>
 
 <script type="module">
+/* -------------------- IMPORTS -------------------- */
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
 import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
-import { 
-  getFirestore, 
-  doc, 
-  getDoc, 
+import {
+  getFirestore,
+  doc,
+  getDoc,
   updateDoc,
   collection,
   query,
   where,
   getDocs
 } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
-/* ✅ ADDED IMPORTS */
 
+/* -------------------- FIREBASE -------------------- */
 const firebaseConfig = {
   apiKey: "AIzaSyA1HZLZRY9UADNVBnoBIlG3b-bCkojxs",
   authDomain: "primeinvestproject2.firebaseapp.com",
@@ -109,62 +102,77 @@ const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 const db = getFirestore(app);
 
-let currentUser = null;
+/* -------------------- AUTH SAFE GUARD -------------------- */
+let authChecked = false;
 
-onAuthStateChanged(auth, async user=>{
-  if(!user){
-    location.href="auth.html";
+onAuthStateChanged(auth, (user) => {
+  if (!user) {
+    if (authChecked) {
+      location.href = "auth.html";
+    }
     return;
   }
 
-  currentUser = user;
-  const ref = doc(db,"users",user.uid);
-  const snap = await getDoc(ref);
+  authChecked = true;
+  loadReferralData(user);
+});
 
-  let data = snap.exists() ? snap.data() : {};
+/* -------------------- LOAD DATA -------------------- */
+async function loadReferralData(user) {
+  const refCodeEl = document.getElementById("refCode");
+  const refCountEl = document.getElementById("refCount");
+  const refEarnEl = document.getElementById("refEarnings");
+  const refList = document.getElementById("refList");
 
-  // Generate referral code once
-  if(!data.referralCode){
-    const code = user.uid.slice(0,8).toUpperCase();
-    await updateDoc(ref,{
-      referralCode:code,
-      referralCount:0,
-      referralEarnings:0
+  const userRef = doc(db, "users", user.uid);
+  const snap = await getDoc(userRef);
+
+  if (!snap.exists()) return;
+
+  let data = snap.data();
+
+  if (!data.referralCode) {
+    const code = user.uid.slice(0, 8).toUpperCase();
+    await updateDoc(userRef, {
+      referralCode: code,
+      referralCount: 0,
+      referralEarnings: 0
     });
     data.referralCode = code;
   }
 
-  document.getElementById("refCode").textContent = data.referralCode;
-  document.getElementById("refCount").textContent = data.referralCount || 0;
-  document.getElementById("refEarnings").textContent = "$"+(data.referralEarnings||0).toFixed(2);
+  refCodeEl.textContent = data.referralCode;
+  refCountEl.textContent = data.referralCount || 0;
+  refEarnEl.textContent = "$" + (data.referralEarnings || 0).toFixed(2);
 
-  /* ✅ ADDED */
-  const list = document.getElementById("refList");
-  list.innerHTML = "";
+  refList.innerHTML = "Loading...";
 
   const q = query(
-    collection(db,"referrals"),
-    where("inviterUid","==",user.uid)
+    collection(db, "referrals"),
+    where("inviterUid", "==", user.uid)
   );
 
   const snapRefs = await getDocs(q);
 
-  if(snapRefs.empty){
-    list.innerHTML = "<div style='opacity:.7'>No referrals yet</div>";
-  }else{
-    snapRefs.forEach(d=>{
+  refList.innerHTML = "";
+
+  if (snapRefs.empty) {
+    refList.innerHTML = "<div style='opacity:.7'>No referrals yet</div>";
+  } else {
+    snapRefs.forEach(d => {
       const r = d.data();
       const row = document.createElement("div");
       row.className = "stat";
       row.innerHTML = `<span>${r.invitedEmail}</span><span>+1%</span>`;
-      list.appendChild(row);
+      refList.appendChild(row);
     });
   }
-  /* ✅ ADDED */
-});
+}
 
-window.copyLink = ()=>{
-  const link = location.origin + "/auth.html?ref=" + document.getElementById("refCode").textContent;
+/* -------------------- COPY LINK -------------------- */
+document.getElementById("copyBtn").onclick = () => {
+  const code = document.getElementById("refCode").textContent;
+  const link = location.origin + "/auth.html?ref=" + code;
   navigator.clipboard.writeText(link);
   alert("Referral link copied");
 };
