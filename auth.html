@@ -1,276 +1,126 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
 <meta charset="UTF-8">
-<meta name="viewport"
-content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
-<title>PrimeGlobalPro – Authentication</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>PrimeGlobalPro – Login</title>
 
 <style>
-*{box-sizing:border-box}
 body{
-  margin:0;
-  min-height:100vh;
-  font-family:system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+  margin:0;font-family:system-ui;color:#fff;
   background:
-    radial-gradient(circle at 20% 20%, rgba(165,120,255,.45), transparent 40%),
-    radial-gradient(circle at 80% 70%, rgba(0,220,255,.35), transparent 40%),
+    radial-gradient(circle at 20% 20%, #7f5cff55, transparent 40%),
+    radial-gradient(circle at 80% 70%, #00e5ff55, transparent 40%),
     linear-gradient(180deg,#05070f,#0a0f24);
-  display:flex;
-  justify-content:center;
-  align-items:center;
-  color:#fff;
+  display:flex;align-items:center;justify-content:center;
 }
-
-.auth-card{
-  width:92%;
-  max-width:400px;
+.card{
+  width:100%;max-width:420px;padding:24px;
   background:rgba(255,255,255,.12);
-  border:1px solid rgba(255,255,255,.22);
-  border-radius:26px;
-  backdrop-filter:blur(18px);
-  box-shadow:0 20px 60px rgba(0,0,0,.45);
-  padding:22px;
+  border-radius:24px;
 }
-
-.auth-header{text-align:center;margin-bottom:18px}
-.auth-header h2{margin:0;font-size:26px;font-weight:900}
-.auth-header p{margin:6px 0 0;font-size:14px;opacity:.75}
-
-.tabs{
-  display:flex;
-  background:rgba(255,255,255,.1);
-  border-radius:16px;
-  overflow:hidden;
-  margin:18px 0;
-}
+h2{text-align:center}
+.tabs{display:flex;margin-bottom:16px}
 .tabs button{
-  flex:1;
-  padding:12px;
-  border:none;
-  background:none;
-  color:#fff;
-  font-weight:800;
-  cursor:pointer;
-  opacity:.6;
+  flex:1;padding:12px;border:none;
+  background:rgba(255,255,255,.1);
+  color:#fff;font-weight:800
 }
-.tabs button.active{
-  background:rgba(255,255,255,.18);
-  opacity:1;
+.tabs button.active{background:rgba(255,255,255,.25)}
+input{
+  width:100%;padding:14px;margin-bottom:10px;
+  border:none;border-radius:14px;
+  background:#0006;color:#fff
 }
-
-input,select{
-  width:100%;
-  padding:14px;
-  border-radius:14px;
-  border:1px solid rgba(255,255,255,.25);
-  background:rgba(0,0,0,.25);
-  color:#fff;
-  font-size:15px;
-  margin-bottom:12px;
-}
-input::placeholder{color:#bbb}
-select option{color:#000}
-
-.main-btn{
-  width:100%;
-  padding:14px;
-  border:none;
+button.main{
+  width:100%;padding:14px;border:none;
   border-radius:16px;
   background:linear-gradient(135deg,#ffd36e,#ffb700);
-  color:#000;
-  font-weight:900;
-  font-size:16px;
-  cursor:pointer;
+  font-weight:900
 }
-
-.link{text-align:center;font-size:14px;margin-top:12px;opacity:.85;cursor:pointer}
-.hidden{display:none}
-
-/* PASSWORD STRENGTH */
-.strength{
-  height:6px;
-  border-radius:6px;
-  background:#333;
-  overflow:hidden;
-  margin-bottom:10px;
-}
-.strength div{
-  height:100%;
-  width:0%;
-  transition:.3s;
-}
-
-/* TERMS */
-.terms{
-  display:flex;
-  align-items:flex-start;
-  gap:8px;
-  font-size:13px;
-  margin-bottom:12px;
-}
-.terms input{margin-top:3px}
+.link{text-align:center;margin-top:10px;opacity:.8}
 </style>
 </head>
 
 <body>
+<div class="card">
 
-<div class="auth-card">
+<h2 id="title">Login</h2>
 
-  <div class="auth-header">
-    <h2>PrimeGlobalPro</h2>
-    <p>Secure investment access</p>
-  </div>
+<div class="tabs">
+  <button id="loginTab" class="active" onclick="showLogin()">Login</button>
+  <button id="regTab" onclick="showRegister()">Register</button>
+</div>
 
-  <div class="tabs">
-    <button id="tabLogin" class="active">Login</button>
-    <button id="tabRegister">Register</button>
-  </div>
+<div id="login">
+  <input id="loginEmail" placeholder="Email">
+  <input id="loginPass" type="password" placeholder="Password">
+  <button class="main" onclick="login()">Login</button>
+  <div class="link"><a onclick="reset()">Forgot password?</a></div>
+</div>
 
-  <!-- LOGIN -->
-  <div id="loginBox">
-    <input id="loginEmail" type="email" placeholder="Email">
-    <input id="loginPassword" type="password" placeholder="Password">
-    <button class="main-btn" id="loginBtn">Login</button>
-    <div class="link" id="forgotBtn">Forgot password?</div>
-  </div>
-
-  <!-- REGISTER -->
-  <div id="registerBox" class="hidden">
-    <input id="fullName" placeholder="Full name">
-
-    <select id="country">
-      <option value="">🌍 Select country</option>
-      <option>🇬🇧 United Kingdom</option>
-      <option>🇺🇸 United States</option>
-      <option>🇨🇦 Canada</option>
-      <option>🇦🇺 Australia</option>
-      <option>🇩🇪 Germany</option>
-      <option>🇫🇷 France</option>
-      <option>🇮🇹 Italy</option>
-      <option>🇪🇸 Spain</option>
-      <option>🇹🇷 Turkey</option>
-      <option>🇮🇷 Iran</option>
-    </select>
-
-    <input id="address" placeholder="Address">
-    <input id="regEmail" type="email" placeholder="Email">
-
-    <input id="regPass1" type="password" placeholder="Password">
-    <div class="strength"><div id="strengthBar"></div></div>
-
-    <input id="regPass2" type="password" placeholder="Confirm password">
-    <input id="referral" placeholder="Referral code (optional)">
-
-    <div class="terms">
-      <input type="checkbox" id="terms">
-      <label for="terms">
-        I agree to the <b>Terms & Conditions</b> and <b>Privacy Policy</b>
-      </label>
-    </div>
-
-    <button class="main-btn" id="registerBtn">Create Account</button>
-  </div>
+<div id="register" style="display:none">
+  <input id="name" placeholder="Full name">
+  <input id="country" placeholder="Country">
+  <input id="address" placeholder="Address">
+  <input id="email" placeholder="Email">
+  <input id="pass" type="password" placeholder="Password">
+  <input id="pass2" type="password" placeholder="Confirm password">
+  <input id="ref" placeholder="Referral code (optional)">
+  <button class="main" onclick="register()">Create Account</button>
+</div>
 
 </div>
 
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-import {
-  getAuth,
-  signInWithEmailAndPassword,
-  createUserWithEmailAndPassword,
-  sendPasswordResetEmail
-} from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
-import {
-  getFirestore,
-  doc,
-  setDoc,
-  serverTimestamp
-} from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, sendPasswordResetEmail } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+import { getFirestore, doc, setDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
 const firebaseConfig = {
   apiKey: "AIzaSyA1HZLZRY9UADNnDVBnoBIlG3b-bCkojxs",
   authDomain: "primeinvestproject2.firebaseapp.com",
-  projectId: "primeinvestproject2",
-  storageBucket: "primeinvestproject2.firebasestorage.app",
-  messagingSenderId: "798977477628",
-  appId: "1:798977477628:web:c97d1fba72ad7865864079"
+  projectId: "primeinvestproject2"
 };
 
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 const db = getFirestore(app);
 
-/* TABS */
-tabLogin.onclick = ()=>{
-  loginBox.classList.remove("hidden");
-  registerBox.classList.add("hidden");
-  tabLogin.classList.add("active");
-  tabRegister.classList.remove("active");
+window.showLogin=()=>{
+  login.style.display="block";
+  register.style.display="none";
+  loginTab.classList.add("active");
+  regTab.classList.remove("active");
 };
-tabRegister.onclick = ()=>{
-  registerBox.classList.remove("hidden");
-  loginBox.classList.add("hidden");
-  tabRegister.classList.add("active");
-  tabLogin.classList.remove("active");
-};
-
-/* PASSWORD STRENGTH */
-regPass1.oninput = ()=>{
-  const v = regPass1.value;
-  let s = 0;
-  if(v.length >= 8) s+=25;
-  if(/[A-Z]/.test(v)) s+=25;
-  if(/[0-9]/.test(v)) s+=25;
-  if(/[^A-Za-z0-9]/.test(v)) s+=25;
-  strengthBar.style.width = s + "%";
-  strengthBar.style.background =
-    s < 50 ? "#ef4444" : s < 75 ? "#f59e0b" : "#22c55e";
+window.showRegister=()=>{
+  login.style.display="none";
+  register.style.display="block";
+  regTab.classList.add("active");
+  loginTab.classList.remove("active");
 };
 
-/* LOGIN */
-loginBtn.onclick = async ()=>{
-  await signInWithEmailAndPassword(auth, loginEmail.value, loginPassword.value);
+window.login=async()=>{
+  await signInWithEmailAndPassword(auth,loginEmail.value,loginPass.value);
   location.replace("index.html");
 };
 
-/* REGISTER */
-registerBtn.onclick = async ()=>{
-  if(!terms.checked){
-    alert("You must accept Terms & Conditions");
-    return;
-  }
-  if(regPass1.value !== regPass2.value){
-    alert("Passwords do not match");
-    return;
-  }
-
-  const cred = await createUserWithEmailAndPassword(
-    auth,
-    regEmail.value,
-    regPass1.value
-  );
-
+window.register=async()=>{
+  if(pass.value!==pass2.value) return alert("Passwords do not match");
+  const cred = await createUserWithEmailAndPassword(auth,email.value,pass.value);
   await setDoc(doc(db,"users",cred.user.uid),{
-    fullName: fullName.value,
-    country: country.value,
-    address: address.value,
-    referral: referral.value || null,
-    createdAt: serverTimestamp()
+    fullName:name.value,
+    country:country.value,
+    address:address.value,
+    referral:ref.value||null,
+    createdAt:serverTimestamp()
   });
-
   location.replace("index.html");
 };
 
-/* FORGOT PASSWORD (EMAIL VERIFIED HERE) */
-forgotBtn.onclick = async ()=>{
-  if(!loginEmail.value){
-    alert("Enter your email first");
-    return;
-  }
-  await sendPasswordResetEmail(auth, loginEmail.value);
-  alert("Password reset email sent. Check your inbox.");
+window.reset=async()=>{
+  await sendPasswordResetEmail(auth,loginEmail.value);
+  alert("Password reset email sent");
 };
 </script>
 
