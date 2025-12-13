@@ -242,32 +242,26 @@ function refresh(){
 }
 
   tapBtn.onclick = () => {
-tapBtn.onclick = () => {
 
-  // 1️⃣ Wait until Firebase auth finishes restoring session
-  if (!authReady) {
-    return; // silently ignore taps until ready
-  }
-
-  // 2️⃣ If user is not logged in, SHOW message (do NOT redirect)
+  // User not logged in → show message
   if (!state.loggedIn) {
     alert("Please login first");
     return;
   }
 
-  // 3️⃣ New day reset
+  // New day reset
   if (state.day !== todayKey()) {
     state.day = todayKey();
     state.tapsToday = 0;
   }
 
-  // 4️⃣ Daily limit check
+  // Daily limit check
   if (!state.vip && state.tapsToday >= NONVIP_DAILY_LIMIT) {
     alert("Daily limit reached");
     return;
   }
 
-  // 5️⃣ Tap success
+  // Tap success
   state.score += state.power;
   state.tapsToday++;
 
@@ -313,7 +307,7 @@ window.setLang = l=>{
 setLang("en");
 
 onAuthStateChanged(auth, async user=>{
-  authReady = true;
+  
   state.loggedIn=!!user;
   loginBtn.style.display=user?"none":"block";
   logoutBtn.style.display=user?"block":"none";
