@@ -2,8 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8" />
-<meta name="viewport"
-content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
 <title>PrimeGlobalPro</title>
 
 <style>
@@ -21,21 +20,18 @@ body{
   overflow-x:hidden;
 }
 
-.wrap{padding:18px 16px 110px; max-width:420px; margin:0 auto;}
+.wrap{padding:18px 16px 120px; max-width:420px; margin:0 auto;}
 
 .glass{
   background:rgba(255,255,255,0.12);
   border:1px solid rgba(255,255,255,0.22);
   box-shadow:0 18px 50px rgba(0,0,0,.35);
   backdrop-filter: blur(18px);
-  -webkit-backdrop-filter: blur(18px);
   border-radius:24px;
 }
 
-.card{padding:18px;text-align:center}
-.card .label{opacity:.8;font-weight:600}
-.card .amount{font-size:52px;font-weight:900;margin:6px 0 10px}
-
+.card{text-align:center;padding:18px}
+.amount{font-size:52px;font-weight:900;margin:6px 0}
 .vip-pill{
   display:inline-block;
   padding:8px 14px;
@@ -45,158 +41,168 @@ body{
   font-weight:700;
 }
 
-.tap-area{margin:22px auto 10px;display:flex;justify-content:center}
+.tap-area{display:flex;justify-content:center;margin:24px 0}
 .orb{
-  width:min(250px,72vw);
-  height:min(250px,72vw);
-  border-radius:999px;
-  border:1px solid rgba(255,255,255,0.28);
-  display:flex;
-  align-items:center;
-  justify-content:center;
+  width:260px;height:260px;
+  border-radius:50%;
+  display:flex;align-items:center;justify-content:center;
+  font-weight:900;letter-spacing:2px;
+  border:1px solid rgba(255,255,255,.3);
   cursor:pointer;
 }
-.tap-text{font-weight:900;letter-spacing:2px}
 
-.stats{margin-top:14px;padding:14px 16px}
+.stats{padding:14px 16px}
 .row{display:flex;justify-content:space-between;font-weight:700}
-.mono{font-variant-numeric:tabular-nums}
+
+/* NAV */
+.nav-wrap{
+  position:fixed;
+  left:0;right:0;bottom:16px;
+  display:flex;justify-content:center;
+}
+.nav{
+  width:min(420px,100%);
+  display:flex;justify-content:space-around;
+  padding:14px;
+  border-radius:26px;
+  background:rgba(255,255,255,0.14);
+  border:1px solid rgba(255,255,255,0.22);
+}
+.nav button{
+  all:unset;
+  width:52px;height:44px;
+  display:flex;align-items:center;justify-content:center;
+  border-radius:16px;
+  cursor:pointer;
+}
+.nav button.active{
+  background:rgba(255,255,255,0.22);
+}
+.nav svg{
+  width:24px;height:24px;
+  stroke:#fff;
+  stroke-width:2;
+  fill:none;
+  stroke-linecap:round;
+  stroke-linejoin:round;
+}
 </style>
 </head>
 
 <body>
+
 <div class="wrap">
 
-<div class="glass card">
-  <div class="label">Balance</div>
-  <div class="amount mono" id="balanceUsd">$0.00</div>
-  <div class="vip-pill" id="vipPill">VIP: None</div>
+  <div class="glass card">
+    <div>Balance</div>
+    <div class="amount" id="balance">$0.00</div>
+    <div class="vip-pill" id="vip">VIP: None</div>
+  </div>
+
+  <div class="tap-area">
+    <div class="orb glass" id="tapBtn">TAP</div>
+  </div>
+
+  <div class="glass stats">
+    <div class="row"><span>Score</span><span id="score">0</span></div>
+    <div class="row"><span>Tap power</span><span id="power">1×</span></div>
+    <div class="row"><span>Today taps</span><span id="today">0 / 500000</span></div>
+    <div class="row"><span>Score → USD</span><span id="usd">$0.00</span></div>
+  </div>
+
 </div>
 
-<div class="tap-area">
-  <div class="orb" id="tapBtn">
-    <div class="tap-text">TAP</div>
+<!-- BOTTOM NAV – PROFESSIONAL INLINE SVG ICONS -->
+<div class="nav-wrap">
+  <div class="nav">
+
+    <!-- HOME -->
+    <button class="active">
+      <svg viewBox="0 0 24 24">
+        <path d="M4 11.5L12 4l8 7.5"/>
+        <path d="M6 10v10h4v-5h4v5h4V10"/>
+      </svg>
+    </button>
+
+    <!-- TASKS -->
+    <button>
+      <svg viewBox="0 0 24 24">
+        <rect x="4" y="5" width="16" height="14" rx="2"/>
+        <path d="M8 9h8M8 13h8M8 17h5"/>
+      </svg>
+    </button>
+
+    <!-- WALLET -->
+    <button>
+      <svg viewBox="0 0 24 24">
+        <rect x="3" y="6" width="18" height="12" rx="2"/>
+        <path d="M16 12h3"/>
+      </svg>
+    </button>
+
+    <!-- PROFILE -->
+    <button>
+      <svg viewBox="0 0 24 24">
+        <circle cx="12" cy="8" r="3.5"/>
+        <path d="M4 20c2.5-4 13.5-4 16 0"/>
+      </svg>
+    </button>
+
   </div>
 </div>
 
-<div class="glass stats">
-  <div class="row"><span>Score</span><b class="mono" id="scoreText">0</b></div>
-  <div class="row"><span>Tap power</span><b id="powerText">1×</b></div>
-  <div class="row"><span>Today taps</span><b class="mono" id="todayText">0 / 500000</b></div>
-  <div class="row"><span>Score → USD</span><b class="mono" id="scoreUsd">$0.00</b></div>
-</div>
-
-</div>
-
-<script type="module">
-import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-import {
-  getFirestore, doc, getDoc, setDoc, runTransaction, serverTimestamp
-} from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
-
-const firebaseConfig = {
-  apiKey: "AIzaSyA1HZLZRY9UADNnDVBnoBIlG3b-bCkojxs",
-  authDomain: "primeinvestproject2.firebaseapp.com",
-  projectId: "primeinvestproject2",
-  storageBucket: "primeinvestproject2.firebasestorage.app",
-  messagingSenderId: "798977477628",
-  appId: "1:798977477628:web:c97d1fba72ad7865864079"
-};
-
-const app = initializeApp(firebaseConfig);
-const db = getFirestore(app);
-
+<script>
+/* CONSTANTS */
 const SCORE_PER_USD = 10000000;
 const NONVIP_DAILY_LIMIT = 500000;
 
-const MULT = {0:1,1:5,2:10,3:20,4:40,5:80,6:800,7:8000,8:80000};
+/* STATE (SAFE, NO UNDEFINED FIELDS) */
+let state = {
+  score: 0,
+  balance: 0,
+  tapsToday: 0,
+  day: new Date().toDateString(),
+  vip: 0,
+  power: 1
+};
 
-function getOrCreateUserId(){
-  let id = localStorage.getItem("userId");
-  if(!id){
-    id = "user_" + Math.random().toString(36).slice(2) + Date.now();
-    localStorage.setItem("userId", id);
+function todayKey(){ return new Date().toDateString(); }
+
+/* UI ELEMENTS */
+const elScore = document.getElementById("score");
+const elPower = document.getElementById("power");
+const elToday = document.getElementById("today");
+const elUsd = document.getElementById("usd");
+const elBalance = document.getElementById("balance");
+
+/* RENDER */
+function refresh(){
+  const usd = state.score / SCORE_PER_USD;
+  elScore.textContent = state.score;
+  elPower.textContent = state.power + "×";
+  elToday.textContent = `${state.tapsToday} / ${NONVIP_DAILY_LIMIT}`;
+  elUsd.textContent = "$" + usd.toFixed(2);
+  elBalance.textContent = "$" + (state.balance + usd).toFixed(2);
+}
+
+/* TAP — FIXED & STABLE */
+document.getElementById("tapBtn").onclick = ()=>{
+  const tk = todayKey();
+  if(state.day !== tk){
+    state.day = tk;
+    state.tapsToday = 0;
   }
-  return id;
-}
-
-const userId = getOrCreateUserId();
-const userRef = doc(db,"users",userId);
-
-function todayKey(){
-  const d=new Date();
-  return `${d.getFullYear()}-${d.getMonth()+1}-${d.getDate()}`;
-}
-
-const elBalance=document.getElementById("balanceUsd");
-const elVip=document.getElementById("vipPill");
-const elScore=document.getElementById("scoreText");
-const elPower=document.getElementById("powerText");
-const elToday=document.getElementById("todayText");
-const elScoreUsd=document.getElementById("scoreUsd");
-const tapBtn=document.getElementById("tapBtn");
-
-async function ensureUser(){
-  const snap=await getDoc(userRef);
-  if(!snap.exists()){
-    await setDoc(userRef,{
-      balance:0,
-      score:0,
-      tapsToday:0,
-      tapsDate:todayKey(),
-      createdAt:serverTimestamp()
-    });
+  if(state.vip === 0 && state.tapsToday >= NONVIP_DAILY_LIMIT){
+    alert("Daily limit reached");
+    return;
   }
-}
+  state.score += state.power;
+  state.tapsToday += 1;
+  refresh();
+};
 
-async function refreshUI(){
-  const snap=await getDoc(userRef);
-  if(!snap.exists()) return;
-  const u=snap.data()||{};
-
-  const vip=u.vip?.level||0;
-  const power=MULT[vip]||1;
-
-  const score=Number.isFinite(u.score)?u.score:0;
-  const tapsToday=Number.isFinite(u.tapsToday)?u.tapsToday:0;
-  const usd=score/SCORE_PER_USD;
-
-  elVip.textContent=vip?`VIP: ${vip}`:"VIP: None";
-  elPower.textContent=power+"×";
-  elScore.textContent=Math.floor(score);
-  elToday.textContent=`${tapsToday} / ${vip? "∞":NONVIP_DAILY_LIMIT}`;
-  elScoreUsd.textContent="$"+usd.toFixed(2);
-  elBalance.textContent="$"+(usd+(u.balance||0)).toFixed(2);
-}
-
-async function tap(){
-  const tk=todayKey();
-  await runTransaction(db,async(tx)=>{
-    const snap=await tx.get(userRef);
-    const u=snap.exists()?snap.data():{};
-    const vip=u.vip?.level||0;
-    const power=MULT[vip]||1;
-
-    let tapsToday=Number.isFinite(u.tapsToday)?u.tapsToday:0;
-    let tapsDate=u.tapsDate||tk;
-    if(tapsDate!==tk){tapsToday=0;tapsDate=tk;}
-
-    if(vip===0 && tapsToday>=NONVIP_DAILY_LIMIT)
-      throw new Error("Daily limit reached");
-
-    tx.set(userRef,{
-      score:(u.score||0)+power,
-      tapsToday:tapsToday+1,
-      tapsDate
-    },{merge:true});
-  });
-  refreshUI();
-}
-
-tapBtn.addEventListener("click",()=>tap().catch(e=>alert(e.message)));
-
-await ensureUser();
-await refreshUI();
+refresh();
 </script>
+
 </body>
 </html>
