@@ -159,16 +159,29 @@ body{
       <circle cx="12" cy="19" r="1.5"/>
     </svg>
   </button>
-
 <div class="menu-box" id="menuBox">
 
-  <!-- USER CARD -->
+  <!-- USER INFO -->
   <div class="menu-user" id="menuUser">
     <div class="menu-avatar">👤</div>
     <div class="menu-user-info">
       <small>Signed in as</small>
       <div id="menuEmail"></div>
     </div>
+  </div>
+
+  <hr style="border:0;border-top:1px solid rgba(255,255,255,.15)">
+
+  <button id="loginBtn" onclick="location.href='auth.html'">🔐 Login</button>
+
+  <div id="loginEmailInfo"
+       style="display:none;font-size:12px;opacity:.7;padding:6px 12px;">
+  </div>
+
+  <button id="logoutBtn" onclick="logout()">🚪 Logout</button>
+  <button id="adminBtn" onclick="location.href='admin_vip.html'">🛠 Admin Panel</button>
+
+</div>
   </div>
 
   <!-- LANGUAGE -->
