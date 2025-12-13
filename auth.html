@@ -1,4 +1,5 @@
 <script type="module">
+/* -------------------- IMPORTS -------------------- */
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
 import {
   getAuth,
@@ -16,7 +17,7 @@ import {
   serverTimestamp
 } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
-/* FIREBASE */
+/* -------------------- FIREBASE -------------------- */
 const firebaseConfig = {
   apiKey: "AIzaSyA1HZLZRY9UADNnDVBnoBIlG3b-bCkojxs",
   authDomain: "primeinvestproject2.firebaseapp.com",
@@ -30,92 +31,90 @@ const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 const db = getFirestore(app);
 
-/* INIT AUTH (NO TOP-LEVEL AWAIT) */
-async function initAuth() {
-  try {
-    await setPersistence(auth, browserLocalPersistence);
-  } catch (e) {
-    console.error("Persistence error", e);
-  }
+/* -------------------- INIT -------------------- */
+async function init() {
+  await setPersistence(auth, browserLocalPersistence);
+
+  /* ELEMENTS */
+  const msg = document.getElementById("msg");
+
+  const loginBtn = document.getElementById("loginBtn");
+  const registerBtn = document.getElementById("registerBtn");
+  const forgotBtn = document.getElementById("forgotBtn");
+
+  const loginEmail = document.getElementById("loginEmail");
+  const loginPassword = document.getElementById("loginPassword");
+
+  const regEmail = document.getElementById("regEmail");
+  const regPassword = document.getElementById("regPassword");
+  const regConfirm = document.getElementById("regConfirm");
+
+  const fullName = document.getElementById("fullName");
+  const country = document.getElementById("country");
+  const address = document.getElementById("address");
+
+  /* LOGIN */
+  loginBtn.onclick = async () => {
+    msg.innerHTML = "";
+    try {
+      await signInWithEmailAndPassword(
+        auth,
+        loginEmail.value.trim(),
+        loginPassword.value
+      );
+      location.href = "index.html";
+    } catch (e) {
+      msg.innerHTML = `<div class="error">${e.message}</div>`;
+    }
+  };
+
+  /* REGISTER */
+  registerBtn.onclick = async () => {
+    msg.innerHTML = "";
+
+    if (regPassword.value !== regConfirm.value) {
+      msg.innerHTML = `<div class="error">Passwords do not match</div>`;
+      return;
+    }
+
+    try {
+      const cred = await createUserWithEmailAndPassword(
+        auth,
+        regEmail.value.trim(),
+        regPassword.value
+      );
+
+      await setDoc(doc(db, "users", cred.user.uid), {
+        fullName: fullName.value,
+        country: country.value,
+        address: address.value,
+        balance: 0,
+        vip: { level: 0 },
+        createdAt: serverTimestamp()
+      });
+
+      location.href = "index.html";
+    } catch (e) {
+      msg.innerHTML = `<div class="error">${e.message}</div>`;
+    }
+  };
+
+  /* RESET PASSWORD */
+  forgotBtn.onclick = async () => {
+    if (!loginEmail.value) {
+      msg.innerHTML = `<div class="error">Enter email</div>`;
+      return;
+    }
+    await sendPasswordResetEmail(auth, loginEmail.value.trim());
+    msg.innerHTML = `<div class="success">Password reset email sent</div>`;
+  };
+
+  /* AUTH STATE */
+  onAuthStateChanged(auth, (user) => {
+    console.log("Auth state:", user?.email || "logged out");
+  });
 }
-initAuth();
 
-/* ELEMENTS */
-const msg = document.getElementById("msg");
-  /* -------------------- DOM ELEMENTS -------------------- */
-const loginBtn = document.getElementById("loginBtn");
-const registerBtn = document.getElementById("registerBtn");
-const forgotBtn = document.getElementById("forgotBtn");
-
-const loginEmail = document.getElementById("loginEmail");
-const loginPassword = document.getElementById("loginPassword");
-
-const regEmail = document.getElementById("regEmail");
-const regPassword = document.getElementById("regPassword");
-const regConfirm = document.getElementById("regConfirm");
-
-const fullName = document.getElementById("fullName");
-const country = document.getElementById("country");
-const address = document.getElementById("address");
-
-/* LOGIN */
-loginBtn.onclick = async () => {
-  msg.innerHTML = "";
-  try {
-    await signInWithEmailAndPassword(
-      auth,
-      loginEmail.value.trim(),
-      loginPassword.value
-    );
-    location.href = "index.html";
-  } catch (e) {
-    msg.innerHTML = `<div class="error">${e.message}</div>`;
-  }
-};
-
-/* REGISTER */
-registerBtn.onclick = async () => {
-  msg.innerHTML = "";
-
-  if (regPassword.value !== regConfirm.value) {
-    msg.innerHTML = `<div class="error">Passwords do not match</div>`;
-    return;
-  }
-
-  try {
-    const cred = await createUserWithEmailAndPassword(
-      auth,
-      regEmail.value.trim(),
-      regPassword.value
-    );
-
-    await setDoc(doc(db, "users", cred.user.uid), {
-      fullName: fullName.value,
-      country: country.value,
-      address: address.value,
-      balance: 0,
-      vip: { level: 0 },
-      createdAt: serverTimestamp()
-    });
-
-    location.href = "index.html";
-  } catch (e) {
-    msg.innerHTML = `<div class="error">${e.message}</div>`;
-  }
-};
-
-/* RESET PASSWORD */
-forgotBtn.onclick = async () => {
-  if (!loginEmail.value) {
-    msg.innerHTML = `<div class="error">Enter email</div>`;
-    return;
-  }
-  await sendPasswordResetEmail(auth, loginEmail.value.trim());
-  msg.innerHTML = `<div class="success">Password reset email sent</div>`;
-};
-
-/* AUTH STATE (NO REDIRECT HERE) */
-onAuthStateChanged(auth, (user) => {
-  console.log("Auth state:", user?.email || "logged out");
-});
+/* RUN AFTER DOM READY */
+document.addEventListener("DOMContentLoaded", init);
 </script>
