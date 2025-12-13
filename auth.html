@@ -1,5 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>PrimeGlobalPro – Auth</title>
+
+<style>
+body{
+  margin:0;
+  font-family:system-ui;
+  min-height:100vh;
+  background:linear-gradient(180deg,#05070f,#0a0f24);
+  color:#fff;
+  display:flex;
+  justify-content:center;
+  align-items:center;
+}
+.card{
+  width:100%;
+  max-width:420px;
+  background:rgba(255,255,255,.12);
+  border-radius:20px;
+  padding:20px;
+}
+input,button{
+  width:100%;
+  padding:12px;
+  margin-top:10px;
+  border-radius:12px;
+  border:none;
+}
+button{
+  font-weight:800;
+  background:#ffd36e;
+  color:#000;
+  cursor:pointer;
+}
+#msg{margin-top:10px;text-align:center}
+.error{color:#ff6b6b}
+.success{color:#6aff9b}
+.link{margin-top:10px;text-align:center;cursor:pointer}
+</style>
+</head>
+
+<body>
+
+<div class="card">
+  <h2>Login</h2>
+
+  <input id="loginEmail" type="email" placeholder="Email">
+  <input id="loginPassword" type="password" placeholder="Password">
+  <button id="loginBtn">Login</button>
+  <div id="forgotBtn" class="link">Forgot password?</div>
+
+  <hr style="margin:20px 0">
+
+  <h2>Register</h2>
+
+  <input id="fullName" placeholder="Full name">
+  <input id="country" placeholder="Country">
+  <input id="address" placeholder="Address">
+  <input id="regEmail" type="email" placeholder="Email">
+  <input id="regPassword" type="password" placeholder="Password">
+  <input id="regConfirm" type="password" placeholder="Confirm password">
+  <button id="registerBtn">Register</button>
+
+  <div id="msg"></div>
+</div>
+
 <script type="module">
-/* -------------------- IMPORTS -------------------- */
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
 import {
   getAuth,
@@ -7,8 +76,7 @@ import {
   createUserWithEmailAndPassword,
   sendPasswordResetEmail,
   setPersistence,
-  browserLocalPersistence,
-  onAuthStateChanged
+  browserLocalPersistence
 } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
 import {
   getFirestore,
@@ -17,7 +85,6 @@ import {
   serverTimestamp
 } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
-/* -------------------- FIREBASE -------------------- */
 const firebaseConfig = {
   apiKey: "AIzaSyA1HZLZRY9UADNnDVBnoBIlG3b-bCkojxs",
   authDomain: "primeinvestproject2.firebaseapp.com",
@@ -31,90 +98,66 @@ const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 const db = getFirestore(app);
 
-/* -------------------- INIT -------------------- */
-async function init() {
-  await setPersistence(auth, browserLocalPersistence);
+await setPersistence(auth, browserLocalPersistence);
 
-  /* ELEMENTS */
-  const msg = document.getElementById("msg");
+const msg = document.getElementById("msg");
 
-  const loginBtn = document.getElementById("loginBtn");
-  const registerBtn = document.getElementById("registerBtn");
-  const forgotBtn = document.getElementById("forgotBtn");
+loginBtn.onclick = async () => {
+  msg.innerHTML="";
+  try{
+    await signInWithEmailAndPassword(
+      auth,
+      loginEmail.value.trim(),
+      loginPassword.value
+    );
+    location.href="index.html";
+  }catch(e){
+    msg.innerHTML=`<div class="error">${e.message}</div>`;
+  }
+};
 
-  const loginEmail = document.getElementById("loginEmail");
-  const loginPassword = document.getElementById("loginPassword");
+registerBtn.onclick = async () => {
+  msg.innerHTML="";
+  if(regPassword.value!==regConfirm.value){
+    msg.innerHTML=`<div class="error">Passwords do not match</div>`;
+    return;
+  }
+  try{
+    const cred = await createUserWithEmailAndPassword(
+      auth,
+      regEmail.value.trim(),
+      regPassword.value
+    );
 
-  const regEmail = document.getElementById("regEmail");
-  const regPassword = document.getElementById("regPassword");
-  const regConfirm = document.getElementById("regConfirm");
+    const referralCode = cred.user.uid.slice(0,8).toUpperCase();
 
-  const fullName = document.getElementById("fullName");
-  const country = document.getElementById("country");
-  const address = document.getElementById("address");
+    await setDoc(doc(db,"users",cred.user.uid),{
+      fullName:fullName.value,
+      country:country.value,
+      address:address.value,
+      balance:0,
+      vip:{level:0},
+      referralCode,
+      referralCount:0,
+      referralEarnings:0,
+      createdAt:serverTimestamp()
+    });
 
-  /* LOGIN */
-  loginBtn.onclick = async () => {
-    msg.innerHTML = "";
-    try {
-      await signInWithEmailAndPassword(
-        auth,
-        loginEmail.value.trim(),
-        loginPassword.value
-      );
-      location.href = "index.html";
-    } catch (e) {
-      msg.innerHTML = `<div class="error">${e.message}</div>`;
-    }
-  };
+    location.href="index.html";
+  }catch(e){
+    msg.innerHTML=`<div class="error">${e.message}</div>`;
+  }
+};
 
-  /* REGISTER */
-  registerBtn.onclick = async () => {
-    msg.innerHTML = "";
-
-    if (regPassword.value !== regConfirm.value) {
-      msg.innerHTML = `<div class="error">Passwords do not match</div>`;
-      return;
-    }
-
-    try {
-      const cred = await createUserWithEmailAndPassword(
-        auth,
-        regEmail.value.trim(),
-        regPassword.value
-      );
-
-      await setDoc(doc(db, "users", cred.user.uid), {
-        fullName: fullName.value,
-        country: country.value,
-        address: address.value,
-        balance: 0,
-        vip: { level: 0 },
-        createdAt: serverTimestamp()
-      });
-
-      location.href = "index.html";
-    } catch (e) {
-      msg.innerHTML = `<div class="error">${e.message}</div>`;
-    }
-  };
-
-  /* RESET PASSWORD */
-  forgotBtn.onclick = async () => {
-    if (!loginEmail.value) {
-      msg.innerHTML = `<div class="error">Enter email</div>`;
-      return;
-    }
-    await sendPasswordResetEmail(auth, loginEmail.value.trim());
-    msg.innerHTML = `<div class="success">Password reset email sent</div>`;
-  };
-
-  /* AUTH STATE */
-  onAuthStateChanged(auth, (user) => {
-    console.log("Auth state:", user?.email || "logged out");
-  });
-}
-
-/* RUN AFTER DOM READY */
-document.addEventListener("DOMContentLoaded", init);
+forgotBtn.onclick = async ()=>{
+  if(!loginEmail.value){
+    msg.innerHTML=`<div class="error">Enter email</div>`;
+    return;
+  }
+  await sendPasswordResetEmail(auth,loginEmail.value.trim());
+  msg.innerHTML=`<div class="success">Reset email sent</div>`;
+};
 </script>
+
+</body>
+</html>
