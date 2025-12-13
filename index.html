@@ -1,174 +1,210 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
+<meta charset="UTF-8" />
 <meta name="viewport"
-content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
-
+content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover" />
 <title>PrimeGlobalPro</title>
 
 <style>
-:root{
-  --glass-bg: rgba(255,255,255,0.12);
-  --glass-border: rgba(255,255,255,0.25);
-  --glow: 0 0 30px rgba(120,200,255,0.35);
-}
+  *{box-sizing:border-box}
+  html,body{height:100%}
+  body{
+    margin:0;
+    font-family:system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+    color:#fff;
+    background:
+      radial-gradient(circle at 18% 18%, rgba(165,120,255,.45), transparent 42%),
+      radial-gradient(circle at 82% 75%, rgba(0,220,255,.35), transparent 45%),
+      radial-gradient(circle at 40% 85%, rgba(255,160,90,.22), transparent 40%),
+      linear-gradient(180deg,#05070f,#0a0f24);
+    overflow-x:hidden;
+  }
 
-*{box-sizing:border-box}
+  .wrap{padding:18px 16px 110px; max-width:420px; margin:0 auto;}
 
-body{
-  margin:0;
-  font-family:system-ui,-apple-system,BlinkMacSystemFont;
-  min-height:100vh;
-  background:
-    radial-gradient(circle at 20% 20%, #7f5cff55, transparent 40%),
-    radial-gradient(circle at 80% 70%, #00e5ff55, transparent 40%),
-    linear-gradient(180deg,#05070f,#0a0f24);
-  color:#fff;
-  overflow-x:hidden;
-}
+  .glass{
+    background:rgba(255,255,255,0.12);
+    border:1px solid rgba(255,255,255,0.22);
+    box-shadow:0 18px 50px rgba(0,0,0,.35);
+    backdrop-filter: blur(18px);
+    -webkit-backdrop-filter: blur(18px);
+    border-radius:24px;
+  }
 
-/* GLASS CARD */
-.glass{
-  background:var(--glass-bg);
-  backdrop-filter: blur(18px);
-  -webkit-backdrop-filter: blur(18px);
-  border:1px solid var(--glass-border);
-  border-radius:22px;
-  box-shadow:var(--glow);
-}
+  .card{
+    padding:18px;
+    text-align:center;
+  }
+  .card .label{opacity:.8; font-weight:600; letter-spacing:.2px}
+  .card .amount{
+    font-size:52px;
+    font-weight:900;
+    margin:6px 0 10px;
+  }
+  .vip-pill{
+    display:inline-block;
+    padding:8px 14px;
+    border-radius:999px;
+    background:rgba(255,255,255,0.14);
+    border:1px solid rgba(255,255,255,0.18);
+    font-weight:700;
+    opacity:.95;
+  }
 
-/* TOP CARD */
-.balance-card{
-  margin:20px auto 10px;
-  width:92%;
-  max-width:420px;
-  padding:20px;
-  text-align:center;
-}
-.balance-card h2{
-  margin:0;
-  font-size:14px;
-  opacity:.8;
-}
-.balance{
-  font-size:42px;
-  font-weight:800;
-  margin:6px 0;
-}
-.vip-badge{
-  font-size:13px;
-  padding:4px 12px;
-  border-radius:999px;
-  display:inline-block;
-  background:rgba(255,255,255,0.2);
-}
+  .tap-area{
+    margin:22px auto 10px;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+  }
 
-/* ENERGY CORE */
-.core-wrap{
-  display:flex;
-  justify-content:center;
-  margin:30px 0;
-}
-.energy-core{
-  width:180px;
-  height:180px;
-  border-radius:50%;
-  background:
-    radial-gradient(circle at 30% 30%, #aafcff, transparent 35%),
-    radial-gradient(circle at 70% 70%, #7b61ff, transparent 40%),
-    rgba(255,255,255,0.08);
-  border:1px solid rgba(255,255,255,.35);
-  backdrop-filter: blur(14px);
-  box-shadow:0 0 60px rgba(120,200,255,.6);
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  cursor:pointer;
-  transition:transform .08s ease;
-}
-.energy-core:active{
-  transform:scale(.96);
-}
-.energy-core span{
-  font-size:18px;
-  opacity:.85;
-}
+  .orb{
+    width:min(250px,72vw);
+    height:min(250px,72vw);
+    border-radius:999px;
+    position:relative;
+    border:1px solid rgba(255,255,255,0.28);
+    background:
+      radial-gradient(circle at 30% 30%, rgba(120,255,255,.55), transparent 45%),
+      radial-gradient(circle at 70% 75%, rgba(170,110,255,.55), transparent 48%),
+      radial-gradient(circle at 55% 45%, rgba(255,255,255,.16), transparent 52%),
+      rgba(255,255,255,0.08);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    box-shadow:0 22px 60px rgba(0,0,0,.45);
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    user-select:none;
+    -webkit-tap-highlight-color: transparent;
+    overflow:hidden;
+  }
+  .orb:active{transform:scale(.985)}
+  .tap-text{
+    font-weight:900;
+    letter-spacing:2px;
+    opacity:.9;
+    font-size:18px;
+  }
 
-/* SCORE */
-.score{
-  text-align:center;
-  font-size:18px;
-  margin-top:10px;
-  opacity:.9;
-}
+  .stats{
+    margin-top:14px;
+    padding:14px 16px;
+    display:flex;
+    flex-direction:column;
+    gap:8px;
+  }
+  .row{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    font-weight:700;
+  }
+  .row span{opacity:.85}
+  .mono{font-variant-numeric:tabular-nums}
 
-/* BOTTOM NAV */
-.nav{
-  position:fixed;
-  bottom:14px;
-  left:50%;
-  transform:translateX(-50%);
-  width:92%;
-  max-width:420px;
-  padding:12px;
-  display:flex;
-  justify-content:space-around;
-}
-.nav button{
-  background:none;
-  border:none;
-  color:#fff;
-  font-size:22px;
-  opacity:.6;
-}
-.nav button.active{
-  opacity:1;
-  text-shadow:0 0 12px #7cf;
-}
-
-.spacer{height:120px}
+  /* Bottom nav */
+  .nav-wrap{
+    position:fixed;
+    left:0; right:0; bottom:16px;
+    display:flex;
+    justify-content:center;
+    pointer-events:none;
+    padding:0 16px;
+  }
+  .nav{
+    width:min(420px,100%);
+    pointer-events:auto;
+    display:flex;
+    justify-content:space-around;
+    align-items:center;
+    padding:14px 14px;
+    border-radius:26px;
+    background:rgba(255,255,255,0.14);
+    border:1px solid rgba(255,255,255,0.22);
+    backdrop-filter: blur(18px);
+    -webkit-backdrop-filter: blur(18px);
+    box-shadow:0 18px 50px rgba(0,0,0,.35);
+  }
+  .nav button{
+    all:unset;
+    width:52px; height:44px;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    border-radius:16px;
+    cursor:pointer;
+    opacity:.9;
+  }
+  .nav button.active{
+    background:rgba(255,255,255,0.18);
+    border:1px solid rgba(255,255,255,0.22);
+    opacity:1;
+  }
+  .ico{width:24px;height:24px;fill:#fff;opacity:.95}
 </style>
 </head>
 
 <body>
+<div class="wrap">
 
-<!-- BALANCE CARD -->
-<div class="glass balance-card">
-  <h2>Balance</h2>
-  <div class="balance">$0.00</div>
-  <div class="vip-badge" id="vipBadge">VIP: None</div>
-</div>
-
-<!-- ENERGY CORE -->
-<div class="core-wrap">
-  <div class="energy-core" id="tapCore">
-    <span>TAP</span>
+  <!-- Balance + VIP -->
+  <div class="glass card">
+    <div class="label">Balance</div>
+    <div class="amount mono" id="balanceUsd">$0.00</div>
+    <div class="vip-pill" id="vipPill">VIP: None</div>
   </div>
+
+  <!-- Tap orb -->
+  <div class="tap-area">
+    <div class="orb" id="tapBtn">
+      <div class="tap-text">TAP</div>
+    </div>
+  </div>
+
+  <!-- Stats -->
+  <div class="glass stats">
+    <div class="row"><span>Score</span><b class="mono" id="scoreText">0</b></div>
+    <div class="row"><span>Tap power</span><b id="powerText">1×</b></div>
+    <div class="row"><span>Today taps</span><b class="mono" id="todayText">0 / 500000</b></div>
+    <div class="row"><span>Score → USD</span><b class="mono" id="scoreUsd">$0.00</b></div>
+  </div>
+
 </div>
 
-<div class="score">
-  Score: <b id="score">0</b>
-</div>
+<!-- Bottom icons only -->
+<div class="nav-wrap">
+  <div class="nav">
+    <button class="active" title="Home" onclick="location.href='index.html'">
+      <svg class="ico" viewBox="0 0 24 24"><path d="M12 3 2 12h3v8h6v-5h2v5h6v-8h3z"/></svg>
+    </button>
 
-<div class="spacer"></div>
+    <button title="Tasks" onclick="location.href='tasks.html'">
+      <svg class="ico" viewBox="0 0 24 24"><path d="M7 7h14v2H7V7zm0 4h14v2H7v-2zm0 4h14v2H7v-2zM3 7h2v2H3V7zm0 4h2v2H3v-2zm0 4h2v2H3v-2z"/></svg>
+    </button>
 
-<!-- NAV -->
-<div class="glass nav">
-  <button class="active">🏠</button>
-  <button onclick="location.href='tasks.html'">📋</button>
-  <button onclick="location.href='wallet.html'">💳</button>
-  <button onclick="location.href='referral.html'">🔗</button>
-  <button onclick="location.href='vip.html'">👑</button>
+    <button title="Wallet" onclick="location.href='wallet.html'">
+      <!-- cleaner wallet icon -->
+      <svg class="ico" viewBox="0 0 24 24"><path d="M3 7a3 3 0 0 1 3-3h12a2 2 0 0 1 2 2v2h-5a3 3 0 0 0 0 6h5v2a2 2 0 0 1-2 2H6a3 3 0 0 1-3-3V7zm18 5h-5a1 1 0 0 0 0 2h5v-2z"/></svg>
+    </button>
+
+    <button title="Referral" onclick="location.href='referral.html'">
+      <svg class="ico" viewBox="0 0 24 24"><path d="M10 13a5 5 0 0 1 0-7l1-1a5 5 0 0 1 7 7l-1 1-1.4-1.4 1-1a3 3 0 1 0-4.2-4.2l-1 1a3 3 0 0 0 0 4.2L10 13zm4-2a5 5 0 0 1 0 7l-1 1a5 5 0 0 1-7-7l1-1 1.4 1.4-1 1a3 3 0 1 0 4.2 4.2l1-1a3 3 0 0 0 0-4.2L14 11z"/></svg>
+    </button>
+
+    <button title="VIP" onclick="location.href='vip.html'">
+      <svg class="ico" viewBox="0 0 24 24"><path d="M12 2 9 7 3 8l4 4-1 6 6-3 6 3-1-6 4-4-6-1-3-5z"/></svg>
+    </button>
+  </div>
 </div>
 
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
 import {
-  getFirestore, doc, getDoc, setDoc, updateDoc, serverTimestamp
+  getFirestore, doc, getDoc, setDoc, runTransaction, serverTimestamp
 } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
-/* FIREBASE */
 const firebaseConfig = {
   apiKey: "AIzaSyA1HZLZRY9UADNnDVBnoBIlG3b-bCkojxs",
   authDomain: "primeinvestproject2.firebaseapp.com",
@@ -181,78 +217,153 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 
-/* USER */
-function uid(){
-  let u=localStorage.getItem("uid");
-  if(!u){
-    u="user_"+Date.now()+"_"+Math.random().toString(36).slice(2,8);
-    localStorage.setItem("uid",u);
-  }
-  return u;
-}
-const userRef = doc(db,"users",uid());
+const SCORE_PER_USD = 10000000;      // 10,000,000 score = $1
+const NONVIP_DAILY_LIMIT = 500000;   // 500,000 taps/day for non VIP
 
-/* TAP CONFIG */
-const SCORE_TO_DOLLAR = 10000000;
-const MULTIPLIERS = {
-  0:1, 1:5, 2:10, 3:20, 4:40, 5:80, 6:800, 7:8000, 8:80000
+const MULT = {
+  0: 1,
+  1: 5,
+  2: 10,
+  3: 20,
+  4: 40,
+  5: 80,
+  6: 800,
+  7: 8000,
+  8: 80000
 };
-const DAILY_LIMIT = 500000;
 
-/* STATE */
-let state = {score:0, tapsToday:0, vipLevel:0, balance:0};
+function getOrCreateUserId(){
+  let id = localStorage.getItem("userId");
+  if(!id){
+    id = "user_" + Math.random().toString(36).slice(2,10) + "_" + Date.now();
+    localStorage.setItem("userId", id);
+  }
+  return id;
+}
+const userId = getOrCreateUserId();
+const userRef = doc(db,"users",userId);
 
-/* INIT */
-async function init(){
+function todayKey(){
+  const d = new Date();
+  const y = d.getFullYear();
+  const m = String(d.getMonth()+1).padStart(2,"0");
+  const da = String(d.getDate()).padStart(2,"0");
+  return `${y}-${m}-${da}`;
+}
+
+const elBalance = document.getElementById("balanceUsd");
+const elVip = document.getElementById("vipPill");
+const elScore = document.getElementById("scoreText");
+const elPower = document.getElementById("powerText");
+const elToday = document.getElementById("todayText");
+const elScoreUsd = document.getElementById("scoreUsd");
+const tapBtn = document.getElementById("tapBtn");
+
+async function ensureUser(){
   const snap = await getDoc(userRef);
   if(!snap.exists()){
     await setDoc(userRef,{
-      balance:0, score:0, tapsToday:0, vipLevel:0,
-      lastTapReset:serverTimestamp()
-    });
+      balance: 0,
+      score: 0,
+      tapsToday: 0,
+      tapsDate: todayKey(),
+      createdAt: serverTimestamp()
+    }, {merge:true});
   }
-  await refresh();
 }
 
-/* REFRESH */
-async function refresh(){
+function safeNum(v){
+  const n = Number(v);
+  return Number.isFinite(n) ? n : 0;
+}
+
+async function refreshUI(){
   const snap = await getDoc(userRef);
   if(!snap.exists()) return;
-  state = snap.data();
+  const u = snap.data() || {};
 
-  document.querySelector(".balance").innerText =
-    "$"+(state.balance||0).toFixed(2);
-  document.getElementById("score").innerText = state.score||0;
-  document.getElementById("vipBadge").innerText =
-    "VIP: "+(state.vipLevel||"None");
+  const vipLevel = u.vip?.level ? Number(u.vip.level) : 0;
+  const power = MULT[vipLevel] || 1;
+
+  // reset today if needed (UI side only; real reset happens in transaction too)
+  const tk = todayKey();
+  const tapsDate = u.tapsDate || tk;
+  const tapsToday = (tapsDate === tk) ? safeNum(u.tapsToday) : 0;
+
+  const score = safeNum(u.score);
+  const usdFromScore = score / SCORE_PER_USD;
+
+  const baseBalance = safeNum(u.balance);
+  const shownBalance = baseBalance + usdFromScore;
+
+  elVip.textContent = vipLevel ? `VIP: ${vipLevel}` : "VIP: None";
+  elPower.textContent = `${power}×`;
+
+  // ✅ FIX: always render as numbers, never as objects
+  elScore.textContent = String(Math.floor(score));
+  elScoreUsd.textContent = "$" + usdFromScore.toFixed(2);
+  elBalance.textContent = "$" + shownBalance.toFixed(2);
+
+  if(vipLevel === 0){
+    elToday.textContent = `${tapsToday} / ${NONVIP_DAILY_LIMIT}`;
+  }else{
+    elToday.textContent = `${tapsToday} / ∞`;
+  }
 }
 
-/* TAP */
-document.getElementById("tapCore").onclick = async ()=>{
-  const snap = await getDoc(userRef);
-  const u = snap.data();
+async function tap(){
+  const tk = todayKey();
 
-  if(u.vipLevel==0 && u.tapsToday>=DAILY_LIMIT){
-    alert("Daily limit reached");
-    return;
-  }
+  await runTransaction(db, async (tx)=>{
+    const snap = await tx.get(userRef);
+    if(!snap.exists()){
+      tx.set(userRef,{
+        balance:0, score:0, tapsToday:0, tapsDate:tk, createdAt:serverTimestamp()
+      },{merge:true});
+      return;
+    }
+    const u = snap.data() || {};
 
-  const gain = MULTIPLIERS[u.vipLevel||0];
-  const newScore = (u.score||0)+gain;
-  const newBalance =
-    Math.floor(newScore/SCORE_TO_DOLLAR) -
-    Math.floor((u.score||0)/SCORE_TO_DOLLAR);
+    const vipLevel = u.vip?.level ? Number(u.vip.level) : 0;
+    const power = MULT[vipLevel] || 1;
 
-  await updateDoc(userRef,{
-    score:newScore,
-    tapsToday:(u.tapsToday||0)+1,
-    balance:(u.balance||0)+newBalance
+    let tapsDate = u.tapsDate || tk;
+    let tapsToday = safeNum(u.tapsToday);
+
+    // new day reset
+    if(tapsDate !== tk){
+      tapsDate = tk;
+      tapsToday = 0;
+    }
+
+    // limit for non vip
+    if(vipLevel === 0 && tapsToday >= NONVIP_DAILY_LIMIT){
+      throw new Error("Daily limit reached");
+    }
+
+    const score = safeNum(u.score);
+    const newScore = score + power;
+
+    tx.update(userRef,{
+      score: newScore,
+      tapsToday: tapsToday + 1,
+      tapsDate: tapsDate
+    });
   });
 
-  refresh();
-};
+  await refreshUI();
+}
 
-init();
+tapBtn.addEventListener("click", async ()=>{
+  try{
+    await tap();
+  }catch(e){
+    alert(e?.message || "Tap failed");
+  }
+});
+
+await ensureUser();
+await refreshUI();
 </script>
 
 </body>
