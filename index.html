@@ -135,15 +135,31 @@ body{
       <circle cx="12" cy="19" r="1.5"/>
     </svg>
   </button>
-  <div class="menu-box" id="menuBox">
-    <button onclick="setLang('en')">English</button>
-    <button onclick="setLang('fa')">فارسی</button>
-    <button onclick="setLang('ar')">العربية</button>
-    <hr style="border:0;border-top:1px solid rgba(255,255,255,.15)">
-    <button id="loginBtn" onclick="location.href='auth.html'">Login</button>
-    <button id="logoutBtn" onclick="logout()">Logout</button>
-    <button id="adminBtn" onclick="location.href='admin_vip.html'">Admin Panel</button>
+ <div class="menu-box" id="menuBox">
+
+  <!-- ✅ USER INFO -->
+  <div id="menuUser"
+       style="display:none;
+              padding:10px 12px;
+              margin:6px;
+              border-radius:12px;
+              background:rgba(255,255,255,.08);
+              font-size:13px;
+              font-weight:700;">
+    Logged in as<br>
+    <span id="menuEmail" style="font-weight:900;font-size:14px;"></span>
   </div>
+
+  <button onclick="setLang('en')">English</button>
+  <button onclick="setLang('fa')">فارسی</button>
+  <button onclick="setLang('ar')">العربية</button>
+
+  <hr style="border:0;border-top:1px solid rgba(255,255,255,.15)">
+
+  <button id="loginBtn" onclick="location.href='auth.html'">Login</button>
+  <button id="logoutBtn" onclick="logout()">Logout</button>
+  <button id="adminBtn" onclick="location.href='admin_vip.html'">Admin Panel</button>
+ </div> 
 </div>
 
 <div class="wrap" id="app" style="display:none">
