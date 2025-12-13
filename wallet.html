@@ -2,79 +2,140 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Deposit</title>
+<meta name="viewport"
+content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+
+<title>Wallet</title>
 
 <style>
 body{
   margin:0;
   font-family:system-ui;
-  background:#0b1220;
+  background:#0f172a;
   color:#fff;
   padding:16px;
 }
 .card{
-  background:#121a2f;
+  background:#1e293b;
   border-radius:16px;
   padding:16px;
   margin-bottom:16px;
 }
-.btn{
+h2{margin-top:0}
+input,button{
   width:100%;
-  padding:14px;
-  border:none;
-  border-radius:12px;
-  background:#22c55e;
-  font-weight:700;
-  font-size:16px;
-}
-.address{
-  word-break:break-all;
-  background:#0f172a;
   padding:12px;
-  border-radius:10px;
   margin-top:10px;
+  border-radius:12px;
+  border:none;
 }
-.small{
-  opacity:.7;
-  font-size:14px;
+button{
+  background:#22c55e;
+  font-weight:900;
+  cursor:pointer;
 }
+.addr{
+  background:#000;
+  padding:12px;
+  border-radius:12px;
+  word-break:break-all;
+  margin-top:6px;
+}
+.small{opacity:.8;font-size:14px}
 </style>
 </head>
 
 <body>
 
-<h2>Deposit USDT (TRC-20)</h2>
+<h2>Wallet</h2>
 
 <div class="card">
-  <div class="small">Network</div>
-  <h3>TRON (TRC-20)</h3>
-
-  <div class="small">Deposit Address</div>
-  <div class="address" id="addr">
-TT...ZKH4p
-  </div>
-
-  <button class="btn" onclick="copy()">Copy Address</button>
+  <div class="small">Current Balance</div>
+  <h1 id="balance">$0.00</h1>
 </div>
 
 <div class="card">
-  <div class="small">After payment</div>
-  <p>Send payment receipt to admin</p>
-  <button class="btn" onclick="goTelegram()">Send Receipt</button>
+  <h3>Withdraw</h3>
+  <div class="small">USDT (TRC20)</div>
+  <input id="amount" type="number" placeholder="Amount">
+  <input id="address" placeholder="Your USDT TRC20 address">
+  <button onclick="requestWithdraw()">Request Withdraw</button>
 </div>
 
-<script>
-function copy(){
-  navigator.clipboard.writeText(
-    "TTHLd1pCtYstvRKtWkx7qfHQmWRuxZKH4p"
-  );
-  alert("Address copied");
-}
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+import {
+  getFirestore,
+  doc,
+  getDoc,
+  setDoc,
+  updateDoc,
+  addDoc,
+  collection,
+  serverTimestamp
+} from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
-function goTelegram(){
-  location.href = "https://t.me/SmartInvest202";
+/* FIREBASE CONFIG */
+const firebaseConfig = {
+  apiKey: "AIzaSyA1HZLZRY9UADNnDVBnoBIlG3b-bCkojxs",
+  authDomain: "primeinvestproject2.firebaseapp.com",
+  projectId: "primeinvestproject2",
+  storageBucket: "primeinvestproject2.firebasestorage.app",
+  messagingSenderId: "798977477628",
+  appId: "1:798977477628:web:c97d1fba72ad7865864079"
+};
+
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
+
+/* USER ID (GLOBAL) */
+function uid(){
+  let id = localStorage.getItem("userId");
+  if(!id){
+    id = "user_"+Date.now()+"_"+Math.random().toString(36).slice(2,8);
+    localStorage.setItem("userId", id);
+  }
+  return id;
 }
+const userId = uid();
+const userRef = doc(db,"users",userId);
+
+/* LOAD BALANCE */
+async function loadBalance(){
+  const snap = await getDoc(userRef);
+  if(!snap.exists()){
+    await setDoc(userRef,{balance:0},{merge:true});
+    balance.innerText="$0.00";
+    return;
+  }
+  balance.innerText="$"+Number(snap.data().balance||0).toFixed(2);
+}
+loadBalance();
+
+/* REQUEST WITHDRAW */
+window.requestWithdraw = async function(){
+  const amt = Number(amount.value);
+  const addr = address.value.trim();
+
+  if(!amt || amt<=0) return alert("Enter valid amount");
+  if(!addr) return alert("Enter wallet address");
+
+  const snap = await getDoc(userRef);
+  const bal = snap.data().balance || 0;
+  if(amt > bal) return alert("Insufficient balance");
+
+  await addDoc(collection(db,"withdraw_requests"),{
+    userId:userId,
+    amount:amt,
+    address:addr,
+    status:"pending",
+    createdAt:serverTimestamp()
+  });
+
+  alert("Withdraw request sent");
+  amount.value="";
+  address.value="";
+};
 </script>
 
 </body>
