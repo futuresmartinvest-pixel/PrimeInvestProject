@@ -295,6 +295,7 @@ window.setLang = l=>{
 setLang("en");
 
 onAuthStateChanged(auth, async user=>{
+  authReady = true;
   state.loggedIn=!!user;
   loginBtn.style.display=user?"none":"block";
   logoutBtn.style.display=user?"block":"none";
