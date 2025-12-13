@@ -2,132 +2,142 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+<meta name="viewport"
+content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
 
 <title>PrimeGlobalPro</title>
 
 <style>
-:root{
-  --glass: rgba(255,255,255,0.18);
-  --blur: blur(18px);
-  --border: rgba(255,255,255,0.25);
-  --purple1:#4f2fd6;
-  --purple2:#1b1145;
-}
-
 *{box-sizing:border-box}
-
 body{
   margin:0;
-  min-height:100vh;
-  font-family:system-ui,-apple-system,BlinkMacSystemFont;
-  background: radial-gradient(circle at top, #6a5cff, #120b2e 70%);
+  font-family:system-ui;
+  background:linear-gradient(135deg,#1a1f3c,#3b2b78);
   color:#fff;
-  display:flex;
-  flex-direction:column;
-  align-items:center;
+  height:100vh;
+  overflow:hidden;
 }
 
 /* ===== BALANCE ===== */
-.balance-card{
-  margin-top:20px;
-  padding:18px 28px;
-  border-radius:22px;
-  background:var(--glass);
-  backdrop-filter:var(--blur);
-  border:1px solid var(--border);
-  text-align:center;
-}
-.balance-title{opacity:.8;font-size:14px}
-.balance-value{font-size:40px;font-weight:800}
-
-/* ===== TAP AREA ===== */
-.tap-area{
-  flex:1;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-}
-
-.robot{
-  width:220px;
-  height:220px;
-  border-radius:50%;
-  background:
-    radial-gradient(circle at 30% 30%, #9ef, #5b3df5 60%);
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  font-size:96px;
-  cursor:pointer;
-  user-select:none;
-  box-shadow:0 30px 80px rgba(0,0,0,.5);
-  transition:transform .08s ease;
-}
-.robot:active{transform:scale(.95)}
-
-.tap-info{
+.balance-box{
   position:absolute;
-  bottom:140px;
+  top:20px;
+  left:50%;
+  transform:translateX(-50%);
+  background:rgba(255,255,255,.15);
+  backdrop-filter:blur(16px);
+  padding:16px 28px;
+  border-radius:24px;
   text-align:center;
-  opacity:.85;
-  font-size:14px;
+  box-shadow:0 20px 40px rgba(0,0,0,.3);
+}
+.balance-box small{opacity:.8}
+.balance-amount{
+  font-size:36px;
+  font-weight:900;
+}
+
+/* ===== ROBOT ===== */
+.robot-wrap{
+  position:absolute;
+  top:50%;
+  left:50%;
+  transform:translate(-50%,-50%);
+}
+.robot{
+  width:160px;
+  height:160px;
+  border-radius:50%;
+  background:radial-gradient(circle at top,#bfa9ff,#6a5cff);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-size:60px;
+  cursor:pointer;
+  animation:breathe 3s ease-in-out infinite;
+  box-shadow:0 0 60px rgba(150,120,255,.7);
+  position:relative;
+}
+
+@keyframes breathe{
+  0%,100%{box-shadow:0 0 40px rgba(150,120,255,.5)}
+  50%{box-shadow:0 0 80px rgba(190,160,255,.9)}
+}
+
+.robot::after{
+  content:"";
+  position:absolute;
+  inset:0;
+  border-radius:50%;
+  background:radial-gradient(circle,rgba(255,255,255,.6),transparent 70%);
+  opacity:0;
+  transform:scale(.6);
+}
+
+.robot.tap::after{
+  animation:ripple .4s ease-out;
+}
+
+@keyframes ripple{
+  0%{opacity:.6;transform:scale(.6)}
+  100%{opacity:0;transform:scale(1.4)}
+}
+
+.score-float{
+  position:absolute;
+  color:#fff;
+  font-weight:900;
+  font-size:20px;
+  animation:floatUp .9s ease-out forwards;
+  text-shadow:0 0 14px rgba(255,255,255,.9);
+}
+
+@keyframes floatUp{
+  0%{opacity:1;transform:translate(-50%,-50%) scale(1)}
+  100%{opacity:0;transform:translate(-50%,-110%) scale(1.4)}
 }
 
 /* ===== NAV ===== */
-.nav-wrap{
-  position:fixed;
-  bottom:16px;
-  left:0;
-  right:0;
-  display:flex;
-  justify-content:center;
-}
 .nav{
-  width:calc(100% - 32px);
-  max-width:420px;
-  background:rgba(0,0,0,.55);
-  backdrop-filter:blur(18px);
-  border-radius:28px;
-  padding:14px 0;
+  position:fixed;
+  bottom:20px;
+  left:50%;
+  transform:translateX(-50%);
+  background:rgba(255,255,255,.9);
+  padding:14px 24px;
+  border-radius:40px;
   display:flex;
-  justify-content:space-around;
+  gap:28px;
+  box-shadow:0 20px 40px rgba(0,0,0,.3);
 }
 .nav i{
   font-size:22px;
-  opacity:.6;
+  color:#333;
+  cursor:pointer;
 }
-.nav i.active{opacity:1}
-
+.nav i.active{
+  color:#6a5cff;
+}
 </style>
 </head>
 
 <body>
 
-<!-- BALANCE -->
-<div class="balance-card">
-  <div class="balance-title">Balance</div>
-  <div class="balance-value" id="balance">$0.00</div>
+<div class="balance-box">
+  <small>Balance</small>
+  <div class="balance-amount">$0.00</div>
 </div>
 
-<!-- TAP -->
-<div class="tap-area">
-  <div class="robot" id="robot">🤖</div>
-  <div class="tap-info" id="tapInfo">
-    Tap to earn<br>
-    Daily limit: <span id="limitText">500,000</span>
-  </div>
+<div class="robot-wrap">
+  <div id="robot" class="robot">🤖</div>
 </div>
 
-<!-- NAV -->
-<div class="nav-wrap">
-  <div class="nav">
-    <i class="active">🏠</i>
-    <i onclick="location.href='tasks.html'">📋</i>
-    <i onclick="location.href='wallet.html'">💼</i>
-    <i onclick="location.href='referral.html'">👥</i>
-    <i onclick="location.href='deposit.html'">👑</i>
-  </div>
+<div class="nav">
+  <i class="active">🏠</i>
+  <i onclick="location.href='tasks.html'">📋</i>
+  <i onclick="location.href='wallet.html'">💼</i>
+  <i onclick="location.href='referral.html'">👥</i>
+  <i onclick="location.href='deposit.html'">⭐</i>
 </div>
 
 <script type="module">
@@ -159,64 +169,61 @@ const SCORE_PER_DOLLAR = 10000000;
 const DAILY_LIMIT_NO_VIP = 500000;
 
 const MULTI = {
-  0:1,1:5,2:10,3:20,4:40,5:80,6:800,7:8000,8:80000
+  0:1,
+  1:5,
+  2:10,
+  3:20,
+  4:40,
+  5:80,
+  6:800,
+  7:8000,
+  8:80000
 };
 
 /* USER */
 function uid(){
-  let id = localStorage.getItem("uid");
+  let id = localStorage.getItem("userId");
   if(!id){
     id="user_"+Date.now()+"_"+Math.random().toString(36).slice(2,8);
-    localStorage.setItem("uid",id);
+    localStorage.setItem("userId",id);
   }
   return id;
 }
+
 const userRef = doc(db,"users",uid());
 
-/* INIT USER */
-async function init(){
-  const snap = await getDoc(userRef);
-  if(!snap.exists()){
+async function ensureUser(){
+  const s = await getDoc(userRef);
+  if(!s.exists()){
     await setDoc(userRef,{
       balance:0,
       score:0,
       dailyScore:0,
-      lastTapDay:new Date().toDateString(),
-      vip:null,
       createdAt:serverTimestamp()
     });
   }
 }
-await init();
 
-/* LOAD */
 async function refresh(){
-  const snap = await getDoc(userRef);
-  const d = snap.data();
-  document.getElementById("balance").innerText =
-    "$"+(d.balance||0).toFixed(2);
-
-  if(!d.vip){
-    document.getElementById("limitText").innerText="500,000";
-  }else{
-    document.getElementById("limitText").innerText="Unlimited";
-  }
+  const s = await getDoc(userRef);
+  document.querySelector(".balance-amount").innerText =
+    "$"+((s.data().balance)||0).toFixed(2);
 }
-await refresh();
 
-/* TAP */
-document.getElementById("robot").onclick = async ()=>{
-  const snap = await getDoc(userRef);
-  const d = snap.data();
+const robot = document.getElementById("robot");
+
+robot.onclick = async ()=>{
+  robot.classList.add("tap");
+  setTimeout(()=>robot.classList.remove("tap"),150);
+
+  const s = await getDoc(userRef);
+  const d = s.data();
 
   const today = new Date().toDateString();
-  let daily = d.dailyScore || 0;
+  let daily = d.dailyScore||0;
+  if(d.lastTapDay !== today) daily=0;
 
-  if(d.lastTapDay !== today){
-    daily = 0;
-  }
-
-  const vipLevel = d.vip?.level || 0;
+  const vipLevel = d.vip?.level||0;
   const gain = MULTI[vipLevel];
 
   if(!d.vip && daily + gain > DAILY_LIMIT_NO_VIP){
@@ -224,21 +231,30 @@ document.getElementById("robot").onclick = async ()=>{
     return;
   }
 
-  const newScore = (d.score||0) + gain;
-  const newDaily = daily + gain;
+  const f=document.createElement("div");
+  f.className="score-float";
+  f.innerText="+"+gain;
+  f.style.left="50%";
+  f.style.top="50%";
+  document.body.appendChild(f);
+  setTimeout(()=>f.remove(),900);
 
-  const dollars = Math.floor(newScore / SCORE_PER_DOLLAR);
-  const balanceAdd = dollars - Math.floor((d.score||0)/SCORE_PER_DOLLAR);
+  const newScore=(d.score||0)+gain;
+  const oldDollars=Math.floor((d.score||0)/SCORE_PER_DOLLAR);
+  const newDollars=Math.floor(newScore/SCORE_PER_DOLLAR);
 
   await updateDoc(userRef,{
     score:newScore,
-    dailyScore:newDaily,
+    dailyScore:daily+gain,
     lastTapDay:today,
-    balance:(d.balance||0)+balanceAdd
+    balance:(d.balance||0)+(newDollars-oldDollars)
   });
 
   refresh();
 };
+
+await ensureUser();
+await refresh();
 </script>
 
 </body>
