@@ -1,174 +1,244 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" />
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
 
 <title>PrimeGlobalPro</title>
 
 <style>
 :root{
-  --glass-bg: rgba(255,255,255,0.15);
-  --glass-border: rgba(255,255,255,0.25);
+  --glass: rgba(255,255,255,0.18);
+  --blur: blur(18px);
+  --border: rgba(255,255,255,0.25);
+  --purple1:#4f2fd6;
+  --purple2:#1b1145;
 }
 
 *{box-sizing:border-box}
 
 body{
   margin:0;
-  height:100vh;
+  min-height:100vh;
   font-family:system-ui,-apple-system,BlinkMacSystemFont;
-  background: radial-gradient(circle at top left,#7b5cff,#3a1c71,#000);
+  background: radial-gradient(circle at top, #6a5cff, #120b2e 70%);
   color:#fff;
-  overflow:hidden;
-}
-
-/* GLASS */
-.glass{
-  background:var(--glass-bg);
-  backdrop-filter: blur(18px);
-  -webkit-backdrop-filter: blur(18px);
-  border:1px solid var(--glass-border);
-  border-radius:22px;
-}
-
-/* HEADER */
-.header{
-  padding:20px;
-  font-size:22px;
-  font-weight:700;
-}
-
-/* BALANCE */
-.balance-card{
-  margin:16px;
-  padding:22px;
-}
-.balance-label{opacity:.8}
-.balance-value{
-  font-size:42px;
-  font-weight:800;
-  margin-top:6px;
-}
-
-/* ROBOT AREA */
-.robot-area{
-  margin:20px;
-  padding:24px;
   display:flex;
   flex-direction:column;
   align-items:center;
-  gap:14px;
 }
 
-.robot{
-  width:160px;
-  height:160px;
-  border-radius:50%;
-  background:
-    radial-gradient(circle at 30% 30%,#9ff,#58f,#214);
+/* ===== BALANCE ===== */
+.balance-card{
+  margin-top:20px;
+  padding:18px 28px;
+  border-radius:22px;
+  background:var(--glass);
+  backdrop-filter:var(--blur);
+  border:1px solid var(--border);
+  text-align:center;
+}
+.balance-title{opacity:.8;font-size:14px}
+.balance-value{font-size:40px;font-weight:800}
+
+/* ===== TAP AREA ===== */
+.tap-area{
+  flex:1;
   display:flex;
   align-items:center;
   justify-content:center;
-  font-size:72px;
+}
+
+.robot{
+  width:220px;
+  height:220px;
+  border-radius:50%;
+  background:
+    radial-gradient(circle at 30% 30%, #9ef, #5b3df5 60%);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-size:96px;
   cursor:pointer;
-  box-shadow:0 0 40px rgba(130,100,255,.8);
-  transition:transform .1s;
+  user-select:none;
+  box-shadow:0 30px 80px rgba(0,0,0,.5);
+  transition:transform .08s ease;
 }
-.robot:active{
-  transform:scale(.95);
+.robot:active{transform:scale(.95)}
+
+.tap-info{
+  position:absolute;
+  bottom:140px;
+  text-align:center;
+  opacity:.85;
+  font-size:14px;
 }
 
-.tap-text{opacity:.8}
-
-/* SCORE */
-.score{
-  font-size:18px;
-  font-weight:600;
-}
-
-/* NAV */
-.nav{
+/* ===== NAV ===== */
+.nav-wrap{
   position:fixed;
   bottom:16px;
-  left:16px;
-  right:16px;
+  left:0;
+  right:0;
+  display:flex;
+  justify-content:center;
+}
+.nav{
+  width:calc(100% - 32px);
+  max-width:420px;
+  background:rgba(0,0,0,.55);
+  backdrop-filter:blur(18px);
+  border-radius:28px;
   padding:14px 0;
   display:flex;
   justify-content:space-around;
-  background:rgba(255,255,255,.9);
-  border-radius:26px;
 }
-
-.nav button{
-  background:none;
-  border:none;
+.nav i{
   font-size:22px;
-  cursor:pointer;
+  opacity:.6;
 }
+.nav i.active{opacity:1}
+
 </style>
 </head>
 
 <body>
 
-<div class="header">Home</div>
-
 <!-- BALANCE -->
-<div class="glass balance-card">
-  <div class="balance-label">Balance</div>
-  <div class="balance-value">$<span id="balance">0.00</span></div>
+<div class="balance-card">
+  <div class="balance-title">Balance</div>
+  <div class="balance-value" id="balance">$0.00</div>
 </div>
 
-<!-- ROBOT -->
-<div class="glass robot-area">
+<!-- TAP -->
+<div class="tap-area">
   <div class="robot" id="robot">🤖</div>
-  <div class="tap-text">Tap the robot to earn</div>
-  <div class="score">
-    Score: <span id="score">0</span>
+  <div class="tap-info" id="tapInfo">
+    Tap to earn<br>
+    Daily limit: <span id="limitText">500,000</span>
   </div>
-  <small>100,000 score = $1</small>
 </div>
 
 <!-- NAV -->
-<div class="nav">
-  <button>🏠</button>
-  <button onclick="location.href='tasks.html'">📋</button>
-  <button onclick="location.href='wallet.html'">💼</button>
-  <button onclick="location.href='referral.html'">👥</button>
-  <button onclick="location.href='deposit.html'">⭐</button>
+<div class="nav-wrap">
+  <div class="nav">
+    <i class="active">🏠</i>
+    <i onclick="location.href='tasks.html'">📋</i>
+    <i onclick="location.href='wallet.html'">💼</i>
+    <i onclick="location.href='referral.html'">👥</i>
+    <i onclick="location.href='deposit.html'">👑</i>
+  </div>
 </div>
 
-<script>
-/* LOCAL DEMO LOGIC (READY FOR FIREBASE LATER) */
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+import {
+  getFirestore,
+  doc,
+  getDoc,
+  setDoc,
+  updateDoc,
+  serverTimestamp
+} from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
-let score = Number(localStorage.getItem("score") || 0);
-let balance = Number(localStorage.getItem("balance") || 0);
+/* FIREBASE */
+const firebaseConfig = {
+  apiKey: "AIzaSyA1HZLZRY9UADNnDVBnoBIlG3b-bCkojxs",
+  authDomain: "primeinvestproject2.firebaseapp.com",
+  projectId: "primeinvestproject2",
+  storageBucket: "primeinvestproject2.firebasestorage.app",
+  messagingSenderId: "798977477628",
+  appId: "1:798977477628:web:c97d1fba72ad7865864079"
+};
 
-const scoreEl = document.getElementById("score");
-const balanceEl = document.getElementById("balance");
-const robot = document.getElementById("robot");
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
 
-function refresh(){
-  scoreEl.textContent = score.toLocaleString();
-  balanceEl.textContent = balance.toFixed(2);
+/* CONSTANTS */
+const SCORE_PER_DOLLAR = 10000000;
+const DAILY_LIMIT_NO_VIP = 500000;
+
+const MULTI = {
+  0:1,1:5,2:10,3:20,4:40,5:80,6:800,7:8000,8:80000
+};
+
+/* USER */
+function uid(){
+  let id = localStorage.getItem("uid");
+  if(!id){
+    id="user_"+Date.now()+"_"+Math.random().toString(36).slice(2,8);
+    localStorage.setItem("uid",id);
+  }
+  return id;
 }
+const userRef = doc(db,"users",uid());
 
-robot.onclick = () => {
-  score += 10;
+/* INIT USER */
+async function init(){
+  const snap = await getDoc(userRef);
+  if(!snap.exists()){
+    await setDoc(userRef,{
+      balance:0,
+      score:0,
+      dailyScore:0,
+      lastTapDay:new Date().toDateString(),
+      vip:null,
+      createdAt:serverTimestamp()
+    });
+  }
+}
+await init();
 
-  if(score >= 100000){
-    const dollars = Math.floor(score / 100000);
-    balance += dollars;
-    score = score % 100000;
+/* LOAD */
+async function refresh(){
+  const snap = await getDoc(userRef);
+  const d = snap.data();
+  document.getElementById("balance").innerText =
+    "$"+(d.balance||0).toFixed(2);
+
+  if(!d.vip){
+    document.getElementById("limitText").innerText="500,000";
+  }else{
+    document.getElementById("limitText").innerText="Unlimited";
+  }
+}
+await refresh();
+
+/* TAP */
+document.getElementById("robot").onclick = async ()=>{
+  const snap = await getDoc(userRef);
+  const d = snap.data();
+
+  const today = new Date().toDateString();
+  let daily = d.dailyScore || 0;
+
+  if(d.lastTapDay !== today){
+    daily = 0;
   }
 
-  localStorage.setItem("score", score);
-  localStorage.setItem("balance", balance);
+  const vipLevel = d.vip?.level || 0;
+  const gain = MULTI[vipLevel];
+
+  if(!d.vip && daily + gain > DAILY_LIMIT_NO_VIP){
+    alert("Daily limit reached");
+    return;
+  }
+
+  const newScore = (d.score||0) + gain;
+  const newDaily = daily + gain;
+
+  const dollars = Math.floor(newScore / SCORE_PER_DOLLAR);
+  const balanceAdd = dollars - Math.floor((d.score||0)/SCORE_PER_DOLLAR);
+
+  await updateDoc(userRef,{
+    score:newScore,
+    dailyScore:newDaily,
+    lastTapDay:today,
+    balance:(d.balance||0)+balanceAdd
+  });
 
   refresh();
 };
-
-refresh();
 </script>
 
 </body>
