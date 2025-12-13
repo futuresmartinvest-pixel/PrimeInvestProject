@@ -42,6 +42,9 @@ button{
   background:linear-gradient(135deg,#22c55e,#16a34a);
   color:#000;
 }
+button:disabled{
+  opacity:.5;
+}
 </style>
 </head>
 
@@ -51,7 +54,7 @@ button{
   <h2 id="title"></h2>
   <p id="price"></p>
   <p style="opacity:.8;font-size:13px">Request will be reviewed by admin</p>
-  <button id="sendBtn">Send VIP Request</button>
+  <button id="sendBtn" disabled>Send VIP Request</button>
 </div>
 
 <script type="module">
@@ -82,18 +85,6 @@ const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 const auth = getAuth(app);
 
-/* -------------------- AUTH -------------------- */
-let userId = null;
-
-onAuthStateChanged(auth, (user) => {
-  if (!user) {
-    alert("Please login first");
-    location.href = "auth.html";
-    return;
-  }
-  userId = user.uid;
-});
-
 /* -------------------- VIP DATA -------------------- */
 const params = new URLSearchParams(location.search);
 const vipLevel = Number(params.get("vip"));
@@ -111,12 +102,22 @@ if (VALID[vipLevel] !== price) {
 document.getElementById("title").textContent = `VIP ${vipLevel}`;
 document.getElementById("price").textContent = `Price: $${price}`;
 
-/* -------------------- SEND REQUEST -------------------- */
-document.getElementById("sendBtn").onclick = async () => {
-  if (!userId) {
-    alert("Login not ready yet, try again.");
+/* -------------------- AUTH -------------------- */
+let userId = null;
+const sendBtn = document.getElementById("sendBtn");
+
+onAuthStateChanged(auth, (user) => {
+  if (!user) {
+    alert("Please login first");
+    location.href = "auth.html";
     return;
   }
+  userId = user.uid;
+  sendBtn.disabled = false;
+});
+
+/* -------------------- SEND REQUEST -------------------- */
+sendBtn.onclick = async () => {
 
   const reqRef = doc(db, "vip_requests", `${userId}_vip_${vipLevel}`);
   const snap = await getDoc(reqRef);
