@@ -1,138 +1,25 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>PrimeGlobalPro – Authentication</title>
-
-<style>
-*{box-sizing:border-box}
-body{
-  margin:0;
-  font-family:system-ui,-apple-system,BlinkMacSystemFont;
-  min-height:100vh;
-  background:
-    radial-gradient(circle at 20% 20%, rgba(127,92,255,.35), transparent 40%),
-    radial-gradient(circle at 80% 70%, rgba(0,229,255,.35), transparent 40%),
-    linear-gradient(180deg,#05070f,#0a0f24);
-  color:#fff;
-  display:flex;
-  justify-content:center;
-  align-items:center;
-  padding:16px;
-}
-.card{
-  width:100%;
-  max-width:420px;
-  background:rgba(255,255,255,0.12);
-  border:1px solid rgba(255,255,255,0.25);
-  border-radius:24px;
-  backdrop-filter:blur(18px);
-  padding:22px;
-  position:relative;
-}
-h1{text-align:center;margin:0 0 14px}
-.lang{position:absolute;top:14px;right:14px}
-.lang select{
-  background:rgba(0,0,0,.4);
-  color:#fff;border:none;
-  padding:6px 10px;
-  border-radius:10px;
-}
-.tabs{display:flex;background:rgba(255,255,255,.12);border-radius:999px;overflow:hidden;margin-bottom:16px}
-.tabs button{flex:1;padding:10px;border:none;background:none;color:#fff;font-weight:700;cursor:pointer}
-.tabs button.active{background:rgba(255,255,255,.25)}
-.field{position:relative}
-.field svg{position:absolute;top:50%;left:14px;width:18px;height:18px;transform:translateY(-50%);stroke:#fff;opacity:.7}
-input{
-  width:100%;padding:14px 14px 14px 42px;margin-bottom:12px;
-  border-radius:14px;border:1px solid rgba(255,255,255,.25);
-  background:rgba(255,255,255,.08);color:#fff;font-size:15px
-}
-button.primary{
-  width:100%;padding:14px;border:none;border-radius:16px;
-  font-weight:900;font-size:16px;
-  background:linear-gradient(135deg,#ffd36e,#ffb700);
-  color:#000;cursor:pointer
-}
-.link{text-align:center;margin-top:10px;font-size:14px;opacity:.85;cursor:pointer}
-.hidden{display:none}
-.error{color:#ff8080;text-align:center;margin-bottom:10px}
-.success{color:#6aff9b;text-align:center;margin-bottom:10px}
-</style>
-</head>
-
-<body>
-
-<div class="card">
-
-  <div class="lang">
-    <select id="langSel">
-      <option value="en">EN</option>
-      <option value="fa">FA</option>
-      <option value="ar">AR</option>
-    </select>
-  </div>
-
-  <h1>PrimeGlobalPro</h1>
-
-  <div class="tabs">
-    <button id="loginTab" class="active" data-t="login">Login</button>
-    <button id="registerTab" data-t="register">Register</button>
-  </div>
-
-  <div id="msg"></div>
-
-  <!-- LOGIN -->
-  <div id="loginBox">
-    <div class="field">
-      <svg viewBox="0 0 24 24"><path d="M4 4h16v16H4z"/><path d="M22 6l-10 7L2 6"/></svg>
-      <input id="loginEmail" type="email" placeholder="Email">
-    </div>
-    <div class="field">
-      <svg viewBox="0 0 24 24"><rect x="5" y="11" width="14" height="9" rx="2"/><path d="M8 11V7a4 4 0 018 0v4"/></svg>
-      <input id="loginPassword" type="password" placeholder="Password">
-    </div>
-    <button class="primary" id="loginBtn" data-t="login">Login</button>
-    <div class="link" id="forgotBtn" data-t="forgot">Forgot password?</div>
-  </div>
-
-  <!-- REGISTER -->
-  <div id="registerBox" class="hidden">
-    <div class="field"><svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 20c2-4 14-4 16 0"/></svg>
-      <input id="fullName" placeholder="Full name"></div>
-    <input id="country" placeholder="Country">
-    <input id="address" placeholder="Address">
-    <div class="field"><svg viewBox="0 0 24 24"><path d="M4 4h16v16H4z"/><path d="M22 6l-10 7L2 6"/></svg>
-      <input id="regEmail" type="email" placeholder="Email"></div>
-    <input id="regPassword" type="password" placeholder="Password">
-    <input id="regConfirm" type="password" placeholder="Confirm password">
-    <input id="referral" placeholder="Referral code (optional)">
-    <button class="primary" id="registerBtn" data-t="create">Create Account</button>
-  </div>
-
-</div>
-
 <script type="module">
+/* -------------------- IMPORTS -------------------- */
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, sendPasswordResetEmail } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+import {
+  getAuth,
+  signInWithEmailAndPassword,
+  createUserWithEmailAndPassword,
+  sendPasswordResetEmail,
+  setPersistence,
+  browserLocalPersistence,
+  onAuthStateChanged
+} from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
 import {
   getFirestore,
   doc,
   setDoc,
-  serverTimestamp,
-  collection,
-  query,
-  where,
-  getDocs,
-  updateDoc,
-  addDoc,
-  increment
+  serverTimestamp
 } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
-/* FIREBASE */
+/* -------------------- FIREBASE -------------------- */
 const firebaseConfig = {
-  apiKey: "AIzaSyA1HZLZRY9UADNVBnoBIlG3b-bCkojxs",
+  apiKey: "AIzaSyA1HZLZRY9UADNnDVBnoBIlG3b-bCkojxs",
   authDomain: "primeinvestproject2.firebaseapp.com",
   projectId: "primeinvestproject2",
   storageBucket: "primeinvestproject2.firebasestorage.app",
@@ -142,116 +29,73 @@ const firebaseConfig = {
 
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
-  import { setPersistence, browserLocalPersistence } 
-from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
-
-await setPersistence(auth, browserLocalPersistence);
 const db = getFirestore(app);
-import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
 
-onAuthStateChanged(auth, user => {
-  if (user) {
-    // User already logged in → go to app
+/* -------------------- PERSISTENCE -------------------- */
+await setPersistence(auth, browserLocalPersistence);
+
+/* -------------------- ELEMENTS -------------------- */
+const msg = document.getElementById("msg");
+
+/* -------------------- LOGIN -------------------- */
+loginBtn.onclick = async () => {
+  msg.innerHTML = "";
+  try {
+    await signInWithEmailAndPassword(
+      auth,
+      loginEmail.value.trim(),
+      loginPassword.value
+    );
     location.href = "index.html";
+  } catch (e) {
+    msg.innerHTML = `<div class="error">${e.message}</div>`;
   }
-});
-/* LANGUAGE */
-const dict={
-  en:{login:"Login",register:"Register",forgot:"Forgot password?",create:"Create Account"},
-  fa:{login:"ورود",register:"ثبت نام",forgot:"فراموشی رمز",create:"ایجاد حساب"},
-  ar:{login:"تسجيل الدخول",register:"إنشاء حساب",forgot:"نسيت كلمة المرور",create:"إنشاء حساب"}
 };
 
-const langSel=document.getElementById("langSel");
-const savedLang=localStorage.getItem("lang")||"en";
-langSel.value=savedLang;
-applyLang(savedLang);
+/* -------------------- REGISTER -------------------- */
+registerBtn.onclick = async () => {
+  msg.innerHTML = "";
 
-langSel.onchange=e=>{
-  localStorage.setItem("lang",e.target.value);
-  applyLang(e.target.value);
-};
-
-function applyLang(l){
-  const d=dict[l];
-  document.querySelectorAll("[data-t]").forEach(el=>el.textContent=d[el.dataset.t]);
-}
-
-/* TABS */
-loginTab.onclick=()=>{loginTab.classList.add("active");registerTab.classList.remove("active");loginBox.classList.remove("hidden");registerBox.classList.add("hidden");msg.innerHTML=""};
-registerTab.onclick=()=>{registerTab.classList.add("active");loginTab.classList.remove("active");registerBox.classList.remove("hidden");loginBox.classList.add("hidden");msg.innerHTML=""};
-
-/* LOGIN */
-loginBtn.onclick=async()=>{
-  try{
-    await signInWithEmailAndPassword(auth,loginEmail.value,loginPassword.value);
-    location.href="index.html";
-  }catch(e){msg.innerHTML=`<div class="error">${e.message}</div>`}
-};
-
-/* REGISTER */
-registerBtn.onclick=async()=>{
-  if(regPassword.value!==regConfirm.value){
-    msg.innerHTML=`<div class="error">Passwords do not match</div>`;
+  if (regPassword.value !== regConfirm.value) {
+    msg.innerHTML = `<div class="error">Passwords do not match</div>`;
     return;
   }
 
-  try{
-    const c = await createUserWithEmailAndPassword(auth,regEmail.value,regPassword.value);
+  try {
+    const cred = await createUserWithEmailAndPassword(
+      auth,
+      regEmail.value.trim(),
+      regPassword.value
+    );
 
-    await setDoc(doc(db,"users",c.user.uid),{
+    await setDoc(doc(db, "users", cred.user.uid), {
       fullName: fullName.value,
       country: country.value,
       address: address.value,
-      referredBy: referral.value || null,
-      referralCode: c.user.uid.slice(0,8).toUpperCase(),
-      referralCount: 0,
-      referralEarnings: 0,
-      createdAt: serverTimestamp(),
-      vip:{ level:0 }
+      balance: 0,
+      vip: { level: 0 },
+      createdAt: serverTimestamp()
     });
 
-    if(referral.value){
-      const q = query(collection(db,"users"), where("referralCode","==",referral.value));
-      const snap = await getDocs(q);
-
-      if(!snap.empty){
-        const inviterDoc = snap.docs[0];
-
-        await updateDoc(inviterDoc.ref,{ referralCount: increment(1) });
-
-        await addDoc(collection(db,"referrals"),{
-          inviterUid: inviterDoc.id,
-          invitedUid: c.user.uid,
-          invitedEmail: regEmail.value,
-          createdAt: serverTimestamp()
-        });
-      }
-    }
-
-    location.href="index.html";
-  }catch(e){
-    msg.innerHTML=`<div class="error">${e.message}</div>`;
+    location.href = "index.html";
+  } catch (e) {
+    msg.innerHTML = `<div class="error">${e.message}</div>`;
   }
 };
 
-/* RESET */
-forgotBtn.onclick=async()=>{
-  if(!loginEmail.value){
-    msg.innerHTML=`<div class="error">Enter email</div>`;
+/* -------------------- RESET PASSWORD -------------------- */
+forgotBtn.onclick = async () => {
+  if (!loginEmail.value) {
+    msg.innerHTML = `<div class="error">Enter email</div>`;
     return;
   }
-  await sendPasswordResetEmail(auth,loginEmail.value);
-  msg.innerHTML=`<div class="success">Email sent</div>`;
+  await sendPasswordResetEmail(auth, loginEmail.value.trim());
+  msg.innerHTML = `<div class="success">Password reset email sent</div>`;
 };
-  import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
 
+/* -------------------- AUTH STATE (NO REDIRECT) -------------------- */
 onAuthStateChanged(auth, (user) => {
-  if (user) {
-    location.href = "index.html";
-  }
+  // ONLY for UI/debug — no redirect here
+  console.log("Auth state:", user?.email || "logged out");
 });
 </script>
-
-</body>
-</html>
