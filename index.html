@@ -11,180 +11,162 @@ content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no,
 <meta http-equiv="Expires" content="0">
 
 <style>
-  *{box-sizing:border-box}
-  html,body{height:100%}
-  body{
-    margin:0;
-    font-family:system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
-    color:#fff;
-    background:
-      radial-gradient(circle at 18% 18%, rgba(165,120,255,.45), transparent 42%),
-      radial-gradient(circle at 82% 75%, rgba(0,220,255,.35), transparent 45%),
-      radial-gradient(circle at 40% 85%, rgba(255,160,90,.22), transparent 40%),
-      linear-gradient(180deg,#05070f,#0a0f24);
-    overflow-x:hidden;
-  }
+*{box-sizing:border-box}
+html,body{height:100%}
 
-  .wrap{padding:18px 16px 110px; max-width:420px; margin:0 auto;}
+body{
+  margin:0;
+  font-family:system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+  color:#fff;
+  background:
+    radial-gradient(circle at 18% 18%, rgba(165,120,255,.45), transparent 42%),
+    radial-gradient(circle at 82% 75%, rgba(0,220,255,.35), transparent 45%),
+    radial-gradient(circle at 40% 85%, rgba(255,160,90,.22), transparent 40%),
+    linear-gradient(180deg,#05070f,#0a0f24);
+  overflow-x:hidden;
+}
 
-  .glass{
-    background:rgba(255,255,255,0.12);
-    border:1px solid rgba(255,255,255,0.22);
-    box-shadow:0 18px 50px rgba(0,0,0,.35);
-    backdrop-filter: blur(18px);
-    -webkit-backdrop-filter: blur(18px);
-    border-radius:24px;
-  }
+/* TOP BAR */
+.topbar{
+  position:fixed;
+  top:12px;
+  right:12px;
+  z-index:10;
+}
 
-  .card{
-    padding:18px;
-    text-align:center;
-  }
-  .card .label{opacity:.8; font-weight:600}
-  .card .amount{
-    font-size:52px;
-    font-weight:900;
-    margin:6px 0 10px;
-  }
-  .vip-pill{
-    display:inline-block;
-    padding:8px 14px;
-    border-radius:999px;
-    background:rgba(255,255,255,0.14);
-    border:1px solid rgba(255,255,255,0.18);
-    font-weight:700;
-  }
+.menu-btn{
+  background:rgba(255,255,255,.15);
+  border:1px solid rgba(255,255,255,.25);
+  backdrop-filter:blur(14px);
+  border-radius:12px;
+  padding:10px 12px;
+  font-size:20px;
+  cursor:pointer;
+  color:#fff;
+}
 
-  .tap-area{
-    margin:22px auto 10px;
-    display:flex;
-    justify-content:center;
-    align-items:center;
-  }
+/* DROPDOWN */
+.menu{
+  position:absolute;
+  right:0;
+  top:48px;
+  background:rgba(20,30,50,.95);
+  border:1px solid rgba(255,255,255,.2);
+  border-radius:14px;
+  width:160px;
+  display:none;
+  overflow:hidden;
+}
 
-  .orb{
-    width:min(250px,72vw);
-    height:min(250px,72vw);
-    border-radius:999px;
-    border:1px solid rgba(255,255,255,0.28);
-    background:
-      radial-gradient(circle at 30% 30%, rgba(120,255,255,.55), transparent 45%),
-      radial-gradient(circle at 70% 75%, rgba(170,110,255,.55), transparent 48%),
-      rgba(255,255,255,0.08);
-    backdrop-filter: blur(16px);
-    -webkit-backdrop-filter: blur(16px);
-    box-shadow:0 22px 60px rgba(0,0,0,.45);
-    display:flex;
-    align-items:center;
-    justify-content:center;
-    user-select:none;
-    -webkit-tap-highlight-color: transparent;
-  }
-  .orb:active{transform:scale(.985)}
-  .tap-text{font-weight:900; letter-spacing:2px}
+.menu button{
+  width:100%;
+  padding:14px;
+  background:none;
+  border:none;
+  color:#fff;
+  font-weight:700;
+  text-align:left;
+  cursor:pointer;
+}
 
-  .stats{
-    margin-top:14px;
-    padding:14px 16px;
-    display:flex;
-    flex-direction:column;
-    gap:8px;
-  }
-  .row{
-    display:flex;
-    justify-content:space-between;
-    font-weight:700;
-  }
-  .row span{opacity:.85}
-  .mono{font-variant-numeric:tabular-nums}
+.menu button:hover{
+  background:rgba(255,255,255,.1);
+}
 
-  .nav-wrap{
-    position:fixed;
-    left:0; right:0; bottom:16px;
-    display:flex;
-    justify-content:center;
-    pointer-events:none;
-    padding:0 16px;
-  }
-  .nav{
-    width:min(420px,100%);
-    pointer-events:auto;
-    display:flex;
-    justify-content:space-around;
-    padding:14px;
-    border-radius:26px;
-    background:rgba(255,255,255,0.14);
-    border:1px solid rgba(255,255,255,0.22);
-    backdrop-filter: blur(18px);
-    -webkit-backdrop-filter: blur(18px);
-  }
-  .nav button{
-    all:unset;
-    width:52px; height:44px;
-    display:flex;
-    justify-content:center;
-    align-items:center;
-    border-radius:16px;
-    cursor:pointer;
-  }
-  .nav button.active{
-    background:rgba(255,255,255,0.18);
-    border:1px solid rgba(255,255,255,0.22);
-  }
-  .ico{width:24px;height:24px;fill:#fff}
+/* MAIN */
+.wrap{padding:70px 16px 110px; max-width:420px; margin:0 auto;}
+
+.glass{
+  background:rgba(255,255,255,0.12);
+  border:1px solid rgba(255,255,255,0.22);
+  box-shadow:0 18px 50px rgba(0,0,0,.35);
+  backdrop-filter: blur(18px);
+  border-radius:24px;
+}
+
+.card{
+  padding:18px;
+  text-align:center;
+}
+
+.amount{
+  font-size:52px;
+  font-weight:900;
+}
+
+.vip-pill{
+  display:inline-block;
+  padding:8px 14px;
+  border-radius:999px;
+  background:rgba(255,255,255,0.14);
+  border:1px solid rgba(255,255,255,0.18);
+  font-weight:700;
+}
+
+.tap-area{margin:22px auto 10px;display:flex;justify-content:center}
+.orb{
+  width:min(250px,72vw);
+  height:min(250px,72vw);
+  border-radius:50%;
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  border:1px solid rgba(255,255,255,.25);
+  background:radial-gradient(circle at 30% 30%,#5ff,#0000),
+             radial-gradient(circle at 70% 70%,#a7f,#0000),
+             rgba(255,255,255,.08);
+}
+
+.stats{margin-top:14px;padding:14px}
+.row{display:flex;justify-content:space-between;font-weight:700}
+
+/* NAV */
+.nav-wrap{position:fixed;left:0;right:0;bottom:16px;display:flex;justify-content:center}
+.nav{
+  background:rgba(255,255,255,.14);
+  border-radius:26px;
+  padding:14px;
+  display:flex;
+  justify-content:space-around;
+  width:420px;
+}
+.nav button{all:unset;cursor:pointer}
 </style>
 </head>
 
 <body>
-<div class="wrap">
 
+<!-- TOP MENU -->
+<div class="topbar">
+  <button class="menu-btn" id="menuBtn">⋮</button>
+  <div class="menu" id="menu">
+    <button id="logoutBtn">Logout</button>
+  </div>
+</div>
+
+<div class="wrap">
   <div class="glass card">
-    <div class="label">Balance</div>
-    <div class="amount mono" id="balanceUsd">$0.00</div>
+    <div>Balance</div>
+    <div class="amount" id="balanceUsd">$0.00</div>
     <div class="vip-pill" id="vipPill">VIP: None</div>
   </div>
 
   <div class="tap-area">
-    <div class="orb" id="tapBtn">
-      <div class="tap-text">TAP</div>
-    </div>
+    <div class="orb" id="tapBtn">TAP</div>
   </div>
 
   <div class="glass stats">
-    <div class="row"><span>Score</span><b class="mono" id="scoreText">0</b></div>
+    <div class="row"><span>Score</span><b id="scoreText">0</b></div>
     <div class="row"><span>Tap power</span><b id="powerText">1×</b></div>
-    <div class="row"><span>Today taps</span><b class="mono" id="todayText">0 / 500000</b></div>
-    <div class="row"><span>Score → USD</span><b class="mono" id="scoreUsd">$0.00</b></div>
-  </div>
-
-</div>
-
-<div class="nav-wrap">
-  <div class="nav">
-    <button class="active" title="Home" onclick="location.href='index.html'">
-      <svg class="ico" viewBox="0 0 24 24"><path d="M12 3 2 12h3v8h6v-5h2v5h6v-8h3z"/></svg>
-    </button>
-    <button title="Tasks" onclick="location.href='tasks.html'">
-      <svg class="ico" viewBox="0 0 24 24"><path d="M7 7h14v2H7V7zm0 4h14v2H7v-2zm0 4h14v2H7v-2zM3 7h2v2H3V7zm0 4h2v2H3v-2zm0 4h2v2H3v-2z"/></svg>
-    </button>
-    <button title="Wallet" onclick="location.href='wallet.html'">
-      <svg class="ico" viewBox="0 0 24 24"><path d="M3 7a3 3 0 0 1 3-3h12a2 2 0 0 1 2 2v2h-5a3 3 0 0 0 0 6h5v2a2 2 0 0 1-2 2H6a3 3 0 0 1-3-3V7zm18 5h-5a1 1 0 0 0 0 2h5v-2z"/></svg>
-    </button>
-    <button title="Referral" onclick="location.href='referral.html'">
-      <svg class="ico" viewBox="0 0 24 24"><path d="M10 13a5 5 0 0 1 0-7l1-1a5 5 0 0 1 7 7l-1 1-1.4-1.4 1-1a3 3 0 1 0-4.2-4.2l-1 1a3 3 0 0 0 0 4.2L10 13zm4-2a5 5 0 0 1 0 7l-1 1a5 5 0 0 1-7-7l1-1 1.4 1.4-1 1a3 3 0 1 0 4.2 4.2l1-1a3 3 0 0 0 0-4.2L14 11z"/></svg>
-    </button>
-    <button title="VIP" onclick="location.href='vip.html'">
-      <svg class="ico" viewBox="0 0 24 24"><path d="M12 2 9 7 3 8l4 4-1 6 6-3 6 3-1-6 4-4-6-1-3-5z"/></svg>
-    </button>
+    <div class="row"><span>Today taps</span><b id="todayText">0 / 500000</b></div>
+    <div class="row"><span>Score → USD</span><b id="scoreUsd">$0.00</b></div>
   </div>
 </div>
 
-<!-- IMPORTANT: defer prevents Android Chrome from leaking module code to the screen -->
 <script type="module" defer>
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-import {
-  getFirestore, doc, getDoc, setDoc, runTransaction, serverTimestamp
-} from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+import { getFirestore, doc, getDoc, setDoc, runTransaction, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
 const firebaseConfig = {
   apiKey: "AIzaSyA1HZLZRY9UADNnDVBnoBIlG3b-bCkojxs",
@@ -196,160 +178,29 @@ const firebaseConfig = {
 };
 
 const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
 const db = getFirestore(app);
 
-let lastTap = 0;
-const TAP_INTERVAL = 120;
+/* MENU */
+const menuBtn = document.getElementById("menuBtn");
+const menu = document.getElementById("menu");
 
-const SCORE_PER_USD = 10000000;
-const NONVIP_DAILY_LIMIT = 500000;
-
-const MULT = {
-  0: 1,
-  1: 5,
-  2: 10,
-  3: 20,
-  4: 40,
-  5: 80,
-  6: 800,
-  7: 8000,
-  8: 80000
+menuBtn.onclick = ()=>{
+  menu.style.display = menu.style.display === "block" ? "none" : "block";
 };
 
-function getOrCreateUserId(){
-  let id = localStorage.getItem("userId");
-  if(!id){
-    id = "user_" + Math.random().toString(36).slice(2,10) + "_" + Date.now();
-    localStorage.setItem("userId", id);
-  }
-  return id;
-}
-const userId = getOrCreateUserId();
-const userRef = doc(db,"users",userId);
+document.getElementById("logoutBtn").onclick = async ()=>{
+  await signOut(auth);
+  location.replace("auth.html");
+};
 
-function todayKey(){
-  const d = new Date();
-  const y = d.getFullYear();
-  const m = String(d.getMonth()+1).padStart(2,"0");
-  const da = String(d.getDate()).padStart(2,"0");
-  return `${y}-${m}-${da}`;
-}
-
-const elBalance = document.getElementById("balanceUsd");
-const elVip = document.getElementById("vipPill");
-const elScore = document.getElementById("scoreText");
-const elPower = document.getElementById("powerText");
-const elToday = document.getElementById("todayText");
-const elScoreUsd = document.getElementById("scoreUsd");
-const tapBtn = document.getElementById("tapBtn");
-
-function safeNum(v){
-  const n = Number(v);
-  return Number.isFinite(n) ? n : 0;
-}
-
-async function ensureUser(){
-  const snap = await getDoc(userRef);
-  if(!snap.exists()){
-    await setDoc(userRef,{
-      score: 0,
-      tapsToday: 0,
-      tapsDate: todayKey(),
-      createdAt: serverTimestamp()
-    }, {merge:true});
-  }
-}
-
-async function refreshUI(){
-  const snap = await getDoc(userRef);
-  if(!snap.exists()) return;
-  const u = snap.data() || {};
-
-  const vipLevel = u.vip?.level ? Number(u.vip.level) : 0;
-  const power = MULT[vipLevel] || 1;
-
-  const tk = todayKey();
-  const tapsDate = u.tapsDate || tk;
-  const tapsToday = (tapsDate === tk) ? safeNum(u.tapsToday) : 0;
-
-  const score = safeNum(u.score);
-  const usdFromScore = score / SCORE_PER_USD;
-
-  // Balance is derived ONLY from score (prevents fake balance)
-  const shownBalance = usdFromScore;
-
-  elVip.textContent = vipLevel ? `VIP: ${vipLevel}` : "VIP: None";
-  elPower.textContent = `${power}×`;
-
-  elScore.textContent = String(Math.floor(score));
-  elScoreUsd.textContent = "$" + usdFromScore.toFixed(2);
-  elBalance.textContent = "$" + shownBalance.toFixed(2);
-
-  elToday.textContent = (vipLevel === 0)
-    ? `${tapsToday} / ${NONVIP_DAILY_LIMIT}`
-    : `${tapsToday} / ∞`;
-}
-
-async function tap(){
-  const tk = todayKey();
-
-  await runTransaction(db, async (tx)=>{
-    const snap = await tx.get(userRef);
-    if(!snap.exists()){
-      tx.set(userRef,{
-        score:0, tapsToday:0, tapsDate:tk, createdAt:serverTimestamp()
-      },{merge:true});
-      return;
-    }
-
-    const u = snap.data() || {};
-
-    const vipLevel = u.vip?.level ? Number(u.vip.level) : 0;
-    const power = MULT[vipLevel] || 1;
-
-    let tapsDate = u.tapsDate || tk;
-    let tapsToday = safeNum(u.tapsToday);
-
-    if(tapsDate !== tk){
-      tapsDate = tk;
-      tapsToday = 0;
-    }
-
-    if(vipLevel === 0 && tapsToday >= NONVIP_DAILY_LIMIT){
-      throw new Error("LIMIT");
-    }
-
-    const score = safeNum(u.score);
-    const newScore = score + Math.min(power, MULT[vipLevel] || 1);
-
-    tx.update(userRef,{
-      score: newScore,
-      tapsToday: tapsToday + 1,
-      tapsDate: tapsDate
-    });
-  });
-
-  await refreshUI();
-}
-
-tapBtn.addEventListener("click", async ()=>{
-  const now = Date.now();
-  if(now - lastTap < TAP_INTERVAL) return;
-  lastTap = now;
-
-  try{
-    await tap();
-  }catch(e){
-    if(e?.message === "LIMIT"){
-      alert("Daily limit reached");
-    }else{
-      alert("Tap failed");
-    }
+/* AUTH GUARD */
+onAuthStateChanged(auth, async user=>{
+  if(!user){
+    location.replace("auth.html");
+    return;
   }
 });
-
-await ensureUser();
-await refreshUI();
 </script>
 
 </body>
