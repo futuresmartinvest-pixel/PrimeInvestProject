@@ -85,9 +85,7 @@ body{
   cursor:pointer;
   border-radius:10px;
 }
-.menu-box button:hover{
-  background:rgba(255,255,255,.12);
-}
+.menu-box button:hover{background:rgba(255,255,255,.12)}
 
 /* NAV */
 .nav-wrap{
@@ -112,36 +110,27 @@ body{
   border-radius:999px;
   cursor:pointer;
 }
-.nav button.active{
-  background:#000;
-}
+.nav button.active{background:#000}
 .nav svg{
   width:22px;height:22px;
   stroke:#000;
   stroke-width:2;
   fill:none;
 }
-.nav button.active svg{
-  stroke:#fff;
-}
+.nav button.active svg{stroke:#fff}
 </style>
 </head>
 
 <body>
 
+<!-- MENU -->
 <div class="top-menu">
-  <button onclick="toggleMenu()">
-    <svg viewBox="0 0 24 24" width="22" height="22" stroke="#fff" fill="none" stroke-width="2">
-      <circle cx="12" cy="5" r="1.5"/>
-      <circle cx="12" cy="12" r="1.5"/>
-      <circle cx="12" cy="19" r="1.5"/>
-    </svg>
-  </button>
+  <button onclick="toggleMenu()">⋮</button>
   <div class="menu-box" id="menuBox">
     <button onclick="setLang('en')">English</button>
     <button onclick="setLang('fa')">فارسی</button>
     <button onclick="setLang('ar')">العربية</button>
-    <hr style="border:0;border-top:1px solid rgba(255,255,255,.15)">
+    <hr>
     <button id="loginBtn" onclick="location.href='auth.html'">Login</button>
     <button id="logoutBtn" onclick="logout()">Logout</button>
     <button id="adminBtn" onclick="location.href='admin_vip.html'">Admin Panel</button>
@@ -169,97 +158,80 @@ body{
 
 <div class="nav-wrap">
   <div class="nav">
-    <button id="navHome" class="active" onclick="goNav('index')">
-      <svg viewBox="0 0 24 24"><path d="M3 12l9-9 9 9"/><path d="M5 10v10h5v-5h4v5h5V10"/></svg>
-    </button>
-    <button id="navTasks" onclick="goNav('tasks')">
-      <svg viewBox="0 0 24 24"><rect x="4" y="5" width="16" height="14" rx="2"/><path d="M8 9h8M8 13h8"/></svg>
-    </button>
-    <button id="navWallet" onclick="goNav('wallet')">
-      <svg viewBox="0 0 24 24"><rect x="3" y="6" width="18" height="12" rx="2"/><path d="M16 12h3"/></svg>
-    </button>
-    <button id="navReferral" onclick="goNav('referral')">
-      <svg viewBox="0 0 24 24">
-        <circle cx="12" cy="8" r="4"/>
-        <path d="M4 20c2-4 14-4 16 0"/>
-        <path d="M18 8l4 4-4 4"/>
-      </svg>
-    </button>
-    <button id="navVip" onclick="goNav('vip')">
-      <svg viewBox="0 0 24 24"><path d="M12 2l3 7 7 1-5 5 1 7-6-3-6 3 1-7-5-5 7-1z"/></svg>
-    </button>
+    <button onclick="goNav('index')" class="active">🏠</button>
+    <button onclick="goNav('tasks')">📋</button>
+    <button onclick="goNav('wallet')">💳</button>
+    <button onclick="goNav('referral')">👥</button>
+    <button onclick="goNav('vip')">⭐</button>
   </div>
 </div>
 
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-import { getAuth, onAuthStateChanged, signOut, setPersistence, browserLocalPersistence } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+import {
+  getAuth,
+  onAuthStateChanged,
+  signOut,
+  setPersistence,
+  browserLocalPersistence
+} from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
 import { getFirestore, doc, getDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
-const firebaseConfig = {
+const app = initializeApp({
   apiKey: "AIzaSyA1HZLZRY9UADNVBnoBIlG3b-bCkojxs",
   authDomain: "primeinvestproject2.firebaseapp.com",
-  projectId: "primeinvestproject2",
-  storageBucket: "primeinvestproject2.firebasestorage.app",
-  messagingSenderId: "798977477628",
-  appId: "1:798977477628:web:c97d1fba72ad7865864079"
-};
+  projectId: "primeinvestproject2"
+});
 
-const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 const db = getFirestore(app);
+setPersistence(auth, browserLocalPersistence);
 
-/* 🔧 FIX: explicit DOM bindings */
-const tapBtn   = document.getElementById("tapBtn");
-const menuBox  = document.getElementById("menuBox");
+const tapBtn = document.getElementById("tapBtn");
+const menuBox = document.getElementById("menuBox");
 const loginBtn = document.getElementById("loginBtn");
-const logoutBtn= document.getElementById("logoutBtn");
+const logoutBtn = document.getElementById("logoutBtn");
 const adminBtn = document.getElementById("adminBtn");
 
 const SCORE_PER_USD = 10000000;
 const NONVIP_DAILY_LIMIT = 500000;
 
 let authReady = false;
-
 let state = {
-  score:0,balance:0,tapsToday:0,
+  score:0,
+  tapsToday:0,
   day:new Date().toDateString(),
-  vip:0,power:1,loggedIn:false
+  power:1,
+  vip:0,
+  loggedIn:false
 };
 
-function todayKey(){ return new Date().toDateString(); }
-
-const elScore   = document.getElementById("score");
-const elPower   = document.getElementById("power");
-const elToday   = document.getElementById("today");
-const elUsd     = document.getElementById("usd");
-const elBalance = document.getElementById("balance");
+const elScore=document.getElementById("score");
+const elPower=document.getElementById("power");
+const elToday=document.getElementById("today");
+const elUsd=document.getElementById("usd");
+const elBalance=document.getElementById("balance");
 
 function refresh(){
-  const usdVal = state.score / SCORE_PER_USD;
-  elScore.textContent = state.score;
-  elPower.textContent = state.power+"×";
-  elToday.textContent = `${state.tapsToday} / ${NONVIP_DAILY_LIMIT}`;
-  elUsd.textContent = "$"+usdVal.toFixed(2);
-  elBalance.textContent = "$"+(state.balance+usdVal).toFixed(2);
+  const usd=state.score/SCORE_PER_USD;
+  elScore.textContent=state.score;
+  elPower.textContent=state.power+"×";
+  elToday.textContent=`${state.tapsToday} / ${NONVIP_DAILY_LIMIT}`;
+  elUsd.textContent="$"+usd.toFixed(2);
+  elBalance.textContent="$"+usd.toFixed(2);
 }
 
-tapBtn.onclick = ()=>{
+tapBtn.onclick=()=>{
   if(!authReady) return;
+  if(!state.loggedIn){ alert("Please login first"); return; }
 
-  if(!auth.currentUser){
-    alert("Please login first");
-    return;
-  }
-
-  if(state.day!==todayKey()){
-    state.day=todayKey();
+  if(state.day!==new Date().toDateString()){
+    state.day=new Date().toDateString();
     state.tapsToday=0;
   }
 
   if(!state.vip && state.tapsToday>=NONVIP_DAILY_LIMIT){
-    alert("Daily limit reached");
-    return;
+    alert("Daily limit reached"); return;
   }
 
   state.score+=state.power;
@@ -267,39 +239,12 @@ tapBtn.onclick = ()=>{
   refresh();
 };
 
-window.goNav = (page)=>{
-  if(page==="home") page="index";
-  if(page==="index"){
-    if(!location.pathname.endsWith("/index.html") && !location.pathname.endsWith("/")){
-      location.href="index.html";
-    }
-    return;
-  }
-  location.href = page + ".html";
-};
-
+window.goNav=p=>{ if(p!=="index") location.href=p+".html"; };
 window.toggleMenu=()=>menuBox.style.display=menuBox.style.display==="block"?"none":"block";
-window.logout=async()=>{await signOut(auth);location.href="auth.html";};
-
-const langs={
-  en:{login:"Login",logout:"Logout",admin:"Admin Panel"},
-  fa:{login:"ورود",logout:"خروج",admin:"مدیریت"},
-  ar:{login:"تسجيل الدخول",logout:"تسجيل الخروج",admin:"لوحة الإدارة"}
-};
-let currentLang=langs.en;
-window.setLang=l=>{
-  currentLang=langs[l];
-  loginBtn.textContent=currentLang.login;
-  logoutBtn.textContent=currentLang.logout;
-  adminBtn.textContent=currentLang.admin;
-};
-setLang("en");
-
-setPersistence(auth, browserLocalPersistence).catch(()=>{});
+window.logout=async()=>{ await signOut(auth); location.href="auth.html"; };
 
 onAuthStateChanged(auth,async user=>{
-  authReady = true;
-
+  authReady=true;
   state.loggedIn=!!user;
   loginBtn.style.display=user?"none":"block";
   logoutBtn.style.display=user?"block":"none";
@@ -311,9 +256,6 @@ onAuthStateChanged(auth,async user=>{
     state.vip=u.vip?.level||0;
     state.power=u.vip?.multiplier||1;
     adminBtn.style.display=u.role==="admin"?"block":"none";
-  }else{
-    state.vip=0;
-    state.power=1;
   }
 
   refresh();
