@@ -2,195 +2,131 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport"
-content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+<meta name="viewport" content="width=device-width, initial-scale=1">
 
-<title>Home</title>
+<title>VIP Plans</title>
 
 <style>
 *{box-sizing:border-box}
 
-body{
+html, body{
   margin:0;
+  padding:0;
+  height:100%;
   font-family:system-ui,-apple-system,BlinkMacSystemFont;
-  min-height:100vh;
   background:
     radial-gradient(circle at 20% 20%, #7f5cff55, transparent 40%),
     radial-gradient(circle at 80% 70%, #00e5ff55, transparent 40%),
     linear-gradient(180deg,#05070f,#0a0f24);
   color:#fff;
+  overflow-y:auto; /* 🔴 THIS IS THE FIX */
 }
 
 /* GLASS */
 .glass{
   background:rgba(255,255,255,0.12);
   backdrop-filter: blur(18px);
-  -webkit-backdrop-filter: blur(18px);
   border:1px solid rgba(255,255,255,0.25);
   border-radius:22px;
-  box-shadow:0 0 30px rgba(120,200,255,0.35);
+  box-shadow:0 0 25px rgba(120,200,255,0.35);
 }
 
-/* CONTAINER */
-.wrapper{
-  max-width:420px;
-  margin:auto;
+/* HEADER */
+h1{
+  text-align:center;
+  padding:20px 0 10px;
+  font-weight:800;
+}
+
+/* GRID */
+.grid{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:16px;
   padding:16px;
+  max-width:420px;
+  margin:0 auto 120px; /* space for scroll */
 }
 
-/* BANK CARD */
-.card{
-  padding:18px;
-  margin-bottom:20px;
-}
-
-.card-top{
+/* VIP CARD */
+.vip-card{
+  padding:16px;
+  min-height:190px;
   display:flex;
+  flex-direction:column;
   justify-content:space-between;
-  align-items:center;
-  font-size:14px;
-  opacity:.9;
 }
 
-.vip-badge{
-  padding:6px 12px;
-  border-radius:999px;
-  background:rgba(255,255,255,.2);
-  font-weight:700;
-}
+.vip-title{font-size:18px;font-weight:800}
+.vip-price{font-size:26px;font-weight:900;margin:6px 0}
+.vip-power{font-size:14px;opacity:.85}
 
-.balance{
-  font-size:40px;
-  font-weight:900;
-  margin:10px 0;
-}
-
-.card-bottom{
-  display:flex;
-  justify-content:space-between;
-  font-size:13px;
-  opacity:.85;
-}
-
-/* TAP BUTTON */
-.tap-area{
-  display:flex;
-  justify-content:center;
-  margin:30px 0;
-}
-
-.tap-btn{
-  width:220px;
-  height:220px;
-  border-radius:50%;
-  border:1px solid rgba(255,255,255,.35);
-  background:
-    radial-gradient(circle at 30% 30%, #6ee7ff55, transparent 60%),
-    radial-gradient(circle at 70% 70%, #a78bfa55, transparent 60%),
-    rgba(255,255,255,0.12);
-  backdrop-filter: blur(20px);
-  color:#fff;
-  font-size:22px;
-  font-weight:900;
+/* BUTTON */
+button{
+  padding:12px;
+  border:none;
+  border-radius:14px;
+  font-weight:800;
+  font-size:16px;
+  background:linear-gradient(135deg,#ffd36e,#ffb700);
+  color:#000;
   cursor:pointer;
 }
-
-/* STATS */
-.stats{
-  padding:16px;
-  font-size:14px;
-  line-height:1.7;
-}
-
-/* BOTTOM NAV */
-.nav{
-  position:fixed;
-  bottom:10px;
-  left:50%;
-  transform:translateX(-50%);
-  width:90%;
-  max-width:420px;
-  display:flex;
-  justify-content:space-around;
-  padding:14px 0;
-}
-.nav button{
-  background:none;
-  border:none;
-  color:#fff;
-  font-size:20px;
-  opacity:.8;
-}
-.nav button.active{opacity:1}
-.spacer{height:100px}
 </style>
 </head>
 
 <body>
 
-<div class="wrapper">
+<h1>VIP Plans</h1>
 
-  <!-- BANK CARD -->
-  <div class="glass card">
-    <div class="card-top">
-      <div id="username">User</div>
-      <div class="vip-badge" id="vip">VIP: None</div>
-    </div>
+<div class="grid">
 
-    <div class="balance" id="balance">$0.00</div>
-
-    <div class="card-bottom">
-      <div>Tap power: <span id="power">1×</span></div>
-      <div>Score → USD: <span id="usd">$0.00</span></div>
-    </div>
+  <div class="glass vip-card">
+    <div><div class="vip-title">VIP 1</div><div class="vip-price">$30</div><div class="vip-power">5× tap</div></div>
+    <button onclick="go(1,30)">Deposit</button>
   </div>
 
-  <!-- TAP -->
-  <div class="tap-area">
-    <button class="tap-btn" onclick="tap()">TAP</button>
+  <div class="glass vip-card">
+    <div><div class="vip-title">VIP 2</div><div class="vip-price">$100</div><div class="vip-power">10× tap</div></div>
+    <button onclick="go(2,100)">Deposit</button>
   </div>
 
-  <!-- STATS -->
-  <div class="glass stats">
-    Score: <span id="score">0</span><br>
-    Today taps: <span id="today">0</span> / <span id="limit">500000</span>
+  <div class="glass vip-card">
+    <div><div class="vip-title">VIP 3</div><div class="vip-price">$499</div><div class="vip-power">20× tap</div></div>
+    <button onclick="go(3,499)">Deposit</button>
   </div>
 
-</div>
+  <div class="glass vip-card">
+    <div><div class="vip-title">VIP 4</div><div class="vip-price">$999</div><div class="vip-power">40× tap</div></div>
+    <button onclick="go(4,999)">Deposit</button>
+  </div>
 
-<div class="spacer"></div>
+  <div class="glass vip-card">
+    <div><div class="vip-title">VIP 5</div><div class="vip-price">$4,999</div><div class="vip-power">80× tap</div></div>
+    <button onclick="go(5,4999)">Deposit</button>
+  </div>
 
-<!-- NAV -->
-<div class="glass nav">
-  <button class="active">🏠</button>
-  <button onclick="location.href='tasks.html'">📋</button>
-  <button onclick="location.href='wallet.html'">💳</button>
-  <button onclick="location.href='referral.html'">🔗</button>
-  <button onclick="location.href='vip.html'">⭐</button>
+  <div class="glass vip-card">
+    <div><div class="vip-title">VIP 6</div><div class="vip-price">$9,999</div><div class="vip-power">800× tap</div></div>
+    <button onclick="go(6,9999)">Deposit</button>
+  </div>
+
+  <div class="glass vip-card">
+    <div><div class="vip-title">VIP 7</div><div class="vip-price">$49,999</div><div class="vip-power">8000× tap</div></div>
+    <button onclick="go(7,49999)">Deposit</button>
+  </div>
+
+  <div class="glass vip-card">
+    <div><div class="vip-title">VIP 8</div><div class="vip-price">$99,999</div><div class="vip-power">80000× tap</div></div>
+    <button onclick="go(8,99999)">Deposit</button>
+  </div>
+
 </div>
 
 <script>
-/* BASIC LOGIC PLACEHOLDER */
-let score = 0;
-let today = 0;
-let power = 1;
-const limit = 500000;
-
-function tap(){
-  if(today >= limit) return alert("Daily limit reached");
-  score += power;
-  today += power;
-  update();
+function go(vip,price){
+  location.href="deposit.html?vip="+vip+"&price="+price;
 }
-
-function update(){
-  document.getElementById("score").innerText = score;
-  document.getElementById("today").innerText = today;
-  document.getElementById("usd").innerText =
-    "$" + (score / 10000000).toFixed(2);
-}
-
-update();
 </script>
 
 </body>
