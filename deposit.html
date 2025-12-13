@@ -8,223 +8,188 @@ content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no"
 <title>VIP Plans</title>
 
 <style>
-/* ===== BACKGROUND ===== */
 body{
   margin:0;
-  padding:20px;
   font-family:system-ui;
+  background:linear-gradient(135deg,#0b0f2e,#1f144f);
   color:#fff;
-  background:
-    radial-gradient(circle at top left,#7c3aed55,transparent 40%),
-    radial-gradient(circle at bottom right,#22c55e44,transparent 45%),
-    linear-gradient(135deg,#0b1020,#0a0f1f);
+  padding:20px 16px 120px;
 }
 
-/* ===== TITLE ===== */
-h2{
+/* TITLE */
+h1{
   text-align:center;
-  margin-bottom:26px;
-  font-size:26px;
-  font-weight:800;
+  font-weight:900;
+  letter-spacing:1px;
+  margin-bottom:24px;
 }
 
-/* ===== GRID ===== */
+/* GRID */
 .vip-grid{
   display:grid;
-  grid-template-columns:repeat(2,1fr);
-  gap:18px;
+  grid-template-columns:1fr 1fr;
+  gap:16px;
 }
 
-/* ===== GLASS CARD ===== */
+/* VIP CARD */
 .vip-card{
-  background:linear-gradient(
-    180deg,
-    rgba(255,255,255,.18),
-    rgba(255,255,255,.05)
-  );
-  backdrop-filter:blur(18px);
-  border-radius:22px;
+  position:relative;
+  height:200px;
+  border-radius:20px;
   padding:18px;
-  border:1px solid rgba(255,255,255,.25);
-  box-shadow:0 20px 50px rgba(0,0,0,.55);
-}
-
-/* ===== TEXT ===== */
-.vip-name{
-  font-size:18px;
-  font-weight:800;
-  letter-spacing:.5px;
-}
-
-.vip-price{
-  font-size:22px;
-  font-weight:900;
-  margin-top:6px;
-}
-
-.vip-rate{
-  margin-top:4px;
-  color:#22c55e;
-  font-weight:700;
-}
-
-/* ===== BUTTON ===== */
-.vip-card button{
-  margin-top:14px;
-  width:100%;
-  padding:12px;
-  border:none;
-  border-radius:16px;
-  background:linear-gradient(135deg,#facc15,#f59e0b);
-  color:#000;
-  font-weight:900;
-  font-size:15px;
-}
-
-/* ===== DEPOSIT ===== */
-.deposit{
-  display:none;
-  margin-top:28px;
-  background:linear-gradient(
-    180deg,
-    rgba(255,255,255,.18),
+  backdrop-filter:blur(18px);
+  background:linear-gradient(160deg,
+    rgba(255,255,255,.25),
     rgba(255,255,255,.05)
   );
-  backdrop-filter:blur(18px);
-  border-radius:24px;
-  padding:20px;
-  border:1px solid rgba(255,255,255,.25);
-  box-shadow:0 20px 50px rgba(0,0,0,.6);
+  box-shadow:
+    inset 0 0 0 1px rgba(255,255,255,.25),
+    0 20px 40px rgba(0,0,0,.5);
+  overflow:hidden;
 }
 
-.addr{
-  background:#000;
-  color:#22c55e;
-  padding:14px;
-  border-radius:14px;
-  margin-top:10px;
-  word-break:break-all;
+/* METAL SHINE */
+.vip-card::before{
+  content:"";
+  position:absolute;
+  inset:0;
+  background:linear-gradient(
+    120deg,
+    transparent 30%,
+    rgba(255,255,255,.4),
+    transparent 70%
+  );
+  opacity:.15;
+}
+
+/* HEADER */
+.vip-top{
+  display:flex;
+  align-items:center;
+  gap:8px;
+  font-weight:800;
+  font-size:16px;
+}
+.vip-top span{
+  opacity:.7;
+  font-size:12px;
+}
+
+/* PRICE */
+.vip-price{
+  margin-top:18px;
+  font-size:26px;
+  font-weight:900;
+}
+
+/* MULTI */
+.vip-multi{
+  margin-top:6px;
+  opacity:.85;
   font-size:14px;
 }
 
-input,button.confirm{
-  width:100%;
-  padding:14px;
-  margin-top:14px;
-  border-radius:14px;
+/* BUTTON */
+.vip-btn{
+  position:absolute;
+  bottom:16px;
+  left:16px;
+  right:16px;
+  background:linear-gradient(135deg,#f5d06f,#d9a441);
+  color:#000;
   border:none;
+  border-radius:14px;
+  padding:12px;
+  font-weight:900;
+  font-size:15px;
+  cursor:pointer;
+  box-shadow:0 10px 20px rgba(0,0,0,.4);
 }
 
-button.confirm{
-  background:linear-gradient(135deg,#22c55e,#16a34a);
-  font-weight:900;
-  color:#000;
-}
+/* COLORS */
+.gold{background:linear-gradient(160deg,#f5d06f,#d9a441)}
+.platinum{background:linear-gradient(160deg,#cfd9df,#8fa1ad)}
+.black{background:linear-gradient(160deg,#2a2a2a,#000)}
+.purple{background:linear-gradient(160deg,#b48cff,#6a4cff)}
 </style>
 </head>
 
 <body>
 
-<h2>Choose Your VIP Plan</h2>
+<h1>VIP Plans</h1>
 
-<div class="vip-grid" id="vipGrid"></div>
+<div class="vip-grid">
 
-<!-- ===== DEPOSIT BOX ===== -->
-<div class="deposit" id="depositBox">
-  <h3 id="selectedVip"></h3>
-
-  <div>USDT (TRC-20)</div>
-  <div class="addr">
-    TTHLd1pCtYstvRKtWkx7qfHQmWRuxZKH4p
+  <!-- VIP 1 -->
+  <div class="vip-card gold">
+    <div class="vip-top">VIP 1 <span>Basic</span></div>
+    <div class="vip-price">$30</div>
+    <div class="vip-multi">Tap power: 5×</div>
+    <button class="vip-btn" onclick="goVIP(1,30)">Deposit</button>
   </div>
 
-  <input type="file" id="proof" accept="image/*">
-  <button class="confirm" onclick="submitDeposit()">Confirm Deposit</button>
+  <!-- VIP 2 -->
+  <div class="vip-card platinum">
+    <div class="vip-top">VIP 2 <span>Silver</span></div>
+    <div class="vip-price">$100</div>
+    <div class="vip-multi">Tap power: 10×</div>
+    <button class="vip-btn" onclick="goVIP(2,100)">Deposit</button>
+  </div>
+
+  <!-- VIP 3 -->
+  <div class="vip-card purple">
+    <div class="vip-top">VIP 3 <span>Pro</span></div>
+    <div class="vip-price">$499</div>
+    <div class="vip-multi">Tap power: 20×</div>
+    <button class="vip-btn" onclick="goVIP(3,499)">Deposit</button>
+  </div>
+
+  <!-- VIP 4 -->
+  <div class="vip-card gold">
+    <div class="vip-top">VIP 4 <span>Gold</span></div>
+    <div class="vip-price">$999</div>
+    <div class="vip-multi">Tap power: 40×</div>
+    <button class="vip-btn" onclick="goVIP(4,999)">Deposit</button>
+  </div>
+
+  <!-- VIP 5 -->
+  <div class="vip-card platinum">
+    <div class="vip-top">VIP 5 <span>Elite</span></div>
+    <div class="vip-price">$4,999</div>
+    <div class="vip-multi">Tap power: 80×</div>
+    <button class="vip-btn" onclick="goVIP(5,4999)">Deposit</button>
+  </div>
+
+  <!-- VIP 6 -->
+  <div class="vip-card purple">
+    <div class="vip-top">VIP 6 <span>Ultra</span></div>
+    <div class="vip-price">$9,999</div>
+    <div class="vip-multi">Tap power: 800×</div>
+    <button class="vip-btn" onclick="goVIP(6,9999)">Deposit</button>
+  </div>
+
+  <!-- VIP 7 -->
+  <div class="vip-card black">
+    <div class="vip-top">VIP 7 <span>Master</span></div>
+    <div class="vip-price">$49,999</div>
+    <div class="vip-multi">Tap power: 8000×</div>
+    <button class="vip-btn" onclick="goVIP(7,49999)">Deposit</button>
+  </div>
+
+  <!-- VIP 8 -->
+  <div class="vip-card black">
+    <div class="vip-top">VIP 8 <span>Legend</span></div>
+    <div class="vip-price">$99,999</div>
+    <div class="vip-multi">Tap power: 80000×</div>
+    <button class="vip-btn" onclick="goVIP(8,99999)">Deposit</button>
+  </div>
+
 </div>
 
-<script type="module">
-import { initializeApp } from
-"https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-import {
-  getFirestore,
-  collection,
-  addDoc,
-  serverTimestamp
-} from
-"https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
-
-/* FIREBASE */
-const firebaseConfig = {
-  apiKey: "AIzaSyA1HZLZRY9UADNnDVBnoBIlG3b-bCkojxs",
-  authDomain: "primeinvestproject2.firebaseapp.com",
-  projectId: "primeinvestproject2",
-  storageBucket: "primeinvestproject2.firebasestorage.app",
-  messagingSenderId: "798977477628",
-  appId: "1:798977477628:web:c97d1fba72ad7865864079"
-};
-
-const app = initializeApp(firebaseConfig);
-const db = getFirestore(app);
-
-/* VIP PLANS */
-const VIPS=[
- {id:1,price:30,rate:2.33},
- {id:2,price:100,rate:3.33},
- {id:3,price:499,rate:3.66},
- {id:4,price:999,rate:3.99},
- {id:5,price:4999,rate:4.33},
- {id:6,price:9999,rate:4.99},
- {id:7,price:49999,rate:6.99},
- {id:8,price:99999,rate:7.33}
-];
-
-let selected=null;
-
-/* USER ID */
-function uid(){
- let u=localStorage.getItem("userId");
- if(!u){
-   u="user_"+Date.now()+"_"+Math.random().toString(36).slice(2,8);
-   localStorage.setItem("userId",u);
- }
- return u;
+<script>
+function goVIP(level,price){
+  location.href = "deposit_confirm.html?vip="+level+"&price="+price;
 }
-
-/* RENDER */
-const grid=document.getElementById("vipGrid");
-VIPS.forEach(v=>{
- const d=document.createElement("div");
- d.className="vip-card";
- d.innerHTML=`
-  <div class="vip-name">VIP ${v.id}</div>
-  <div class="vip-price">$${v.price}</div>
-  <div class="vip-rate">${v.rate}% Daily</div>
-  <button>Deposit</button>
- `;
- d.querySelector("button").onclick=()=>{
-  selected=v;
-  depositBox.style.display="block";
-  selectedVip.innerText=
-   "VIP "+v.id+" — $"+v.price+" ("+v.rate+"%)";
- };
- grid.appendChild(d);
-});
-
-/* SUBMIT */
-window.submitDeposit=async()=>{
- if(!selected) return alert("Select VIP");
- if(!proof.files[0]) return alert("Upload receipt");
-
- await addDoc(collection(db,"vip_requests"),{
-   userId:uid(),
-   vipLevel:selected.id,
-   price:selected.price,
-   status:"pending",
-   createdAt:serverTimestamp()
- });
-
- location.href="https://t.me/SmartInvest202";
-};
 </script>
 
 </body>
