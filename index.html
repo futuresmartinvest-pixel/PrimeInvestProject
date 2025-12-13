@@ -183,13 +183,6 @@ body{
     <!-- AUTH -->
     <button id="loginBtn" onclick="location.href='auth.html'">🔐 Login</button>
 
-    <div id="loginEmailInfo"
-         style="display:none;
-                font-size:12px;
-                opacity:.75;
-                padding:6px 12px;
-                word-break:break-all;">
-    </div>
 
     <button id="logoutBtn" onclick="logout()" style="display:none;">🚪 Logout</button>
     <button id="adminBtn" onclick="location.href='admin_vip.html'" style="display:none;">
@@ -239,36 +232,28 @@ window.logout = async () => { await signOut(auth); location.href="auth.html"; };
 window.setLang = ()=>{};
 
 onAuthStateChanged(auth, async user => {
-  const loginEmailInfo = document.getElementById("loginEmailInfo");
 
   if (!user) {
     loginBtn.style.display = "block";
     logoutBtn.style.display = "none";
     adminBtn.style.display = "none";
     menuUser.style.display = "none";
-
-    loginEmailInfo.style.display = "none";
-    loginEmailInfo.textContent = "";
-
-  
     return;
   }
 
   // USER LOGGED IN
-  loginBtn.style.display = "block";      // keep Login visible
+  loginBtn.style.display = "none";
   logoutBtn.style.display = "block";
-  menuUser.style.display = "block";
+  menuUser.style.display = "flex";
 
   menuEmail.textContent = user.email;
-
-  loginEmailInfo.style.display = "block";
-  loginEmailInfo.textContent = user.email;
 
   const snap = await getDoc(doc(db, "users", user.uid));
   const u = snap.exists() ? snap.data() : {};
 
-  vipEl.textContent = "VIP: " + (u.vip?.level || "None");
   adminBtn.style.display = u.role === "admin" ? "block" : "none";
+});
+</script>
 
 </script>
 <div class="bottom-nav">
