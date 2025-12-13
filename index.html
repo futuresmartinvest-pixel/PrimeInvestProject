@@ -239,9 +239,9 @@ function refresh(){
 }
 
 tapBtn.onclick = ()=>{
-  if(!auth.currentUser){
-    alert("Please login first");
-    return;
+  if(!authReady){
+  alert("Please login first");
+  return;
   }
   if(state.day!==todayKey()){
     state.day=todayKey();
