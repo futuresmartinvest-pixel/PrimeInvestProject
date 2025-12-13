@@ -239,9 +239,18 @@ function refresh(){
 }
 
 tapBtn.onclick = ()=>{
-  if(!state.loggedIn) return alert("Please login first");
-  if(state.day!==todayKey()){state.day=todayKey();state.tapsToday=0;}
-  if(!state.vip && state.tapsToday>=NONVIP_DAILY_LIMIT) return alert("Daily limit reached");
+  if(!auth.currentUser){
+    alert("Please login first");
+    return;
+  }
+  if(state.day!==todayKey()){
+    state.day=todayKey();
+    state.tapsToday=0;
+  }
+  if(!state.vip && state.tapsToday>=NONVIP_DAILY_LIMIT){
+    alert("Daily limit reached");
+    return;
+  }
   state.score+=state.power;
   state.tapsToday++;
   refresh();
