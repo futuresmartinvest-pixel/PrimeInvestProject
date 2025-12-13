@@ -89,7 +89,7 @@ body{
   background:rgba(255,255,255,.12);
 }
 
-/* NAV – WHITE PILL STYLE */
+/* NAV */
 .nav-wrap{
   position:fixed;
   left:0;right:0;bottom:16px;
@@ -144,7 +144,7 @@ body{
     <button onclick="setLang('ar')">العربية</button>
     <hr style="border:0;border-top:1px solid rgba(255,255,255,.15)">
     <button id="loginBtn" onclick="location.href='auth.html'">Login</button>
-    <button onclick="logout()" id="logoutBtn">Logout</button>
+    <button id="logoutBtn" onclick="logout()">Logout</button>
     <button id="adminBtn" onclick="location.href='admin_vip.html'">Admin Panel</button>
   </div>
 </div>
@@ -180,44 +180,84 @@ body{
   </div>
 </div>
 
-<script>
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+import { getFirestore, doc, getDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyA1HZLZRY9UADNnDVBnoBIlG3b-bCkojxs",
+  authDomain: "primeinvestproject2.firebaseapp.com",
+  projectId: "primeinvestproject2",
+  storageBucket: "primeinvestproject2.firebasestorage.app",
+  messagingSenderId: "798977477628",
+  appId: "1:798977477628:web:c97d1fba72ad7865864079"
+};
+
+const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
+const db = getFirestore(app);
+
 const SCORE_PER_USD = 10000000;
 const NONVIP_DAILY_LIMIT = 500000;
 
 let state = {
-  score:0,balance:0,tapsToday:0,
-  day:new Date().toDateString(),vip:0,power:1
+  score:0,
+  balance:0,
+  tapsToday:0,
+  day:new Date().toDateString(),
+  vip:0,
+  power:1,
+  loggedIn:false
 };
 
-function todayKey(){return new Date().toDateString();}
+function todayKey(){ return new Date().toDateString(); }
 
-const elScore=score,elPower=power,elToday=today,elUsd=usd,elBalance=balance;
+const elScore = document.getElementById("score");
+const elPower = document.getElementById("power");
+const elToday = document.getElementById("today");
+const elUsd = document.getElementById("usd");
+const elBalance = document.getElementById("balance");
+const tapBtn = document.getElementById("tapBtn");
+const loginBtn = document.getElementById("loginBtn");
+const logoutBtn = document.getElementById("logoutBtn");
+const adminBtn = document.getElementById("adminBtn");
 
 function refresh(){
-  const usdVal=state.score/SCORE_PER_USD;
-  elScore.textContent=state.score;
-  elPower.textContent=state.power+"×";
-  elToday.textContent=`${state.tapsToday} / ${NONVIP_DAILY_LIMIT}`;
-  elUsd.textContent="$"+usdVal.toFixed(2);
-  elBalance.textContent="$"+(state.balance+usdVal).toFixed(2);
+  const usdVal = state.score / SCORE_PER_USD;
+  elScore.textContent = state.score;
+  elPower.textContent = state.power + "×";
+  elToday.textContent = `${state.tapsToday} / ${NONVIP_DAILY_LIMIT}`;
+  elUsd.textContent = "$" + usdVal.toFixed(2);
+  elBalance.textContent = "$" + (state.balance + usdVal).toFixed(2);
 }
 
-tapBtn.onclick=()=>{
-  if(state.day!==todayKey()){state.day=todayKey();state.tapsToday=0;}
-  if(!state.vip && state.tapsToday>=NONVIP_DAILY_LIMIT) return alert("Daily limit reached");
-  state.score+=state.power;
+tapBtn.onclick = ()=>{
+  if(!state.loggedIn){
+    alert("Please login first");
+    return;
+  }
+  if(state.day !== todayKey()){
+    state.day = todayKey();
+    state.tapsToday = 0;
+  }
+  if(state.vip === 0 && state.tapsToday >= NONVIP_DAILY_LIMIT){
+    alert("Daily limit reached");
+    return;
+  }
+  state.score += state.power;
   state.tapsToday++;
   refresh();
 };
 
-function toggleMenu(){
-  menuBox.style.display=menuBox.style.display==="block"?"none":"block";
-}
+window.toggleMenu = ()=>{
+  menuBox.style.display = menuBox.style.display === "block" ? "none" : "block";
+};
 
-function logout(){
-  alert(currentLang.logout);
-  location.href="auth.html";
-}
+window.logout = async ()=>{
+  await signOut(auth);
+  location.href = "auth.html";
+};
 
 /* LANGUAGE */
 const langs={
@@ -226,15 +266,36 @@ const langs={
   ar:{login:"تسجيل الدخول",logout:"تسجيل الخروج",admin:"لوحة الإدارة"}
 };
 let currentLang=langs.en;
-function setLang(l){
+window.setLang = l=>{
   currentLang=langs[l];
   loginBtn.textContent=currentLang.login;
   logoutBtn.textContent=currentLang.logout;
   adminBtn.textContent=currentLang.admin;
-}
-
+};
 setLang("en");
-refresh();
+
+/* AUTH STATE */
+onAuthStateChanged(auth, async (user)=>{
+  if(user){
+    state.loggedIn = true;
+    loginBtn.style.display="none";
+    logoutBtn.style.display="block";
+
+    const snap = await getDoc(doc(db,"users",user.uid));
+    const u = snap.exists() ? snap.data() : {};
+
+    state.vip = u.vip?.level || 0;
+    state.power = u.vip?.multiplier || 1;
+
+    adminBtn.style.display = (u.role === "admin") ? "block" : "none";
+  }else{
+    state.loggedIn = false;
+    loginBtn.style.display="block";
+    logoutBtn.style.display="none";
+    adminBtn.style.display="none";
+  }
+  refresh();
+});
 </script>
 
 </body>
