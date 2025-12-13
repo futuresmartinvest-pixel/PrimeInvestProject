@@ -45,18 +45,26 @@ body{
   color:#fff;
 }
 
-/* DROPDOWN */
+/* MENU */
 .menu{
   position:absolute;
   right:0;
   top:48px;
-  background:rgba(20,30,50,.95);
+  background:rgba(20,30,50,.97);
   border:1px solid rgba(255,255,255,.2);
-  border-radius:14px;
-  width:160px;
+  border-radius:16px;
+  width:240px;
   display:none;
   overflow:hidden;
 }
+
+.menu .user-box{
+  padding:14px;
+  border-bottom:1px solid rgba(255,255,255,.15);
+}
+
+.menu .name{font-weight:800}
+.menu .email{font-size:13px;opacity:.8;word-break:break-all}
 
 .menu button{
   width:100%;
@@ -73,6 +81,46 @@ body{
   background:rgba(255,255,255,.1);
 }
 
+/* MODAL */
+.modal{
+  position:fixed;
+  inset:0;
+  background:rgba(0,0,0,.6);
+  display:none;
+  justify-content:center;
+  align-items:center;
+  z-index:20;
+}
+
+.modal-box{
+  background:#121a30;
+  border-radius:18px;
+  padding:18px;
+  width:90%;
+  max-width:340px;
+}
+
+.modal-box h3{text-align:center;margin-top:0}
+
+.modal-box input{
+  width:100%;
+  padding:12px;
+  margin-bottom:10px;
+  border-radius:12px;
+  border:none;
+}
+
+.modal-box button{
+  width:100%;
+  padding:12px;
+  border:none;
+  border-radius:12px;
+  font-weight:800;
+  background:#22c55e;
+  color:#000;
+  margin-top:6px;
+}
+
 /* MAIN */
 .wrap{padding:70px 16px 110px; max-width:420px; margin:0 auto;}
 
@@ -84,15 +132,8 @@ body{
   border-radius:24px;
 }
 
-.card{
-  padding:18px;
-  text-align:center;
-}
-
-.amount{
-  font-size:52px;
-  font-weight:900;
-}
+.card{padding:18px;text-align:center}
+.amount{font-size:52px;font-weight:900}
 
 .vip-pill{
   display:inline-block;
@@ -115,22 +156,11 @@ body{
   background:radial-gradient(circle at 30% 30%,#5ff,#0000),
              radial-gradient(circle at 70% 70%,#a7f,#0000),
              rgba(255,255,255,.08);
+  font-weight:900;
 }
 
 .stats{margin-top:14px;padding:14px}
 .row{display:flex;justify-content:space-between;font-weight:700}
-
-/* NAV */
-.nav-wrap{position:fixed;left:0;right:0;bottom:16px;display:flex;justify-content:center}
-.nav{
-  background:rgba(255,255,255,.14);
-  border-radius:26px;
-  padding:14px;
-  display:flex;
-  justify-content:space-around;
-  width:420px;
-}
-.nav button{all:unset;cursor:pointer}
 </style>
 </head>
 
@@ -140,7 +170,24 @@ body{
 <div class="topbar">
   <button class="menu-btn" id="menuBtn">⋮</button>
   <div class="menu" id="menu">
+    <div class="user-box">
+      <div class="name" id="userName">Loading...</div>
+      <div class="email" id="userEmail"></div>
+    </div>
+
+    <button id="changePassBtn">Change Password</button>
+    <button id="adminBtn" style="display:none">Admin Panel</button>
     <button id="logoutBtn">Logout</button>
+  </div>
+</div>
+
+<!-- CHANGE PASSWORD MODAL -->
+<div class="modal" id="passModal">
+  <div class="modal-box">
+    <h3>Change Password</h3>
+    <input id="newPass1" type="password" placeholder="New password">
+    <input id="newPass2" type="password" placeholder="Confirm password">
+    <button id="savePassBtn">Update Password</button>
   </div>
 </div>
 
@@ -148,25 +195,23 @@ body{
   <div class="glass card">
     <div>Balance</div>
     <div class="amount" id="balanceUsd">$0.00</div>
-    <div class="vip-pill" id="vipPill">VIP: None</div>
+    <div class="vip-pill">VIP: None</div>
   </div>
 
   <div class="tap-area">
-    <div class="orb" id="tapBtn">TAP</div>
-  </div>
-
-  <div class="glass stats">
-    <div class="row"><span>Score</span><b id="scoreText">0</b></div>
-    <div class="row"><span>Tap power</span><b id="powerText">1×</b></div>
-    <div class="row"><span>Today taps</span><b id="todayText">0 / 500000</b></div>
-    <div class="row"><span>Score → USD</span><b id="scoreUsd">$0.00</b></div>
+    <div class="orb">TAP</div>
   </div>
 </div>
 
 <script type="module" defer>
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
-import { getFirestore, doc, getDoc, setDoc, runTransaction, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+import {
+  getAuth,
+  onAuthStateChanged,
+  signOut,
+  updatePassword
+} from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+import { getFirestore, doc, getDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
 const firebaseConfig = {
   apiKey: "AIzaSyA1HZLZRY9UADNnDVBnoBIlG3b-bCkojxs",
@@ -184,21 +229,63 @@ const db = getFirestore(app);
 /* MENU */
 const menuBtn = document.getElementById("menuBtn");
 const menu = document.getElementById("menu");
+menuBtn.onclick = ()=> menu.style.display = menu.style.display === "block" ? "none" : "block";
 
-menuBtn.onclick = ()=>{
-  menu.style.display = menu.style.display === "block" ? "none" : "block";
-};
-
+/* LOGOUT */
 document.getElementById("logoutBtn").onclick = async ()=>{
   await signOut(auth);
   location.replace("auth.html");
 };
 
-/* AUTH GUARD */
+/* CHANGE PASSWORD */
+const modal = document.getElementById("passModal");
+document.getElementById("changePassBtn").onclick = ()=>{
+  modal.style.display = "flex";
+  menu.style.display = "none";
+};
+
+document.getElementById("savePassBtn").onclick = async ()=>{
+  const p1 = document.getElementById("newPass1").value;
+  const p2 = document.getElementById("newPass2").value;
+
+  if(!p1 || p1 !== p2){
+    alert("Passwords do not match");
+    return;
+  }
+
+  try{
+    await updatePassword(auth.currentUser, p1);
+    alert("Password updated. Please login again.");
+    await signOut(auth);
+    location.replace("auth.html");
+  }catch(e){
+    alert("Recent login required. Please login again.");
+    await signOut(auth);
+    location.replace("auth.html");
+  }
+};
+
+/* ADMIN */
+document.getElementById("adminBtn").onclick = ()=>{
+  location.href = "admin_vip.html";
+};
+
+/* AUTH + ROLE */
 onAuthStateChanged(auth, async user=>{
   if(!user){
     location.replace("auth.html");
     return;
+  }
+
+  document.getElementById("userEmail").textContent = user.email;
+
+  const snap = await getDoc(doc(db,"users",user.uid));
+  document.getElementById("userName").textContent =
+    snap.exists() ? snap.data().fullName || "User" : "User";
+
+  const token = await user.getIdTokenResult();
+  if(token.claims.admin){
+    document.getElementById("adminBtn").style.display = "block";
   }
 });
 </script>
