@@ -55,7 +55,9 @@ button{
 </div>
 
 <script type="module">
+/* -------------------- IMPORTS -------------------- */
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
 import {
   getFirestore,
   doc,
@@ -66,6 +68,7 @@ import {
   serverTimestamp
 } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
+/* -------------------- FIREBASE -------------------- */
 const firebaseConfig = {
   apiKey: "AIzaSyA1HZLZRY9UADNnDVBnoBIlG3b-bCkojxs",
   authDomain: "primeinvestproject2.firebaseapp.com",
@@ -77,13 +80,21 @@ const firebaseConfig = {
 
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
+const auth = getAuth(app);
 
-const userId = localStorage.getItem("userId");
-if(!userId){
-  alert("User not found");
-  location.href = "vip.html";
-}
+/* -------------------- AUTH -------------------- */
+let userId = null;
 
+onAuthStateChanged(auth, (user) => {
+  if (!user) {
+    alert("Please login first");
+    location.href = "auth.html";
+    return;
+  }
+  userId = user.uid;
+});
+
+/* -------------------- VIP DATA -------------------- */
 const params = new URLSearchParams(location.search);
 const vipLevel = Number(params.get("vip"));
 const price = Number(params.get("price"));
@@ -91,7 +102,8 @@ const price = Number(params.get("price"));
 const VALID = {
   1:30,2:100,3:499,4:999,5:4999,6:9999,7:49999,8:99999
 };
-if(VALID[vipLevel] !== price){
+
+if (VALID[vipLevel] !== price) {
   alert("Invalid request");
   location.href = "vip.html";
 }
@@ -99,31 +111,36 @@ if(VALID[vipLevel] !== price){
 document.getElementById("title").textContent = `VIP ${vipLevel}`;
 document.getElementById("price").textContent = `Price: $${price}`;
 
-document.getElementById("sendBtn").onclick = async ()=>{
-  const reqRef = doc(db,"vip_requests",`${userId}_vip_${vipLevel}`);
+/* -------------------- SEND REQUEST -------------------- */
+document.getElementById("sendBtn").onclick = async () => {
+  if (!userId) {
+    alert("Login not ready yet, try again.");
+    return;
+  }
+
+  const reqRef = doc(db, "vip_requests", `${userId}_vip_${vipLevel}`);
   const snap = await getDoc(reqRef);
 
-  if(snap.exists() && snap.data().status === "pending"){
+  if (snap.exists() && snap.data().status === "pending") {
     alert("Already pending");
     return;
   }
 
-  await setDoc(reqRef,{
+  await setDoc(reqRef, {
     userId,
     vipLevel,
     price,
-    status:"pending",
-    createdAt:serverTimestamp()
+    status: "pending",
+    createdAt: serverTimestamp()
   });
 
-  /* AUDIT LOG */
-  await addDoc(collection(db,"audit_logs"),{
-    type:"VIP_REQUEST",
+  await addDoc(collection(db, "audit_logs"), {
+    type: "VIP_REQUEST",
     userId,
     vipLevel,
     price,
-    actor:"user",
-    createdAt:serverTimestamp()
+    actor: "user",
+    createdAt: serverTimestamp()
   });
 
   alert("Request sent");
