@@ -38,6 +38,8 @@ button{
 }
 #msg{margin-top:10px;text-align:center}
 .error{color:#ff6b6b}
+.success{color:#6aff9b}
+.link{margin-top:10px;text-align:center;cursor:pointer}
 </style>
 </head>
 
@@ -49,11 +51,15 @@ button{
   <input id="loginEmail" type="email" placeholder="Email">
   <input id="loginPassword" type="password" placeholder="Password">
   <button id="loginBtn">Login</button>
+  <div id="forgotBtn" class="link">Forgot password?</div>
 
   <hr style="margin:20px 0">
 
   <h2>Register</h2>
 
+  <input id="fullName" placeholder="Full name">
+  <input id="country" placeholder="Country">
+  <input id="address" placeholder="Address">
   <input id="regEmail" type="email" placeholder="Email">
   <input id="regPassword" type="password" placeholder="Password">
   <input id="regConfirm" type="password" placeholder="Confirm password">
@@ -63,138 +69,139 @@ button{
 </div>
 
 <script type="module">
-import { auth, db } from "./firebase.js";
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
 import {
+  getAuth,
   signInWithEmailAndPassword,
-  createUserWithEmailAndPassword
+  createUserWithEmailAndPassword,
+  sendPasswordResetEmail,
+  setPersistence,
+  browserLocalPersistence
 } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
-
 import {
+  getFirestore,
   doc,
   setDoc,
-  getDocs,
-  query,
-  where,
-  collection,
+  getDoc,
   updateDoc,
-  increment,
-  serverTimestamp
+  query,
+  collection,
+  where,
+  getDocs,
+  serverTimestamp,
+  increment
 } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
+const firebaseConfig = {
+  apiKey: "AIzaSyA1HZLZRY9UADNnDVBnoBIlG3b-bCkojxs",
+  authDomain: "primeinvestproject2.firebaseapp.com",
+  projectId: "primeinvestproject2",
+  storageBucket: "primeinvestproject2.firebasestorage.app",
+  messagingSenderId: "798977477628",
+  appId: "1:798977477628:web:c97d1fba72ad7865864079"
+};
+
+const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
+const db = getFirestore(app);
+
+await setPersistence(auth, browserLocalPersistence);
+
 const msg = document.getElementById("msg");
-import { query, where, getDocs, updateDoc } from
-"https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
+/* READ REFERRAL CODE FROM URL */
 const params = new URLSearchParams(window.location.search);
-const referralFromUrl = params.get("ref");
-// READ REF CODE FROM URL
-const params = new URLSearchParams(window.location.search);
-const refCode = params.get("ref");
+const referralCodeFromUrl = params.get("ref");
 
-// LOGIN
+/* LOGIN */
 loginBtn.onclick = async () => {
-  try {
+  msg.innerHTML="";
+  try{
     await signInWithEmailAndPassword(
       auth,
       loginEmail.value.trim(),
       loginPassword.value
     );
-    location.href = "index.html";
-  } catch (e) {
-    msg.innerHTML = `<div class="error">${e.message}</div>`;
+    location.href="index.html";
+  }catch(e){
+    msg.innerHTML=`<div class="error">${e.message}</div>`;
   }
 };
 
-// REGISTER
+/* REGISTER */
 registerBtn.onclick = async () => {
-  msg.innerHTML = "";
-
-  if (regPassword.value !== regConfirm.value) {
-    msg.innerHTML = `<div class="error">Passwords do not match</div>`;
+  msg.innerHTML="";
+  if(regPassword.value !== regConfirm.value){
+    msg.innerHTML=`<div class="error">Passwords do not match</div>`;
     return;
   }
 
-  try {
+  try{
     const cred = await createUserWithEmailAndPassword(
       auth,
       regEmail.value.trim(),
       regPassword.value
     );
 
-    const referralCode = cred.user.uid.slice(0,8).toUpperCase();
+    const uid = cred.user.uid;
+    const ownReferralCode = uid.slice(0,8).toUpperCase();
 
-    // CREATE USER
-    await setDoc(doc(db,"users",cred.user.uid),{
-  fullName: fullName.value,
-  country: country.value,
-  address: address.value,
-  balance: 0,
-  vip: { level: 0 },
-  referralCode,
-  referralCount: 0,
-  referralEarnings: 0,
-  referredBy: referralFromUrl || null,
-  createdAt: serverTimestamp()
-});
-
-/* PAY REFERRAL ONLY AFTER REAL ACCOUNT IS CREATED */
-if (referralFromUrl) {
-  const q = query(
-    collection(db,"users"),
-    where("referralCode","==", referralFromUrl)
-  );
-
-  const snap = await getDocs(q);
-  if (!snap.empty) {
-    const refUser = snap.docs[0];
-    const refData = refUser.data();
-
-    await updateDoc(refUser.ref,{
-      balance: (refData.balance || 0) + 0.09,
-      referralCount: (refData.referralCount || 0) + 1,
-      referralEarnings: (refData.referralEarnings || 0) + 0.09
+    /* CREATE USER */
+    await setDoc(doc(db,"users",uid),{
+      fullName: fullName.value,
+      country: country.value,
+      address: address.value,
+      balance: 0,
+      vip: { level: 0 },
+      referralCode: ownReferralCode,
+      referralCount: 0,
+      referralEarnings: 0,
+      referredBy: referralCodeFromUrl || null,
+      createdAt: serverTimestamp()
     });
-  }
-}
 
-location.href = "index.html";
-
-    // HANDLE REFERRAL
-    if (refCode) {
+    /* HANDLE REFERRAL REWARD */
+    if(referralCodeFromUrl){
       const q = query(
         collection(db,"users"),
-        where("referralCode","==",refCode)
+        where("referralCode","==",referralCodeFromUrl)
       );
       const snap = await getDocs(q);
 
-      if (!snap.empty) {
+      if(!snap.empty){
         const inviterDoc = snap.docs[0];
-        const inviterRef = doc(db,"users",inviterDoc.id);
+        if(inviterDoc.id !== uid){
+          await updateDoc(doc(db,"users",inviterDoc.id),{
+            balance: increment(0.09),
+            referralCount: increment(1),
+            referralEarnings: increment(0.09)
+          });
 
-        await updateDoc(inviterRef,{
-          balance: increment(0.09),
-          referralCount: increment(1),
-          referralEarnings: increment(0.09)
-        });
-
-        await setDoc(
-          doc(collection(db,"referrals")),
-          {
+          await setDoc(doc(db,"referrals",uid),{
             inviterUid: inviterDoc.id,
-            invitedUid: cred.user.uid,
+            invitedUid: uid,
             invitedEmail: regEmail.value.trim(),
             reward: 0.09,
             createdAt: serverTimestamp()
-          }
-        );
+          });
+        }
       }
     }
 
-    location.href = "index.html";
-
-  } catch (e) {
-    msg.innerHTML = `<div class="error">${e.message}</div>`;
+    location.href="index.html";
+  }catch(e){
+    msg.innerHTML=`<div class="error">${e.message}</div>`;
   }
+};
+
+/* FORGOT PASSWORD */
+forgotBtn.onclick = async ()=>{
+  if(!loginEmail.value){
+    msg.innerHTML=`<div class="error">Enter email</div>`;
+    return;
+  }
+  await sendPasswordResetEmail(auth, loginEmail.value.trim());
+  msg.innerHTML=`<div class="success">Reset email sent</div>`;
 };
 </script>
 
