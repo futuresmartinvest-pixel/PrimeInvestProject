@@ -1,126 +1,66 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1" />
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Referral</title>
-
 <style>
-body{
-  margin:0;
-  font-family:system-ui;
-  background:#0a0f24;
-  color:#fff;
-}
-.wrap{padding:20px}
-.card{
-  background:rgba(255,255,255,.12);
-  border-radius:18px;
-  padding:16px;
-  margin-bottom:14px;
-}
-button{
-  width:100%;
-  padding:12px;
-  border:none;
-  border-radius:12px;
-  font-weight:800;
-  cursor:pointer;
-}
-  .copy{
-  background:linear-gradient(135deg,#00e5ff,#3b82f6);
-  color:#000;
-  font-size:16px;
-  font-weight:900;
-}
-
-#refList div{
-  padding:10px;
-  margin-top:8px;
-  background:rgba(255,255,255,.08);
-  border-radius:12px;
-  font-size:13px;
-}
+body{margin:0;font-family:system-ui;background:#05070f;color:#fff}
+.wrap{max-width:420px;margin:auto;padding:20px}
+.card{background:rgba(255,255,255,.12);padding:20px;border-radius:20px;margin-bottom:15px}
+button{width:100%;padding:14px;border:none;border-radius:14px;font-weight:800}
+.code{text-align:center;font-size:22px;font-weight:900;letter-spacing:2px}
 </style>
 </head>
-
 <body>
 
 <div class="wrap">
+<div class="card">
+<h3>Your Referral Code</h3>
+<div id="refCode" class="code">----</div>
+<button id="copyBtn">Copy Referral Link</button>
+</div>
 
-  <div class="card">
-    <h2>Invite & Earn</h2>
-    <div id="refCode">----</div>
-    <button id="copyBtn">Copy Referral Link</button>
-  </div>
+<div class="card">
+<div>Invited: <b id="count">0</b></div>
+<div>Earnings: <b>$<span id="earn">0.00</span></b></div>
+</div>
 
-  <div class="card">
-    <div>Invited Users: <b id="count">0</b></div>
-    <div>Earnings: <b id="earn">$0.00</b></div>
-  </div>
-
-  <div class="card">
-    <h3>Invited List</h3>
-    <div id="list"></div>
-  </div>
-
+<div class="card">
+<h3>Invited List</h3>
+<div id="list"></div>
+</div>
 </div>
 
 <script type="module">
 import { auth, db } from "./firebase.js";
 import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
-import {
-  doc,
-  getDoc,
-  collection,
-  query,
-  where,
-  getDocs
-} from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+import { doc,getDoc,collection,query,where,getDocs } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
 onAuthStateChanged(auth, async user=>{
-  if(!user){
-    location.href="auth.html";
-    return;
-  }
+  if(!user){location.href="auth.html";return;}
 
   const snap = await getDoc(doc(db,"users",user.uid));
   const d = snap.data();
 
-  document.getElementById("refCode").innerText = d.referralCode;
-  document.getElementById("count").innerText = d.referralCount || 0;
-  document.getElementById("earn").innerText = "$" + (d.referralEarnings||0).toFixed(2);
+  refCode.innerText=d.referralCode;
+  count.innerText=d.referralCount;
+  earn.innerText=d.referralEarnings.toFixed(2);
 
-  const q = query(
-    collection(db,"referrals"),
-    where("inviterUid","==",user.uid)
-  );
-  const refs = await getDocs(q);
-
-  const list = document.getElementById("list");
-  list.innerHTML = refs.empty ? "No referrals yet" : "";
-
+  const q=query(collection(db,"referrals"),where("inviterUid","==",user.uid));
+  const refs=await getDocs(q);
+  list.innerHTML=refs.empty?"No referrals":"";
   refs.forEach(r=>{
-    const div = document.createElement("div");
-    div.innerText = r.data().invitedEmail;
+    const div=document.createElement("div");
+    div.innerText=r.data().invitedUid;
     list.appendChild(div);
   });
 
-  document.getElementById("copyBtn").onclick = () => {
-  const code = document.getElementById("refCode").textContent;
-  const link = location.origin + "/auth.html?ref=" + code;
-
-  const tempInput = document.createElement("input");
-  tempInput.value = link;
-  document.body.appendChild(tempInput);
-  tempInput.select();
-  tempInput.setSelectionRange(0, 99999);
-
-  document.execCommand("copy");
-  document.body.removeChild(tempInput);
-
-  alert("Referral link copied");
-};
+  copyBtn.onclick=()=>{
+    const link=location.origin+"/auth.html?ref="+d.referralCode;
+    navigator.clipboard.writeText(link);
+    alert("Copied");
+  };
 });
 </script>
 
